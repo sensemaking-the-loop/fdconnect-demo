@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About this demonstration — Faculty Development Connect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════
+  ABOUT THIS FILE — for whoever edits it next
+  ═══════════════════════════════════════════════════════════════════════════
+
+  This page is DEMO-ONLY. It does not exist on the live system, which is why it
+  lives in demo/ rather than public/. Edit it here; the deriver copies it into
+  the build and the gate checks it like every other page.
+
+  All the prose is between the EDIT FREELY markers below. You can rewrite any of
+  it without touching anything technical.
+
+  THREE THINGS THAT WILL FAIL THE GATE, so please avoid them:
+
+    1. Real names. Naming any member of the team fails assertion E1, and any
+       real contact name fails E2. Write "the CTL faculty development team".
+    2. Real contact IDs. The pattern CTL- followed by a digit fails assertion C.
+       "CTL" on its own is fine.
+    3. Links to other websites. Assertion I allows only the webfont hosts, so a
+       link to a duke.edu page fails the build. If you want one, say so and the
+       host can be added to the allowlist deliberately.
+
+  The date and version line at the bottom fills itself in from provenance.json.
+  Leave that block alone and it stays accurate on its own.
+  ═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  /* Deliberately NOT the app chrome. The four demo pages share a navy masthead;
+     this page is a document about them, so it reads as paper rather than as a
+     fifth screen. Same typefaces as the dossier system, different surface. */
+  :root {
+    --paper: #FBFAF7;
+    --ink: #22201C;
+    --ink-soft: #57534B;
+    --rule: #E3DFD6;
+    --accent: #1F6F6B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.68;
+  }
+  .demo-banner {
+    margin: 0;
+    padding: 11px 24px;
+    background: #001A33;
+    color: #D8DCE4;
+    font-family: 'Source Sans 3', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .demo-banner strong { color: #FFFFFF; font-weight: 600; }
+
+  .topbar {
+    border-bottom: 1px solid var(--rule);
+    background: #FFFFFF;
+  }
+  .topbar-inner {
+    max-width: 720px; margin: 0 auto; padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .wordmark {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .back {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13.5px; font-weight: 600;
+    color: var(--accent); text-decoration: none;
+    border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 14px; white-space: nowrap;
+  }
+  .back:hover { background: #F2F6F5; border-color: var(--accent); }
+  .back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  main { max-width: 720px; margin: 0 auto; padding: 44px 24px 72px; }
+  h1 {
+    font-size: 33px; font-weight: 600; line-height: 1.2;
+    margin: 0 0 10px; letter-spacing: -0.01em;
+  }
+  .standfirst {
+    font-size: 19px; color: var(--ink-soft); margin: 0 0 36px;
+  }
+  h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.11em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 40px 0 10px; padding-top: 22px;
+    border-top: 1px solid var(--rule);
+  }
+  p { margin: 0 0 16px; }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  strong { font-weight: 600; }
+  .pull {
+    border-left: 3px solid var(--accent);
+    padding: 2px 0 2px 18px;
+    margin: 0 0 20px;
+    color: var(--ink-soft);
+  }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 20px; font-size: 16px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11.5px; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  .colophon {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .colophon code {
+    background: #F1EEE7; border-radius: 3px; padding: 1px 5px; font-size: 12.5px;
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    h1 { font-size: 27px; }
+    main { padding: 32px 20px 56px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <strong>Demonstration — synthetic data.</strong> No real faculty record appears on this site.
+</div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="wordmark">Faculty Development Connect</span>
+    <a class="back" href="index.html">← Back to the demonstration</a>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════ EDIT FREELY FROM HERE ══════════════ -->
+
+<h1>About this demonstration</h1>
+<p class="standfirst">
+  A working copy of the system the Duke Center for Teaching &amp; Learning uses
+  to track faculty development work — running on invented people.
+</p>
+
+<h2>What you are looking at</h2>
+<p>
+  Faculty Development Connect is an internal system built and maintained by the
+  CTL faculty development team. It records the consultations, programs, and
+  events the team runs with faculty, and it turns that record into something the
+  team can actually use: a dashboard of activity, a searchable directory of
+  everyone they work with, and a per-person dossier that reads like a document
+  rather than a database row.
+</p>
+<p>
+  This site is that system, with the real people removed. Every name, title,
+  department, engagement, date, and number was generated for this demonstration.
+  You can click anything, filter anything, and submit the intake form. Nothing
+  is saved and no real record exists behind any of it.
+</p>
+
+<h2>What is real and what is not</h2>
+<table>
+  <tr><th>Real</th><th>Invented</th></tr>
+  <tr>
+    <td>The taxonomy — engagement types, topic areas, program names, rank
+        categories, and school and unit names</td>
+    <td>Every person, and every engagement attached to them</td>
+  </tr>
+  <tr>
+    <td>The workflow, including how an entry is logged and how it becomes part
+        of someone's history</td>
+    <td>All counts, totals, dates, and chart values</td>
+  </tr>
+  <tr>
+    <td>The interface, which is the same code the team uses daily</td>
+    <td>The staff members shown as having logged the work</td>
+  </tr>
+</table>
+<p class="pull">
+  The distinction matters if you are evaluating whether to build something
+  similar. The data here is fictional, but the categories, the intake flow, and
+  the reporting are the ones a real team settled on and revised in use.
+</p>
+
+<h2>The four surfaces</h2>
+<ul>
+  <li><strong>Quick Log</strong> — the intake form. A consultant records an
+      engagement in under a minute, on a phone if need be, without opening a
+      spreadsheet.</li>
+  <li><strong>Dashboards</strong> — activity by month, type, topic, school, and
+      fiscal year, plus year-over-year comparison.</li>
+  <li><strong>Directory</strong> — a searchable index of every contact, filterable
+      by school, rank, program, staff member, fiscal year, recency, and how many
+      times the team has worked with them.</li>
+  <li><strong>Dossier</strong> — one page per person: their engagement history on
+      a timeline, and a companion document where consultants write notes in their
+      own words.</li>
+</ul>
+
+<h2>How it is put together</h2>
+<p>
+  There is one system of record — a single spreadsheet — and everything else
+  reads from it. Nothing keeps its own copy of the data, which is what stops two
+  screens from disagreeing about the same person.
+</p>
+<p>
+  Intake is deliberately two-stage. The form collects what a consultant can
+  recall quickly; a data manager then reviews each entry into the record,
+  normalising the taxonomy as it lands. That human step is the reason the data
+  is clean enough to chart, and it is the part most easily mistaken for
+  inefficiency.
+</p>
+<p>
+  Notes live in documents rather than in cells, because a consultation is not
+  well described by a field. The system creates and maintains the structure of
+  each document; what goes inside it belongs to the person who did the work.
+</p>
+
+<h2>If you are considering building one</h2>
+<p>
+  The honest version: this runs on Google Workspace and Apps Script, with no
+  budget line and no engineering team. That is a real constraint and also the
+  reason it exists — it was buildable by the people who needed it.
+</p>
+<p>
+  What it actually took was less about tooling than about two other things. A
+  settled vocabulary, written down and owned by someone with the authority to
+  decide it, so that "consultation" means one thing across every screen. And a
+  named person responsible for the record, because a system of record with no
+  custodian degrades quietly until nobody trusts what it reports.
+</p>
+
+<h2>What this demonstration does not show</h2>
+<ul>
+  <li>The administrative surfaces — access control, the sync that maintains the
+      dossier documents, and the data manager's own working views.</li>
+  <li>Access itself. The real system is limited to the team; here every door is
+      open, which is why the intake form saves nothing.</li>
+  <li>Anything at the volume the real record carries. The demonstration
+      population is smaller and tidier than a live year.</li>
+</ul>
+
+<!-- ══════════════ EDIT FREELY TO HERE ══════════════ -->
+
+<!-- Fills itself in from provenance.json. Leave this alone and it stays right. -->
+<div class="colophon" id="colophon">
+  Built by the Duke CTL faculty development team.
+</div>
+
+</main>
+
+<script>
+  /* provenance.json is written into the build after derivation, so it cannot be
+     baked into this file. Reading it at load keeps the freshness line honest
+     without anyone maintaining it. Opened from a local file rather than served,
+     fetch is blocked and the fallback text stands — which is correct, because
+     an unserved copy has no provenance to report. */
+  (function () {
+    var el = document.getElementById("colophon");
+    if (!el || !window.fetch) return;
+    fetch("provenance.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (p) {
+        if (!p || !p.source) return;
+        var when = (p.generated_at || "").slice(0, 10);
+        var sha = p.source.commit_short || "";
+        var bits = ["Built by the Duke CTL faculty development team."];
+        if (when) {
+          bits.push("This demonstration was generated on " + when +
+                    (sha ? " from source revision " : "") + (sha ? sha : "") + ".");
+        }
+        bits.push("It is a snapshot: the live system continues to change, and " +
+                  "this copy does not.");
+        el.textContent = bits.join(" ");
+      })
+      .catch(function () { /* fallback text stands */ });
+  })();
+</script>
+
+</body>
+</html>

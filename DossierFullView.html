@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relationship Dossier — Dossier_FULL VIEW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page-bg: #ECEDEF;
+    --doc-bg: #FFFFFF;
+    --frame-bg: #EDF1F5;
+    --frame-edge: #DAE1E8;
+    --ink: #1A2333;
+    --ink-soft: #4A5468;
+    --muted: #6B7280;
+    --faint: #9CA3AF;
+    --hairline: #E5E7EB;
+    --rule: #D6D9DD;
+    --tint: #F6F7F9;
+    --accent: #2C5773;
+    --accent-deep: #1F4159;
+    --accent-soft: #5B7A8E;
+    --accent-faint: #D5DDE4;
+    --group: #B0793F;
+    --group-soft: #D4A876;
+    --group-tint: #FAF1E2;
+    --fy: #6B5C7C;
+    --fy-soft: #A89AB4;
+    --empty: #B5B8BD;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 56px 24px 80px;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--page-bg);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 14.5px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .document {
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--doc-bg);
+    box-shadow:
+      0 1px 1px rgba(0,0,0,0.02),
+      0 4px 12px rgba(20,30,50,0.04),
+      0 24px 48px rgba(20,30,50,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .document-inner {
+    padding: 60px 80px 64px;
+  }
+
+  /* ───── DEMO BANNER (demo mode only) ───── */
+  /* Full bleed at the very top of the document, above the masthead, matching
+     every other page in the system: a page declares that it is a demonstration
+     before it shows anything else, including its own chrome.
+
+     The colour stays this page's own warm dark rather than the directory's ink.
+     Position is what was unified; palette is deliberately per-page (§K item 20),
+     so this remains one decision rather than two. */
+  .demo-banner {
+    margin: 0;
+    background: #3D3A34;
+    color: #F2EFE9;
+    border-radius: 0;
+    padding: 12px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+  }
+  .demo-banner select {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    background: #524E46;
+    color: #F2EFE9;
+    border: 1px solid #6B675E;
+    border-radius: 2px;
+    padding: 4px 8px;
+  }
+  .demo-footnote {
+    max-width: 880px;
+    margin: 20px auto 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8A8578;
+    text-align: center;
+  }
+
+  /* ───── TITLE BLOCK ───── */
+  .title-block {
+    margin-bottom: 40px;
+  }
+
+  /* ───── SHARED MASTHEAD ─────
+     Identical to dashboard.html, quicklog.html and DossierDirectory.html: same
+     gradient stops, same 1100px inner width, same 24px padding, same Playfair
+     Display title at 0.3px tracking.
+
+     The CONTACT'S NAME DOES NOT APPEAR HERE. Chrome names the system and the
+     page; the person named by this document belongs in the document, where
+     titleBlockHTML() sets it. */
+  .fdc-masthead {
+    background: linear-gradient(135deg, #001A33 0%, #003366 40%, #1a5276 100%);
+    padding: 0 20px;
+    box-shadow: 0 4px 24px rgba(0,26,51,0.2);
+    margin-bottom: 28px;
+  }
+  .fdc-masthead-inner {
+    max-width: 1100px; margin: 0 auto; padding: 24px 0;
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  }
+  .fdc-mark { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .fdc-glyph {
+    width: 38px; height: 38px; flex: none; border-radius: 8px;
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: grid; place-items: center;
+  }
+  .fdc-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: 0.3px; font-weight: 500; font-size: 25px;
+    color: #FFFFFF; margin: 0; line-height: 1.15;
+  }
+  .fdc-title b { font-weight: 600; }
+  .fdc-sub {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px; color: rgba(255,255,255,0.68); margin: 3px 0 0;
+  }
+  .fdc-home {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13.5px; font-weight: 600;
+    color: #FFFFFF; text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 8px;
+    padding: 8px 15px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .fdc-home:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.55); }
+  .fdc-home:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+  @media (max-width: 720px) {
+    .fdc-masthead-inner { flex-direction: column; align-items: flex-start; }
+    .fdc-title { font-size: 21px; }
+  }
+
+  .doc-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .doc-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--accent);
+  }
+
+  .doc-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 480;
+    font-size: 52px;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 22px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .meta-row .meta-label {
+    color: var(--faint);
+    margin-right: 4px;
+  }
+
+  /* ───── FRAMED PANEL (cataloging + notes + summary) ───── */
+  .frame {
+    background: var(--frame-bg);
+    padding: 44px 80px 48px;
+    margin: 0 -80px 0;
+    position: relative;
+    border-top: 1px solid var(--frame-edge);
+    border-bottom: 1px solid var(--frame-edge);
+  }
+  .frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) 40%, transparent 100%);
+  }
+  .frame-corner {
+    position: absolute;
+    top: 18px;
+    right: 80px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+  }
+
+  /* ───── SECTION LABEL (inside frame) ───── */
+  .section-label {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .section-label-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .section-label-source {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    margin-left: auto;
+  }
+  .section-label-source::before {
+    content: '↳ ';
+    margin-right: 2px;
+  }
+
+  /* ───── CATALOGING ───── */
+  .cataloging {
+    margin-bottom: 36px;
+  }
+  .cataloging-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 36px;
+    margin: 0;
+  }
+  .cataloging-field {
+    border-left: 2px solid var(--accent-faint);
+    padding-left: 14px;
+    background: rgba(255,255,255,0.5);
+    padding-right: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 0 3px 3px 0;
+  }
+  .cataloging-field.is-wide { grid-column: 1 / -1; }
+  .cataloging-field dt {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 3px;
+    text-transform: uppercase;
+  }
+  .cataloging-field dd {
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* ───── NOTES ───── */
+  .notes {
+    margin-bottom: 40px;
+  }
+  .notes-body {
+    background: var(--doc-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    min-height: 52px;
+  }
+  .notes-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--empty);
+  }
+  .notes-empty::before {
+    content: '○ ';
+    color: var(--faint);
+  }
+
+  /* ───── SUMMARY ───── */
+  .summary {
+    margin-bottom: 0;
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 8px 0 18px;
+  }
+  .hero-number {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 400;
+    font-size: 108px;
+    line-height: 0.85;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+  }
+  .hero-context {
+    border-left: 1px solid var(--frame-edge);
+    padding-left: 28px;
+  }
+  .hero-lead {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 450;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .hero-sub {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .hero-sub-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-right: 6px;
+    min-width: 88px;
+  }
+  .hero-sub-value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mix-rows {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .mix-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .mix-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 4px 12px;
+    background: var(--doc-bg);
+    border: 1px solid var(--frame-edge);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .chip-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  /* ───── SOURCE NOTES LINK (the one action on the page) ───── */
+  .source-link-row {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--frame-edge);
+  }
+  .source-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--accent-faint);
+    padding-bottom: 2px;
+  }
+  .source-link:hover { border-bottom-color: var(--accent); }
+  .source-link .arrow { font-weight: 400; }
+  .source-link-hint {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .source-link-missing {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--empty);
+  }
+  .source-link-missing::before { content: '○ '; color: var(--faint); }
+
+  /* ───── ENGAGEMENT HISTORY ───── */
+  .history {
+    padding: 56px 80px 0;
+    margin: 0 -80px;
+  }
+
+  .history > .section-label {
+    margin-bottom: 14px;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  /* FY chapter heading — substantial, editorial */
+  .fy-chapter {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin: 16px 0 32px;
+  }
+  .fy-chapter-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--fy);
+    letter-spacing: -0.005em;
+  }
+  .fy-chapter-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fy-soft);
+    padding-bottom: 4px;
+  }
+  .fy-chapter-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--fy-soft);
+    opacity: 0.45;
+    align-self: center;
+  }
+
+  .timeline {
+    position: relative;
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: 80px 36px 1fr;
+    column-gap: 0;
+    position: relative;
+  }
+
+  .date {
+    text-align: right;
+    padding-right: 18px;
+    padding-top: 16px;
+    padding-bottom: 28px;
+  }
+  .date-month {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .date-day {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 460;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .spine {
+    position: relative;
+  }
+  .spine::before {
+    /* continuous vertical line */
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1.5px;
+    background: var(--accent);
+    transform: translateX(-50%);
+    opacity: 0.5;
+  }
+  .spine::after {
+    /* node — default = empty substance */
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: var(--doc-bg);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 4px var(--doc-bg);
+  }
+  /* node state — has substance written */
+  .entry.has-substance .spine::after {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  /* node state — group consultation */
+  .entry.is-group .spine::after {
+    background: var(--group);
+    border-color: var(--group);
+  }
+  .entry:first-of-type .spine::before {
+    top: 14px;
+  }
+  .entry:last-of-type .spine::before {
+    bottom: calc(100% - 32px);
+  }
+
+  .content {
+    padding-left: 22px;
+    padding-top: 14px;
+    padding-bottom: 28px;
+  }
+
+  .content-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-bottom: 4px;
+  }
+  .content-type {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .content-tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--group-tint);
+    color: var(--group);
+    border: 1px solid var(--group-soft);
+    transform: translateY(-2px);
+  }
+
+  .content-meta {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .content-meta .meta-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--accent-soft);
+  }
+  .content-meta .meta-sep {
+    color: var(--faint);
+    margin: 0 8px;
+  }
+  /* A named Fac Dev Program is a proper noun, not a category — weighted and
+     inked so it reads as a name among the muted metadata. */
+  .content-meta .meta-program {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .quicklog {
+    background: var(--tint);
+    border-left: 2px solid var(--accent-soft);
+    padding: 10px 14px;
+    border-radius: 0 3px 3px 0;
+    margin-bottom: 14px;
+  }
+  .quicklog-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    margin-bottom: 4px;
+  }
+  .quicklog-text {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .substance {
+    padding: 4px 0;
+  }
+  .substance-summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    user-select: none;
+    padding: 4px 0;
+    border-radius: 2px;
+    transition: opacity 120ms;
+  }
+  .substance-summary::-webkit-details-marker {
+    display: none;
+  }
+  .substance-summary:hover {
+    opacity: 0.75;
+  }
+  .substance-summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .substance-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .substance-chevron {
+    width: 11px;
+    height: 11px;
+    color: var(--accent-soft);
+    transition: transform 200ms ease;
+    flex-shrink: 0;
+  }
+  .substance[open] .substance-chevron {
+    transform: rotate(90deg);
+  }
+  .substance-body p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 12px;
+  }
+  .substance-body p:last-child { margin-bottom: 0; }
+
+  .substance-damaged {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: var(--tint);
+    border-left: 2px solid var(--group-soft);
+    padding: 10px 14px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .stub-link-block {
+    background: var(--group-tint);
+    border: 1px solid var(--group-soft);
+    padding: 12px 16px;
+    border-radius: 3px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .stub-link-block strong {
+    color: var(--group);
+    font-weight: 600;
+  }
+  .stub-link-block a {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--accent-faint);
+    transition: border-color 120ms;
+  }
+  .stub-link-block a:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  .history-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--empty);
+    padding: 8px 0 12px;
+  }
+  .history-empty::before { content: '○ '; color: var(--faint); }
+
+  /* ───── FOOTER ───── */
+  .doc-footer {
+    margin-top: 48px;
+    padding: 22px 80px 0;
+    border-top: 1px solid var(--hairline);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+  }
+
+  /* ───── LOAD / ERROR STATES ───── */
+  .page-state {
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--doc-bg);
+    border-radius: 3px;
+    padding: 48px 60px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+  .page-state h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .page-state code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    background: var(--tint);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 720px) {
+    body { padding: 24px 8px; }
+    .document-inner { padding: 36px 28px 28px; }
+    .frame { padding: 32px 28px; margin: 0 -28px; }
+    .history { padding: 36px 28px 0; margin: 0 -28px; }
+    .doc-footer { padding: 22px 28px 0; }
+    .frame-corner { right: 28px; top: 14px; }
+    .doc-title { font-size: 36px; }
+    .hero { grid-template-columns: 1fr; gap: 18px; }
+    .hero-number { font-size: 76px; }
+    .hero-context { border-left: none; padding-left: 0; }
+    .cataloging-fields { grid-template-columns: 1fr; }
+    .entry { grid-template-columns: 64px 28px 1fr; }
+    .date-day { font-size: 24px; }
+    .fy-chapter-label { font-size: 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+/* ============================================================================
+   FDConnect — Dossier_FULL VIEW (read-only presentation layer)
+   Duke Center for Teaching & Learning · Faculty Development Connect
+
+   Visual design source of truth: the approved two-fiscal-year dossier
+   mockup (see the canonical repo; the data manager signed off). This file converts that hand-tuned mockup into a
+   data-driven page. Design is unchanged except two documented overrides:
+     · Engagement IDs use the ENG-FY{YYYY}-{NNNN} convention (mockup predates it)
+     · Substance blocks render COLLAPSED by default (v8 §B7)
+
+   THIS FILE READS. IT NEVER WRITES. All dossier writes live in the
+   data-manager-triggered workbook sync (v8 §B6); doPost contains no dossier logic.
+   ========================================================================= */
+
+
+/* ---------------------------------------------------------------------------
+   1. PAYLOAD SOURCE  —  the sentinel is a STRING LITERAL, deliberately.
+
+   Served by Apps Script: Router.gs replaces the quoted token below with the
+   real payload object literal, so INJECTED_PAYLOAD arrives as an object.
+
+   Opened directly as a file: the token stays as written, INJECTED_PAYLOAD is
+   the string itself, and the page falls back to synthetic demo data. That is
+   what makes local verify-before-deploy possible and lets the public demo be a
+   derivation of this same file rather than a fork.
+
+   WHY A STRING AND NOT A COMMENT (learned the hard way, July 28 2026):
+   HtmlService.createHtmlOutputFromFile().getContent() STRIPS ALL COMMENTS from
+   the file — JS and CSS alike, roughly 8KB of them here. An earlier version
+   wrapped this token in a block comment, which silently vanished at serve time,
+   so the router could never find it. A comment is by definition non-semantic
+   and a platform may discard it; a string literal's value is observable and
+   therefore cannot be. Never encode a contract in a construct the platform is
+   entitled to throw away.
+
+   Do not add quotes, reformat, or split the next line. Router.gs matches it as
+   an exact string, including the quote characters, and throws if it is absent.
+   ------------------------------------------------------------------------- */
+const INJECTED_PAYLOAD = "__FDC_PAYLOAD__";
+
+/* Demo mode iff the token was never replaced — i.e. it is still a string. */
+const IS_DEMO = (typeof INJECTED_PAYLOAD === "string");
+
+/* ---------------------------------------------------------------------------
+   2. CONTRACT STRINGS  —  these are code contracts (v8 §F).
+      Changing them in the template or the sync without changing them here
+      silently breaks the parser. `(Write here.)` is load-bearing: it is the
+      stamped placeholder, and mistaking it for consultant writing would
+      invert every node state on the timeline.
+   ------------------------------------------------------------------------- */
+const PROMPT_CONTRACT   = "Optional: What we discussed, resources shared, follow-up or next steps";
+const PLACEHOLDER_TEXTS = ["(Write here.)"];
+
+/* Normalize a heading for contract comparison: collapse whitespace, drop a
+   trailing period. Tolerant of both template shapes we may encounter — the
+   prompt as its own paragraph, or the prompt with the placeholder carried on
+   a line break inside the same paragraph. */
+function normalizeHeading(s) {
+  return String(s == null ? "" : s)
+    .replace(/\s+/g, " ")
+    .replace(/\s*\.\s*$/, "")
+    .trim();
+}
+function isPromptHeading(s) {
+  var n = normalizeHeading(s);
+  var target = normalizeHeading(PROMPT_CONTRACT);
+  if (n === target) return true;
+  /* tolerate the placeholder trailing the heading text */
+  return n.indexOf(target) === 0 &&
+         PLACEHOLDER_TEXTS.some(function (p) {
+           return normalizeHeading(n.slice(target.length)) === normalizeHeading(p);
+         });
+}
+function isPlaceholderParagraph(s) {
+  var n = normalizeHeading(s);
+  return PLACEHOLDER_TEXTS.some(function (p) { return normalizeHeading(p) === n; });
+}
+
+/* Substance emptiness rule (v8 §B3 node-state rule).
+   A section counts as SUBSTANCE WRITTEN if at least one paragraph beneath the
+   prompt has non-empty trimmed text AND is not the stamped placeholder.
+   Failure direction is deliberate: the placeholder match is exact, never
+   heuristic, because suppressing real consultant writing is the bad error
+   and showing an empty block is the harmless one. */
+function normalizeSubstance(paragraphs) {
+  if (!paragraphs) return null;
+  var kept = paragraphs
+    .map(function (p) { return String(p == null ? "" : p).trim(); })
+    .filter(function (p) { return p.length > 0 && !isPlaceholderParagraph(p); });
+  return kept.length ? kept : null;
+}
+
+
+/* ---------------------------------------------------------------------------
+   3. THE PAYLOAD CONTRACT
+      One normalized object describes everything this page renders for one
+      contact. The presentation layer reads ONLY this shape. Demo mode fills
+      it from embedded synthetic data; live mode fills it from Sheets + the
+      doGet endpoint. Swapping read strategies never touches render code.
+
+      {
+        contact: {
+          contactId, displayName, email, netId, pronouns,
+          primaryAffiliation, rank, parentOrg, primaryOrg, title,
+          generalNotes,      // Contacts Col V — "" when none
+          sourceNotesUrl     // Contacts Col X — "" when not yet created
+        },
+        engagements: [{
+          engagementId,      // ENG-FY{YYYY}-{NNNN}
+          date,              // "YYYY-MM-DD"
+          fy,                // "FY26-27" — authority is the tab the row came from
+          type, staff, topic,
+          quickLogNote,
+          group: null | {
+            role: "home" | "stub",
+            participants: [names],        // co-participants, excluding this contact
+            notesHomeName,                // stub only
+            notesHomeUrl,                 // stub only — link into the home Doc
+            notesHomeEngagementId         // stub only
+          },
+          substance: [paragraphs] | null, // null = nothing written
+          structureDamaged: false         // true = Doc section unparseable
+        }],
+        meta: { mode: "demo" | "live" }
+      }
+
+      Everything else on the page is DERIVED here, not supplied: totals,
+      per-FY counts, activity span, type/topic/staff mixes, FY chapter
+      boundaries and their counts, and node states.
+   ------------------------------------------------------------------------- */
+
+
+/* ---------------------------------------------------------------------------
+   4. DERIVATION
+   ------------------------------------------------------------------------- */
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function parseISO(d) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d || "").trim());
+  if (!m) return null;
+  return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+}
+
+/* FY runs July 1 – June 30. Used only as a fallback; the payload's `fy`
+   (the tab the row came from) is the authority. */
+function deriveFY(iso) {
+  var d = parseISO(iso);
+  if (!d) return "";
+  var y = d.getUTCFullYear(), start = d.getUTCMonth() >= 6 ? y : y - 1;
+  return "FY" + String(start % 100).padStart(2, "0") + "-" + String((start + 1) % 100).padStart(2, "0");
+}
+
+/* "FY26-27" → "FY 2026–27" (en dash, matching the mockup) */
+function fyChapterLabel(fy) {
+  var m = /^FY(\d{2})-(\d{2})$/.exec(String(fy || ""));
+  if (!m) return String(fy || "");
+  return "FY 20" + m[1] + "\u2013" + m[2];
+}
+
+function plural(n, singular, pluralForm) {
+  return n + " " + (n === 1 ? singular : (pluralForm || singular + "s"));
+}
+
+function sortedEngagements(engagements) {
+  return engagements.slice().sort(function (a, b) {
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;      // newest first
+    return a.engagementId < b.engagementId ? 1 : -1;              // stable tiebreak
+  });
+}
+
+/* Count by key, descending by count then alphabetical — deterministic order. */
+function mixCounts(engagements, key) {
+  var counts = {};
+  engagements.forEach(function (e) {
+    var v = String(e[key] == null ? "" : e[key]).trim();
+    if (!v) return;
+    counts[v] = (counts[v] || 0) + 1;
+  });
+  return Object.keys(counts)
+    .sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); })
+    .map(function (k) { return { label: k, count: counts[k] }; });
+}
+
+function hasSubstance(e) {
+  return !!(normalizeSubstance(e.substance) || e.structureDamaged);
+}
+
+function deriveSummary(engagements) {
+  var list = sortedEngagements(engagements);
+  var dates = list.map(function (e) { return e.date; }).filter(Boolean).sort();
+  var first = dates[0] || "", last = dates[dates.length - 1] || "";
+  var spanDays = 0;
+  if (first && last) {
+    var a = parseISO(first), b = parseISO(last);
+    if (a && b) spanDays = Math.round((b - a) / 86400000);
+  }
+
+  /* per-FY counts, newest FY first */
+  var byFY = {};
+  list.forEach(function (e) {
+    var fy = e.fy || deriveFY(e.date);
+    byFY[fy] = (byFY[fy] || 0) + 1;
+  });
+  var fyOrder = Object.keys(byFY).sort().reverse();
+
+  return {
+    total: list.length,
+    spanDays: spanDays,
+    first: first,
+    last: last,
+    fyOrder: fyOrder,
+    byFY: byFY,
+    types: mixCounts(list, "type"),
+    topics: mixCounts(list, "topic"),
+    staff: mixCounts(list, "staff")
+  };
+}
+
+
+/* ---------------------------------------------------------------------------
+   5. RENDER  —  pure string builders, so they are testable headlessly.
+   ------------------------------------------------------------------------- */
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function joinNames(names) {
+  var a = (names || []).filter(Boolean);
+  if (a.length === 0) return "";
+  if (a.length === 1) return esc(a[0]);
+  if (a.length === 2) return esc(a[0]) + " and " + esc(a[1]);
+  return a.slice(0, -1).map(esc).join(", ") + ", and " + esc(a[a.length - 1]);
+}
+
+function chipsHTML(items) {
+  if (!items.length) return '<span class="notes-empty">None recorded</span>';
+  return items.map(function (i) {
+    return '<span class="chip">' + esc(i.label) +
+           ' <span class="chip-count">' + i.count + '</span></span>';
+  }).join("");
+}
+
+function titleBlockHTML(c) {
+  var bits = [];
+  bits.push('<span><span class="meta-label">Contact ID</span> ' + esc(c.contactId) + '</span>');
+  if (c.email)    bits.push('<span><span class="meta-label">Email</span> ' + esc(c.email) + '</span>');
+  if (c.netId)    bits.push('<span><span class="meta-label">NetID</span> ' + esc(c.netId) + '</span>');
+  if (c.pronouns) bits.push('<span><span class="meta-label">Pronouns</span> ' + esc(c.pronouns) + '</span>');
+  return '' +
+    '<header class="title-block">' +
+      '<div class="doc-eyebrow">Relationship Dossier</div>' +
+      '<h1 class="doc-title">' + esc(c.displayName) + '</h1>' +
+      '<div class="meta-row">' + bits.join("") + '</div>' +
+    '</header>';
+}
+
+function catalogingHTML(c) {
+  var fields = [
+    { dt: "Primary Affiliation", dd: c.primaryAffiliation },
+    { dt: "Rank", dd: c.rank },
+    { dt: "Duke Parent Org (School/Institute)", dd: c.parentOrg },
+    { dt: "Duke Primary Org (Dept/Center)", dd: c.primaryOrg },
+    { dt: "Title (from Duke Directory)", dd: c.title, wide: true }
+  ];
+  return '' +
+    '<section class="cataloging">' +
+      '<div class="section-label">' +
+        '<span class="section-label-text">Cataloging</span>' +
+        '<span class="section-label-source">Synced from Contacts</span>' +
+      '</div>' +
+      '<dl class="cataloging-fields">' +
+        fields.map(function (f) {
+          return '<div class="cataloging-field' + (f.wide ? ' is-wide' : '') + '">' +
+                   '<dt>' + esc(f.dt) + '</dt>' +
+                   '<dd>' + (f.dd ? esc(f.dd) : '<span class="notes-empty">Not recorded</span>') + '</dd>' +
+                 '</div>';
+        }).join("") +
+      '</dl>' +
+    '</section>';
+}
+
+function notesHTML(c) {
+  var body = String(c.generalNotes || "").trim()
+    ? esc(c.generalNotes)
+    : '<span class="notes-empty">No general notes recorded yet</span>';
+  return '' +
+    '<section class="notes">' +
+      '<div class="section-label">' +
+        '<span class="section-label-text">General Notes</span>' +
+        '<span class="section-label-source">Synced from Contacts · Column V</span>' +
+      '</div>' +
+      '<div class="notes-body">' + body + '</div>' +
+    '</section>';
+}
+
+function summaryHTML(s, contact) {
+  var fyLine = s.fyOrder.map(function (fy) { return fy + ": " + s.byFY[fy]; }).join(" · ");
+  var lead = s.total === 0
+    ? "no engagements recorded yet"
+    : (s.spanDays === 0
+        ? plural(s.total, "engagement") + " on one day"
+        : plural(s.total, "engagement") + " over " + plural(s.spanDays, "day"));
+
+  var sourceLink = String(contact.sourceNotesUrl || "").trim()
+    ? '<a class="source-link" href="' + esc(contact.sourceNotesUrl) + '" target="_blank" rel="noopener">' +
+        'Open Dossier_SOURCE NOTES <span class="arrow">→</span></a>' +
+      '<div class="source-link-hint">Notes live in the Doc. This page is read-only.</div>'
+    : '<span class="source-link-missing">Dossier_SOURCE NOTES not yet created for this contact</span>';
+
+  if (contact.notesReadError) {
+    sourceLink += '<div class="substance-damaged" style="margin-top:14px;">' +
+      'Notes could not be read from the Doc, so any written substance is not shown below. ' +
+      'Open the Doc directly. Engagement metadata on this page is unaffected.</div>';
+  }
+
+
+  return '' +
+    '<section class="summary">' +
+      '<div class="section-label">' +
+        '<span class="section-label-text">Engagement Summary</span>' +
+        '<span class="section-label-source">Synced from FY-* Engagements</span>' +
+      '</div>' +
+      '<div class="hero">' +
+        '<div class="hero-number">' + s.total + '</div>' +
+        '<div class="hero-context">' +
+          '<div class="hero-lead">' + esc(lead) + '</div>' +
+          (s.total ? '<div class="hero-sub">' +
+            '<span class="hero-sub-label">Activity span</span>' +
+            '<span class="hero-sub-value">' + esc(s.first) + ' → ' + esc(s.last) + '</span>' +
+          '</div>' : '') +
+          (s.total ? '<div class="hero-sub">' +
+            '<span class="hero-sub-label">By fiscal year</span>' +
+            '<span class="hero-sub-value">' + esc(fyLine) + '</span>' +
+          '</div>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="mix-rows">' +
+        '<div class="mix-row"><div class="mix-label">Type mix</div><div class="chips">' + chipsHTML(s.types) + '</div></div>' +
+        '<div class="mix-row"><div class="mix-label">Topic mix</div><div class="chips">' + chipsHTML(s.topics) + '</div></div>' +
+        '<div class="mix-row"><div class="mix-label">Staff worked with</div><div class="chips">' + chipsHTML(s.staff) + '</div></div>' +
+      '</div>' +
+      '<div class="source-link-row">' + sourceLink + '</div>' +
+    '</section>';
+}
+
+function substanceHTML(e) {
+  if (e.structureDamaged) {
+    return '<div class="substance-damaged">Notes exist — open the Dossier_SOURCE NOTES Doc to read them. ' +
+           'This section\u2019s headings could not be read.</div>';
+  }
+  var paras = normalizeSubstance(e.substance);
+  if (!paras) return "";
+  /* COLLAPSED BY DEFAULT (v8 §B7) — the mockup shipped these open. */
+  return '' +
+    '<details class="substance">' +
+      '<summary class="substance-summary">' +
+        '<span class="substance-label">Substance</span>' +
+        '<svg class="substance-chevron" viewBox="0 0 12 12" aria-hidden="true">' +
+          '<path d="M 4 3 L 8 6 L 4 9" stroke="currentColor" stroke-width="1.6" fill="none" ' +
+                'stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>' +
+      '</summary>' +
+      '<div class="substance-body">' +
+        paras.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join("") +
+      '</div>' +
+    '</details>';
+}
+
+function entryHTML(e) {
+  var d = parseISO(e.date);
+  var month = d ? MONTHS[d.getUTCMonth()] : "";
+  var day   = d ? String(d.getUTCDate()).padStart(2, "0") : "";
+
+  var isGroup = !!e.group;
+  var isStub  = isGroup && e.group.role === "stub";
+
+  var classes = ["entry"];
+  if (hasSubstance(e)) classes.push("has-substance");
+  if (isGroup) classes.push("is-group");
+
+  /* metadata line — mirrors the Doc's stamped metadata */
+  var meta = [esc(e.staff), esc(e.topic)];
+  if (String(e.program || "").trim()) {
+    meta.push('<span class="meta-program">' + esc(e.program) + '</span>');
+  }
+  meta.push('<span class="meta-id">' + esc(e.engagementId) + '</span>');
+  if (isGroup) {
+    meta.push(isStub
+      ? '<strong>GROUP · Notes home: ' + esc(e.group.notesHomeName) + '</strong>'
+      : '<strong>GROUP · with ' + joinNames(e.group.participants) + '</strong>');
+  }
+
+  var stubBlock = "";
+  if (isStub) {
+    var href = String(e.group.notesHomeUrl || "").trim() || "#";
+    var idPart = e.group.notesHomeEngagementId ? " (" + esc(e.group.notesHomeEngagementId) + ")" : "";
+    stubBlock = '<div class="stub-link-block"><strong>Group engagement</strong> with ' +
+      joinNames((e.group.participants || []).concat(
+        e.group.notesHomeName ? [e.group.notesHomeName] : []
+      )) + '. Full notes in <a href="' + esc(href) + '" target="_blank" rel="noopener">' +
+      esc(e.group.notesHomeName) + '\u2019s dossier notes' + idPart + '</a>.</div>';
+  }
+
+  return '' +
+    '<article class="' + classes.join(" ") + '">' +
+      '<div class="date">' +
+        '<div class="date-month">' + esc(month) + '</div>' +
+        '<div class="date-day">' + esc(day) + '</div>' +
+      '</div>' +
+      '<div class="spine"></div>' +
+      '<div class="content">' +
+        '<div class="content-header">' +
+          '<span class="content-type">' + esc(e.type) + '</span>' +
+          (isGroup ? '<span class="content-tag">Group</span>' : '') +
+        '</div>' +
+        '<div class="content-meta">' + meta.join('<span class="meta-sep">·</span>') + '</div>' +
+        '<div class="quicklog">' +
+          '<div class="quicklog-label">Quick Log note</div>' +
+          '<div class="quicklog-text">' +
+            (String(e.quickLogNote || "").trim()
+              ? esc(e.quickLogNote)
+              : '<span class="notes-empty">No note recorded at entry</span>') +
+          '</div>' +
+        '</div>' +
+        (isStub ? stubBlock : substanceHTML(e)) +
+      '</div>' +
+    '</article>';
+}
+
+function timelineHTML(engagements) {
+  var list = sortedEngagements(engagements);
+  if (!list.length) {
+    return '<div class="timeline"><div class="history-empty">No engagements recorded for this contact yet</div></div>';
+  }
+
+  /* FY counts for the chapter meta lines */
+  var counts = {};
+  list.forEach(function (e) {
+    var fy = e.fy || deriveFY(e.date);
+    counts[fy] = (counts[fy] || 0) + 1;
+  });
+
+  var html = "", currentFY = null;
+  list.forEach(function (e) {
+    var fy = e.fy || deriveFY(e.date);
+    if (fy !== currentFY) {
+      currentFY = fy;
+      html += '<div class="fy-chapter">' +
+                '<div class="fy-chapter-label">' + esc(fyChapterLabel(fy)) + '</div>' +
+                '<div class="fy-chapter-meta">' + esc(plural(counts[fy], "engagement")) + '</div>' +
+                '<div class="fy-chapter-rule"></div>' +
+              '</div>';
+    }
+    html += entryHTML(e);
+  });
+  return '<div class="timeline">' + html + '</div>';
+}
+
+function historyHTML(engagements) {
+  return '' +
+    '<section class="history">' +
+      '<div class="section-label">' +
+        '<span class="section-label-text">Engagement History</span>' +
+        '<span class="section-label-source">Synced from FY-* Engagements · Substance written by consultants</span>' +
+      '</div>' +
+      timelineHTML(engagements) +
+    '</section>';
+}
+
+function documentHTML(payload) {
+  var c = payload.contact;
+  var s = deriveSummary(payload.engagements);
+  return '' +
+    '<main class="document">' +
+      '<div class="document-inner">' +
+        titleBlockHTML(c) +
+        '<div class="frame">' +
+          '<div class="frame-corner">File · ' + esc(c.contactId) + '</div>' +
+          catalogingHTML(c) +
+          notesHTML(c) +
+          summaryHTML(s, c) +
+        '</div>' +
+        historyHTML(payload.engagements) +
+        '<footer class="doc-footer">' +
+          '<span>Duke Center for Teaching and Learning · Faculty Development Connect Dossier</span>' +
+          '<span>Internal Faculty Development Team Use Only</span>' +
+        '</footer>' +
+      '</div>' +
+    '</main>';
+}
+
+
+/* ---------------------------------------------------------------------------
+   6. SYNTHETIC DATA (demo mode only)
+      Obviously-fictional people, `.example` email domain, fictional staff
+      personas. Nothing here touches a real Duke record. Staff personas and
+      names are the data manager's to confirm before anything ships publicly.
+   ------------------------------------------------------------------------- */
+const DEMO_PAYLOADS = {
+  "DEMO-0104": {
+    contact: {
+      contactId: "DEMO-0104",
+      displayName: "Marisol \u201cMari\u201d Fenwick",
+      email: "marisol.fenwick@duke.example",
+      netId: "mrf0142",
+      pronouns: "She/Her/Hers",
+      primaryAffiliation: "Faculty",
+      rank: "Regular Rank Non Tenure Track faculty",
+      parentOrg: "University Institutes and Centers",
+      primaryOrg: "Duke Global Health Institute (DGHI)",
+      title: "Associate Professor of the Practice of Global Health",
+      generalNotes: "Coordinates the DGHI online masters sequence. Prefers email over meetings during " +
+                    "the teaching term. Interested in being a peer observer once the program reopens.",
+      sourceNotesUrl: "#demo-source-notes"
+    },
+    engagements: [
+      {
+        engagementId: "ENG-FY2627-0036", date: "2026-07-21", fy: "FY26-27",
+        type: "Consultation", staff: "Dana Whitlock", topic: "Course Design",
+        quickLogNote: "Fall module restructure — second of three planned sessions.",
+        group: null, structureDamaged: false,
+        substance: [
+          "Walked the revised module map for the fall run of the graduate epidemiology course. " +
+          "Mari has moved the clinical case scaffold from week 6 up to week 2, which fixes the " +
+          "pacing problem we identified in June — students now meet a real case before the " +
+          "methods load arrives.",
+          "Open question she raised: whether the peer-review step on case analyses should be " +
+          "graded or credit-only. We talked through both; she is leaning credit-only for the " +
+          "first offering so the norm-setting happens without stakes attached.",
+          "Next: she sends the week 1–4 build by August 7. I review before our third session."
+        ]
+      },
+      {
+        engagementId: "ENG-FY2627-0018", date: "2026-07-08", fy: "FY26-27",
+        type: "Inquiry", staff: "Dana Whitlock", topic: "Instructional Technology",
+        quickLogNote: "Asked whether async discussion tooling supports anonymous first posts. " +
+                      "Confirmed it does; sent setup steps.",
+        group: null, structureDamaged: false,
+        /* Placeholder only — proves the emptiness rule: this must render as an
+           OPEN node with no substance block. */
+        substance: ["(Write here.)"]
+      },
+      {
+        engagementId: "ENG-FY2627-0009", date: "2026-07-02", fy: "FY26-27",
+        type: "Office Hours", staff: "Yusuf Barlowe", topic: "Assessment & Grading",
+        quickLogNote: "Dropped by themed office hours on alternative grading. Brief conversation " +
+                      "about specifications grading in a methods course.",
+        group: null, substance: null, structureDamaged: false
+      },
+      {
+        engagementId: "ENG-FY2526-0265", date: "2026-06-23", fy: "FY25-26",
+        type: "Inquiry", staff: "Dana Whitlock", topic: "Course Design",
+        quickLogNote: "Follow-up request for the two case-based course examples promised on 6/18.",
+        group: null, substance: null, structureDamaged: false
+      },
+      {
+        engagementId: "ENG-FY2526-0261", date: "2026-06-18", fy: "FY25-26",
+        type: "Consultation", staff: "Dana Whitlock", topic: "Curriculum Development",
+        quickLogNote: "DGHI 510 co-teaching team — syllabus alignment across the three sections. " +
+                      "Group meeting with Mari, Tobias, and Priya.",
+        group: { role: "home", participants: ["Tobias Renn", "Priya Lachlan"] },
+        structureDamaged: false,
+        substance: [
+          "All three section leads want a shared spine — common learning outcomes and a common " +
+          "final case — with local freedom in the middle weeks. We drafted the shared outcomes " +
+          "language on the whiteboard; Mari is taking it away to circulate.",
+          "Sticking point: the sections currently weight participation differently (10% / 20% / 0%). " +
+          "They agreed to converge for consistency but not today. Parked for their August retreat.",
+          "I promised the CTL outcomes-alignment worksheet and an example from another " +
+          "multi-section program by end of week."
+        ]
+      },
+      {
+        engagementId: "ENG-FY2526-0244", date: "2026-06-09", fy: "FY25-26",
+        type: "Consultation", staff: "Yusuf Barlowe", topic: "Program/Dept-Level Consulting",
+        quickLogNote: "Exploratory conversation about a DGHI-wide teaching survey. Priya convened.",
+        group: {
+          role: "stub",
+          participants: ["Tobias Renn"],
+          notesHomeName: "Priya Lachlan",
+          notesHomeUrl: "#demo-notes-home",
+          notesHomeEngagementId: "ENG-FY2526-0243"
+        },
+        substance: null, structureDamaged: false
+      },
+      {
+        engagementId: "ENG-FY2526-0231", date: "2026-05-28", fy: "FY25-26",
+        type: "Fac Dev Program", staff: "Yusuf Barlowe", topic: "Teaching Practices",
+        program: "Engaging Learners and Building Community",
+        quickLogNote: "Session 4 of 6.",
+        group: null, substance: null, structureDamaged: false
+      },
+      {
+        engagementId: "ENG-FY2526-0208", date: "2026-05-14", fy: "FY25-26",
+        type: "Fac Dev Program", staff: "Yusuf Barlowe", topic: "Teaching Practices",
+        program: "Collaborative Project Courses Faculty Fellows (CPC 2026-2027)",
+        quickLogNote: "Cohort meeting 2 \u2014 long program name, tests wrapping.",
+        group: null, substance: null, structureDamaged: false
+      },
+      {
+        engagementId: "ENG-FY2526-0177", date: "2026-04-30", fy: "FY25-26",
+        type: "Training", staff: "Dana Whitlock", topic: "Instructional Technology",
+        quickLogNote: "DGHI faculty meeting — walkthrough of asynchronous course tooling.",
+        group: null, substance: null, structureDamaged: true
+      },
+      {
+        engagementId: "ENG-FY2526-0154", date: "2026-04-16", fy: "FY25-26",
+        type: "Inquiry", staff: "Dana Whitlock", topic: "AI in Teaching & Learning",
+        quickLogNote: "Asked about syllabus AI policy language for a methods course. " +
+                      "Sent the CTL policy examples page.",
+        group: null, substance: null, structureDamaged: false
+      },
+      {
+        engagementId: "ENG-FY2526-0132", date: "2026-04-02", fy: "FY25-26",
+        type: "Inquiry", staff: "Imani Castellanos", topic: "Inclusive Teaching",
+        quickLogNote: "Accessibility of recorded lecture captions — routed to the campus " +
+                      "accessibility office and shared the CTL captioning guidance.",
+        group: null, substance: null, structureDamaged: false
+      }
+    ],
+    meta: { mode: "demo" }
+  },
+
+  /* Second contact: exercises the empty-notes state, a single FY, singular
+     pluralization ("1 engagement"), and a contact with no Doc yet. */
+  "DEMO-0117": {
+    contact: {
+      contactId: "DEMO-0117",
+      displayName: "Tobias Renn",
+      email: "tobias.renn@duke.example",
+      netId: "tbr0088",
+      pronouns: "He/Him/His",
+      primaryAffiliation: "Faculty",
+      rank: "Tenured & Tenure Track Faculty",
+      parentOrg: "Trinity College of Arts & Sciences",
+      primaryOrg: "Statistical Science",
+      title: "Associate Professor of Statistical Science",
+      generalNotes: "",
+      sourceNotesUrl: ""
+    },
+    engagements: [
+      {
+        engagementId: "ENG-FY2627-0031", date: "2026-07-16", fy: "FY26-27",
+        type: "Other", staff: "Imani Castellanos", topic: "New Faculty Orientation & Support",
+        quickLogNote: "Served alongside on a new-faculty panel; brief conversation afterward " +
+                      "about the peer observation program.",
+        group: null, substance: null, structureDamaged: false
+      }
+    ],
+    meta: { mode: "demo" }
+  }
+};
+
+
+/* ---------------------------------------------------------------------------
+   7. THE ADAPTER SEAM
+      The only place that knows where data comes from. Live data arrives
+      pre-built from the server; demo data comes from the embedded synthetic
+      payloads. Render code above is identical in both modes.
+
+      NOTE: the contact ID is NOT read from location.search. HtmlService serves
+      this page inside a sandboxed iframe where the query string is not visible
+      to client script — the ID is resolved server-side in doGet(e) and arrives
+      inside the payload.
+   ------------------------------------------------------------------------- */
+function demoContactId() {
+  var q = (typeof location !== "undefined" && location.search) || "";
+  var m = /[?&]id=([^&]+)/.exec(q);
+  var id = m ? decodeURIComponent(m[1]).trim() : "";
+  /* An unknown ID must surface as an error, not silently render someone else's
+     dossier under a URL that claims a different contact. Default only when no
+     ID was requested at all. */
+  if (id) return id;
+  return Object.keys(DEMO_PAYLOADS)[0];
+}
+
+function buildPayload(contactId) {
+  if (!IS_DEMO) return INJECTED_PAYLOAD;
+  var p = DEMO_PAYLOADS[contactId];
+  if (!p) throw new Error("No demo contact " + contactId);
+  return p;
+}
+
+/* ---------------------------------------------------------------------------
+   8. BOOT
+   ------------------------------------------------------------------------- */
+function demoBannerHTML(contactId) {
+  var options = Object.keys(DEMO_PAYLOADS).map(function (id) {
+    var name = DEMO_PAYLOADS[id].contact.displayName;
+    return '<option value="' + esc(id) + '"' + (id === contactId ? " selected" : "") + '>' +
+           esc(name) + " · " + esc(id) + '</option>';
+  }).join("");
+  return '<div class="demo-banner">' +
+           '<span>Demonstration — synthetic data</span>' +
+           '<label>Contact <select id="demo-contact">' + options + '</select></label>' +
+         '</div>';
+}
+
+/**
+ * The masthead, identical on all four pages.
+ *
+ * homeUrl is carried in the payload rather than written into this file: served
+ * live the front page is an absolute URL on another origin, and no page file in
+ * this system holds configuration. Absent — which is the static demo case, where
+ * index.html sits alongside — the relative default is correct.
+ */
+function mastheadHTML(payload) {
+  var home = (payload && payload.meta && payload.meta.homeUrl) ? payload.meta.homeUrl : "index.html";
+  return '<header class="fdc-masthead">' +
+           '<div class="fdc-masthead-inner">' +
+             '<div class="fdc-mark">' +
+               '<div class="fdc-glyph">' +
+                 '<svg width="19" height="19" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+                   '<path d="M3 5.5h14M3 10h14M3 14.5h9" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>' +
+                 '</svg>' +
+               '</div>' +
+               '<div>' +
+                 '<h1 class="fdc-title">Faculty Development Connect: <b>Dossier</b></h1>' +
+                 '<p class="fdc-sub">Duke University &middot; Center for Teaching &amp; Learning</p>' +
+               '</div>' +
+             '</div>' +
+             '<a class="fdc-home" href="' + esc(home) + '" target="_top">' +
+               '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
+                 '<path d="M2 6.4L7 2l5 4.4V12a.6.6 0 01-.6.6H2.6A.6.6 0 012 12V6.4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+               '</svg>' +
+               'Home' +
+             '</a>' +
+           '</div>' +
+         '</header>';
+}
+
+function errorHTML(message) {
+  return '<div class="page-state">' +
+           '<h2>This dossier can\u2019t be displayed</h2>' +
+           '<p>' + esc(message) + '</p>' +
+           '<p>Engagement data is unaffected — it lives in the System of Record.</p>' +
+         '</div>';
+}
+
+function render() {
+  var root = document.getElementById("root");
+  var contactId = IS_DEMO ? demoContactId() : "";
+  var html = "";
+  try {
+    var payload = buildPayload(contactId);
+    if (IS_DEMO) html += demoBannerHTML(contactId);
+    html += mastheadHTML(payload);
+    html += documentHTML(payload);
+    if (IS_DEMO) {
+      html += '<div class="demo-footnote">Demonstration — synthetic data · ' +
+              'no real Duke records appear on this page</div>';
+    }
+  } catch (err) {
+    /* The masthead renders on the error path as well: a dossier that cannot be
+       displayed is exactly when someone needs the way back. mastheadHTML()
+       tolerates a null payload and falls back to the relative home. */
+    html = (IS_DEMO ? demoBannerHTML(contactId) : "") +
+           mastheadHTML(null) +
+           errorHTML(err && err.message ? err.message : String(err));
+  }
+  root.innerHTML = html;
+
+  var sel = document.getElementById("demo-contact");
+  if (sel) {
+    sel.addEventListener("change", function () {
+      location.search = "?id=" + encodeURIComponent(sel.value);
+    });
+  }
+}
+
+if (typeof document !== "undefined" && document.getElementById("root")) {
+  render();
+}
+
+/* Headless test surface — harmless in the browser. */
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    IS_DEMO: IS_DEMO, DEMO_PAYLOADS: DEMO_PAYLOADS, buildPayload: buildPayload,
+    normalizeHeading: normalizeHeading, isPromptHeading: isPromptHeading,
+    isPlaceholderParagraph: isPlaceholderParagraph, normalizeSubstance: normalizeSubstance,
+    deriveFY: deriveFY, fyChapterLabel: fyChapterLabel, plural: plural,
+    sortedEngagements: sortedEngagements, mixCounts: mixCounts,
+    hasSubstance: hasSubstance, deriveSummary: deriveSummary,
+    documentHTML: documentHTML, timelineHTML: timelineHTML, entryHTML: entryHTML,
+    mastheadHTML: mastheadHTML
+  };
+}
+</script>
+
+</body>
+</html>

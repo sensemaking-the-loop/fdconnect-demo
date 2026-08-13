@@ -1,0 +1,72 @@
+{
+  "schema": "fdconnect-demo-provenance/1",
+  "generated_at": "2026-08-10T22:23:29+00:00",
+  "source": {
+    "commit": "8f8bd01180588251644e8a793a61b7166a07d8e8",
+    "commit_short": "8f8bd011",
+    "branch": "main",
+    "committed_at": "2026-08-10T18:22:47-04:00",
+    "tree_clean": true,
+    "note": "Commit in the private canonical repository. Recorded so the team can identify the exact source state; it grants no access. The remote URL is deliberately omitted."
+  },
+  "derivation": {
+    "deriver": {
+      "path": "tools/derive_demo_v7.py",
+      "sha256": "1005660a23b772202b66f6c89b552790a964bc981601e71fdc26c270ea47bbe1"
+    },
+    "real_values_harvested_and_denied": 9,
+    "assertion_classes_run": [
+      "A",
+      "A-warn",
+      "B",
+      "C",
+      "D",
+      "E1",
+      "E2",
+      "E3",
+      "F",
+      "F2",
+      "G",
+      "H",
+      "I"
+    ],
+    "gate_result": "RESULT: all assertions passed."
+  },
+  "build": {
+    "file_count": 6,
+    "files": [
+      {
+        "name": "DossierDirectory.html",
+        "bytes": 130368,
+        "sha256": "3ec3bcd994922380156af2424562701d8eca1040c953ad24ba56c4892184eb1d"
+      },
+      {
+        "name": "DossierFullView.html",
+        "bytes": 55274,
+        "sha256": "f07bc0b903e1820c0f57d25ea30d76e723fd83ed2d1c38a34cfa7de66b7d0102"
+      },
+      {
+        "name": "about.html",
+        "bytes": 12300,
+        "sha256": "53393e013679f4f7a0e3598e41be5578f1438d353bcb0015b3e9972cdb7825b2"
+      },
+      {
+        "name": "dashboard.html",
+        "bytes": 109410,
+        "sha256": "92c29806754a57cfc6bf57b0dd080a061b40c9192adb414055aea9d3cc7268c6"
+      },
+      {
+        "name": "index.html",
+        "bytes": 5387,
+        "sha256": "26d949e4aceadc564093e3bcd8fc4f438c47e36bc998fabb217b6853c818fb8d"
+      },
+      {
+        "name": "quicklog.html",
+        "bytes": 56726,
+        "sha256": "dc6e1fd11a5a089348c65cc44bf30aec027d0de761ec54a6cb8062f45f027086"
+      }
+    ]
+  },
+  "about": "Every person, engagement, program, and number in this demonstration is fictional. The taxonomy and the workflow are the real ones. This build was derived from the commit above and published only after every assertion in the derivation gate passed, including screening all synthetic names against the real contact roster.",
+  "human_summary": "Derived from 8f8bd011 on 2026-08-10. All gate assertions passed."
+}

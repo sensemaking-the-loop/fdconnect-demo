@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Development Connect — Demonstration (synthetic data)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: linear-gradient(160deg, #f0f4f8, #e2e8f0);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 20px; padding: 48px 40px;
+      box-shadow: 0 4px 32px rgba(0,20,50,0.08);
+      max-width: 520px; width: 100%; text-align: center;
+    }
+    .logo {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, #003366, #1a5276);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif; color: #003366;
+      font-size: 24px; margin-bottom: 4px;
+    }
+    .sub { color: #64748b; font-size: 14px; margin-bottom: 36px; }
+    .links { display: flex; flex-direction: column; gap: 12px; }
+    a {
+      display: block; padding: 16px 24px; border-radius: 12px;
+      text-decoration: none; font-weight: 600; font-size: 16px;
+      transition: all 0.2s;
+    }
+    .primary {
+      background: linear-gradient(135deg, #003366, #1a5276);
+      color: #fff;
+    }
+    .primary:hover {
+      box-shadow: 0 4px 16px rgba(0,51,102,0.3);
+      transform: translateY(-1px);
+    }
+    .secondary {
+      background: #f0f4f8; color: #003366;
+      border: 1.5px solid #d1d9e0;
+    }
+    .secondary:hover { background: #e8edf2; }
+    /* Third door. Ink-teal is the dossier system's accent, used here so the
+       link previews the visual language it leads to. */
+    .tertiary {
+      background: #fff; color: #2C5773;
+      border: 1.5px solid #cfdae1;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .tertiary:hover { background: #f4f7f9; border-color: #2C5773; }
+    .tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase; color: #6B7280;
+      border: 1px solid #d1d9e0; border-radius: 4px;
+      padding: 2px 6px; white-space: nowrap;
+    }
+    .footer { margin-top: 32px; font-size: 12px; color: #94a3b8; }
+    .demo-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    padding: 11px 24px;
+    background: #001A33; color: #D8DCE4;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase; text-align: center;
+  }
+  .demo-banner strong { color: #FFFFFF; font-weight: 500; }
+  body { padding-top: 56px; }
+  /* The front page is where campus stakeholders and other CTLs arrive, so the
+     demo status is stated in the page itself and not only in the chrome. A
+     visitor who scrolls past a thin strip should still be unable to mistake
+     this for the live system. */
+  .demo-notice {
+    text-align: left;
+    background: #F6F8FA;
+    border: 1px solid #d1d9e0;
+    border-left: 3px solid #003366;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 0 0 28px;
+    font-size: 13.5px; line-height: 1.55; color: #46536b;
+  }
+  .demo-notice b { color: #1A2333; font-weight: 700; }
+  .demo-notice a {
+    display: inline-block; margin-top: 9px;
+    color: #1F6F6B; font-weight: 700; text-decoration: none;
+    border-bottom: 1px solid #b9cdcb;
+  }
+  .demo-notice a:hover { border-bottom-color: #1F6F6B; }
+  @media (max-width: 480px) { body { padding-top: 64px; } }
+</style>
+</head>
+<body>
+<div class="demo-banner">
+  <strong>Demonstration — synthetic data.</strong> Every person, engagement, and number on this site is fictional.
+</div>
+  <div class="card">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+        stroke="white" stroke-width="2" stroke-linecap="round">
+        <path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z"/>
+        <path d="M12 12L20 7.5"/><path d="M12 12V21"/>
+        <path d="M12 12L4 7.5"/>
+      </svg>
+    </div>
+    <h1>Faculty Development Connect</h1>
+    <p class="sub">Center for Teaching & Learning · Duke University</p>
+    <div class="demo-notice">
+      <b>This is a public demonstration of Faculty Development Connect.</b>
+      Every person, engagement, program, and number you will see is
+      fictional, generated for this demonstration. No real faculty record
+      appears anywhere on this site, and nothing you enter is saved.
+      The taxonomy and the workflow are the real ones.
+      <a href="about.html">Read more about this demonstration</a>
+    </div>
+    <div class="links">
+      <a href="quicklog.html" class="primary">Quick Log — Enter an Engagement</a>
+      <a href="dashboard.html" class="secondary">Dashboard — View Our Engagements</a>
+      <a href="DossierDirectory.html" class="tertiary">
+        Dossiers — Find a Contact
+        <span class="tag">Synthetic</span>
+      </a>
+    </div>
+  </div>
+  <div class="footer">Duke CTL Faculty Development Team</div>
+</body>
+</html>

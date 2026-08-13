@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a Contact — Faculty Development Connect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page-bg: #ECEDEF;
+    --doc-bg: #FFFFFF;
+    --frame-bg: #EDF1F5;
+    --frame-edge: #DAE1E8;
+    --ink: #1A2333;
+    --ink-soft: #4A5468;
+    --muted: #6B7280;
+    --faint: #9CA3AF;
+    --hairline: #E5E7EB;
+    --rule: #D6D9DD;
+    --tint: #F6F7F9;
+    --accent: #2C5773;
+    --accent-deep: #1F4159;
+    --accent-soft: #5B7A8E;
+    --accent-faint: #D5DDE4;
+    --group: #B0793F;
+    --group-soft: #D4A876;
+    --group-tint: #FAF1E2;
+    --fy: #6B5C7C;
+    --fy-soft: #A89AB4;
+    --empty: #B5B8BD;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0 24px 72px;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--page-bg);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 14.5px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ───── DEMO BANNER ───── */
+  /* An inert button is muted, so the two contacts with an authored dossier
+     are visible at a glance rather than found by clicking. */
+  .btn[data-inert] { opacity: 0.5; }
+  /* Sits at the very top of the document, above the masthead, on every page
+     in the system. A page should declare that it is a demonstration before it
+     shows anything else, including its own chrome. */
+  .demo-banner {
+    margin: 0;
+    padding: 11px 24px;
+    background: var(--ink);
+    color: #D8DCE4;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .demo-banner strong { color: #FFFFFF; font-weight: 500; }
+
+  /* ───── SHARED MASTHEAD ─────
+     Lifted from dashboard.html .db-header so all four pages carry identical
+     chrome: same gradient stops, same 1100px inner width, same 24px padding,
+     same Playfair Display title at 0.3px tracking.
+
+     This band is deliberately a different typographic world from the page
+     beneath it. That separation is what lets Playfair sit above Source Serif
+     without reading as an accident, and it is why nothing below this band
+     needed to change. */
+  .fdc-masthead {
+    background: linear-gradient(135deg, #001A33 0%, #003366 40%, #1a5276 100%);
+    padding: 0 20px;
+    box-shadow: 0 4px 24px rgba(0,26,51,0.2);
+  }
+  .fdc-masthead-inner {
+    max-width: 1100px; margin: 0 auto; padding: 24px 0;
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  }
+  .fdc-mark { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .fdc-glyph {
+    width: 38px; height: 38px; flex: none; border-radius: 8px;
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: grid; place-items: center;
+  }
+  .fdc-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: 0.3px; font-weight: 500; font-size: 25px;
+    color: #FFFFFF; margin: 0; line-height: 1.15;
+  }
+  .fdc-title b { font-weight: 600; }
+  .fdc-sub {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px; color: rgba(255,255,255,0.68); margin: 3px 0 0;
+  }
+  .fdc-home {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13.5px; font-weight: 600;
+    color: #FFFFFF; text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 8px;
+    padding: 8px 15px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .fdc-home:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.55); }
+  .fdc-home:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+  @media (max-width: 720px) {
+    .fdc-masthead-inner { flex-direction: column; align-items: flex-start; }
+    .fdc-title { font-size: 21px; }
+  }
+
+  /* ───── SHEET ───── */
+  .sheet {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--doc-bg);
+    box-shadow:
+      0 1px 1px rgba(0,0,0,0.02),
+      0 4px 12px rgba(20,30,50,0.04),
+      0 24px 48px rgba(20,30,50,0.06);
+    border-radius: 3px;
+    padding: 52px 56px 40px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .eyebrow::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--accent-faint);
+  }
+
+  h1, .sheet-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+  }
+
+  .lede {
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 34px;
+  }
+
+  /* ───── SEARCH ───── */
+  .search {
+    position: relative;
+    border-bottom: 1.5px solid var(--accent-faint);
+    transition: border-color 140ms ease;
+    margin-bottom: 18px;
+  }
+  .search:focus-within { border-bottom-color: var(--accent); }
+  .search svg {
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-soft);
+  }
+  .search input {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 21px;
+    font-weight: 400;
+    color: var(--ink);
+    padding: 12px 78px 13px 34px;
+    outline: none;
+  }
+  .search input::placeholder { color: var(--faint); font-style: italic; }
+  .clear-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 6px 4px;
+    display: none;
+  }
+  .clear-btn:hover { color: var(--accent); }
+  .clear-btn.on { display: block; }
+
+  /* ───── CONTROLS ───── */
+  .controls {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  /* Two rows: who the person is, then how they have engaged. Eight controls
+     on one line wrapped unpredictably at common window widths. */
+  .control-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+  .control-row + .control-row { margin-top: 12px; }
+  .field { position: relative; display: inline-flex; flex-direction: column; gap: 4px; }
+  /* A standing label, because the default option doubled as the label: once a
+     value was chosen the word "School" disappeared with it. */
+  .field > label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--faint);
+  }
+  .ctl-spacer { flex: 1 1 auto; }
+  .field select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    background: var(--doc-bg);
+    /* Was IBM Plex Mono 10.5px uppercase. Mono at that size with letter-spacing
+       and caps is the readability complaint; Mono is kept for labels, counts and
+       key hints, where it still earns its place. */
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    padding: 8px 28px 8px 10px;
+    cursor: pointer;
+    max-width: 230px;
+    text-overflow: ellipsis;
+  }
+  .field select:hover { border-color: var(--accent-faint); }
+  .field select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .field select.active {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    background: #F4F7F9;
+  }
+  .field::after {
+    content: "";
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    width: 5px; height: 5px;
+    margin-top: -4px;
+    border-right: 1.2px solid var(--faint);
+    border-bottom: 1.2px solid var(--faint);
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+  .controls .spacer { flex: 1; }
+  .reset {
+    border: 0;
+    background: transparent;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    cursor: pointer;
+    padding: 6px 2px;
+    visibility: hidden;
+  }
+  .reset:hover { color: var(--accent); }
+  .reset.on { visibility: visible; }
+
+  /* ───── STATUS / SCALE ───── */
+  .statusline {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 0 4px;
+  }
+  .count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .count b { color: var(--ink); font-weight: 500; }
+  .legend {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-left: auto;
+  }
+  .legend i {
+    display: inline-block;
+    width: 2px; height: 11px;
+    vertical-align: -2px;
+    margin-right: 5px;
+  }
+  .legend .solo i { background: var(--accent-soft); }
+  .legend .grp i { background: var(--group); }
+
+  .row-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 192px 248px;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .scale-head {
+    padding: 6px 0 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .scale {
+    position: relative;
+    height: 22px;
+  }
+  .scale .axis {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--hairline);
+  }
+  .scale .tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px; height: 4px;
+    background: var(--hairline);
+  }
+  .scale .fy-div {
+    position: absolute;
+    bottom: 0;
+    width: 1px; height: 18px;
+    background: var(--fy-soft);
+  }
+  .scale .fy-label {
+    position: absolute;
+    bottom: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--fy);
+    white-space: nowrap;
+  }
+  .scale .fy-label.left { transform: translateX(-100%); padding-right: 6px; }
+  .scale .fy-label.right { padding-left: 6px; }
+  .scale-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-align: right;
+  }
+
+  /* ───── RESULTS ───── */
+  ul.results { list-style: none; margin: 0; padding: 0; }
+
+  li.result {
+    padding: 15px 12px 15px 12px;
+    margin: 0 -12px;
+    border-bottom: 1px solid var(--hairline);
+    border-radius: 2px;
+  }
+  li.result:hover { background: var(--tint); }
+  li.result.cursor {
+    background: #F4F7F9;
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+
+  .name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17.5px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    margin: 0 0 3px;
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .name .cid {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--accent-soft);
+  }
+  .name mark {
+    background: #FDF3D8;
+    color: inherit;
+    border-radius: 1px;
+    padding: 0;
+  }
+  .meta {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .rank-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--faint); margin-top: 3px;
+  }
+  .meta .sep { color: var(--faint); padding: 0 6px; }
+  .meta .unit { color: var(--ink-soft); }
+  .meta .program {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .external {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--group);
+    border: 1px solid var(--group-soft);
+    background: var(--group-tint);
+    border-radius: 2px;
+    padding: 1px 5px;
+    margin-left: 8px;
+    font-weight: 500;
+    align-self: center;
+  }
+
+  /* activity column */
+  .activity { text-align: left; }
+  .spine {
+    position: relative;
+    height: 20px;
+    margin-bottom: 5px;
+  }
+  .spine .base {
+    position: absolute;
+    left: 0; right: 0; bottom: 3px;
+    height: 1px;
+    background: var(--hairline);
+  }
+  .spine .fy-div {
+    position: absolute;
+    bottom: 0; width: 1px; height: 15px;
+    background: #EDE9F1;
+  }
+  .spine .mk {
+    position: absolute;
+    bottom: 3px;
+    width: 2px;
+    height: 11px;
+    background: var(--accent-soft);
+    border-radius: 0.5px;
+  }
+  .spine .mk.group { background: var(--group); }
+  .activity .figures.last { color: var(--faint); }
+  .activity .figures {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .activity .figures b { color: var(--ink); font-weight: 500; }
+  .activity .none {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--empty);
+  }
+
+  /* actions */
+  .actions { display: flex; gap: 7px; justify-content: flex-end; white-space: nowrap; }
+  /* Belt for the width estimate above: if a label ever grows, the activity
+     column clips rather than letting the buttons ride over it. */
+  .activity { min-width: 0; overflow: hidden; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    padding: 8px 10px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  .btn svg { flex: 0 0 auto; }
+  .btn-notes {
+    color: var(--accent-deep);
+    border-color: var(--accent-faint);
+    background: var(--doc-bg);
+  }
+  .btn-notes:hover { background: #EDF2F5; border-color: var(--accent-soft); }
+  .btn-view {
+    color: #FFFFFF;
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn-view:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .inert-note {
+    grid-column: 1 / -1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    color: var(--group);
+    background: var(--group-tint);
+    border-left: 2px solid var(--group-soft);
+    padding: 5px 9px;
+    margin: 10px 0 0;
+    display: none;
+  }
+  .inert-note.on { display: block; }
+
+  /* ───── EMPTY ───── */
+  .empty-state {
+    padding: 46px 0 40px;
+    text-align: center;
+  }
+  .empty-state p.big {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  .empty-state p.small {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 0 auto;
+    max-width: 46ch;
+  }
+
+  /* ───── FOOTER ───── */
+  .hint {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .hint kbd {
+    font-family: inherit;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    padding: 1px 4px;
+    color: var(--muted);
+  }
+  .sheet-foot {
+    max-width: 1000px;
+    margin: 18px auto 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #A6ABB3;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 860px) {
+    .sheet { padding: 36px 24px 28px; }
+    h1, .sheet-title { font-size: 27px; }
+    .row-grid { grid-template-columns: minmax(0,1fr); gap: 12px; }
+    .scale-head { display: none; }
+    .actions { justify-content: flex-start; }
+    .legend { margin-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <strong>Demonstration — synthetic data.</strong> No real contact records appear on this page.
+</div>
+
+<header class="fdc-masthead">
+  <div class="fdc-masthead-inner">
+    <div class="fdc-mark">
+      <div class="fdc-glyph">
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3 5.5h14M3 10h14M3 14.5h9" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="fdc-title">Faculty Development Connect: <b>Directory</b></h1>
+        <p class="fdc-sub">Duke University &middot; Center for Teaching &amp; Learning</p>
+      </div>
+    </div>
+    <a class="fdc-home" id="home-link" href="index.html" target="_top">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M2 6.4L7 2l5 4.4V12a.6.6 0 01-.6.6H2.6A.6.6 0 012 12V6.4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+      </svg>
+      Home
+    </a>
+  </div>
+</header>
+
+<main class="sheet">
+  <div class="eyebrow">Faculty Development Connect · Dossiers</div>
+  <h2 class="sheet-title">Find a Contact</h2>
+  <p class="lede">Type a name, school, department, or program. Every Contact in Faculty Development Connect has a dossier — open the <em>Source notes</em> Google Doc to write, or the <em>Full view</em> page to read.</p>
+
+  <div class="search">
+    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M11 11L15.5 15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <label for="q" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Search contacts</label>
+    <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Start typing a name…">
+    <button class="clear-btn" id="clear" type="button">Clear</button>
+  </div>
+
+  <div class="controls">
+    <div class="control-row">
+      <span class="field"><label for="f-school">School / Unit</label><select id="f-school"></select></span>
+      <span class="field"><label for="f-rank">Rank</label><select id="f-rank"></select></span>
+      <span class="field"><label for="f-program">Program</label><select id="f-program"></select></span>
+      <span class="field"><label for="f-staff">CTL staff</label><select id="f-staff"></select></span>
+    </div>
+    <div class="control-row">
+      <span class="field"><label for="f-fy">Fiscal year</label><select id="f-fy"></select></span>
+      <span class="field"><label for="f-activity">Last engaged</label><select id="f-activity"></select></span>
+      <span class="field"><label for="f-depth">Engagements</label><select id="f-depth"></select></span>
+      <span class="ctl-spacer"></span>
+      <span class="field"><label for="f-sort">Sort by</label><select id="f-sort"></select></span>
+      <span class="field"><label for="reset">&nbsp;</label><button class="reset" id="reset" type="button">Reset</button></span>
+    </div>
+  </div>
+
+  <div class="statusline">
+    <span class="count" id="count" aria-live="polite"></span>
+    <span class="legend">
+      <span class="solo"><i></i>engagement</span>
+      <span class="grp"><i></i>group</span>
+    </span>
+  </div>
+
+  <div class="row-grid scale-head">
+    <div class="scale-caption" id="scale-caption"></div>
+    <div class="scale" id="scale"></div>
+    <div></div>
+  </div>
+
+  <ul class="results" id="results"></ul>
+
+  <div class="hint">
+    <span><kbd>↑</kbd> <kbd>↓</kbd> move</span>
+    <span><kbd>return</kbd> open Full view</span>
+    <span><kbd>shift</kbd> + <kbd>return</kbd> open Source notes</span>
+    <span><kbd>esc</kbd> clear</span>
+  </div>
+</main>
+
+<div class="sheet-foot">
+  <span>Dossier Directory · mockup v1</span>
+  <span>Synthetic contacts · real taxonomy · full dossiers included for two</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   PAYLOAD CONTRACT
+   The server replaces the sentinel string literal below with the
+   directory payload object. If it is still a string, this file is
+   running as a static demo and uses SYNTHETIC instead.
+   ═══════════════════════════════════════════════════════════════ */
+const INJECTED_PAYLOAD = "__FDC_PAYLOAD__";
+
+/* ── Synthetic directory. Fictional people, real taxonomy. ── */
+const SYNTHETIC = {
+  meta: { demo: true, contactCount: 190 },
+  contacts: [{"id":"DEMO-0001","first":"Ambrose","last":"Isakovic","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Medicine","programs":[],"staff":["Dana Whitlock","Rosalind Achebe-Voss"],"topics":["AI in Teaching & Learning","Curriculum Development","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-23","g":false},{"d":"2026-07-22","g":false},{"d":"2026-11-08","g":false}]},{"id":"DEMO-0002","first":"Thaddeus","last":"Zdenek","preferred":"Thad","affiliation":"faculty","title":"Associate Professor of Teaching","rank":"Tenured & Tenure Track Faculty","school":"Fuqua School of Business","org":"","programs":["AI in Education at Duke Summit, Pre-Summit Workshops","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["Assessment & Grading","Curriculum Development","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-20","g":false},{"d":"2026-01-16","g":false},{"d":"2026-03-18","g":false},{"d":"2026-11-22","g":false}]},{"id":"DEMO-0003","first":"Lorcan","last":"Ingelbrecht","preferred":"x","affiliation":"faculty","title":"Professor of Duke Center for Teaching and Learning","rank":"Tenured & Tenure Track Faculty","school":"University Initiatives & Academic Support Units","org":"Duke Center for Teaching and Learning","programs":["Faculty Peer Course Evaluation Program"],"staff":["Theo Nakashima"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-28","g":false}]},{"id":"DEMO-0004","first":"Ingrid","last":"Fenwick","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Fuqua, general","rank":"Tenured & Tenure Track Faculty","school":"Fuqua School of Business","org":"Fuqua, general","programs":[],"staff":["Dana Whitlock"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-03","g":false}]},{"id":"DEMO-0005","first":"Marisol","last":"Sotomayor-Quist","preferred":"Mari","affiliation":"faculty","title":"Professor of Graduate Liberal Studies","rank":"Tenured & Tenure Track Faculty","school":"Graduate School, The","org":"Graduate Liberal Studies","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Dana Whitlock","Imani Castellanos","Theo Nakashima","Yusuf Barlowe"],"topics":["Curriculum Development","Inclusive Teaching","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-10","g":false},{"d":"2025-11-11","g":false},{"d":"2026-03-01","g":false},{"d":"2026-04-04","g":false},{"d":"2026-07-25","g":false}]},{"id":"DEMO-0006","first":"Rosalind","last":"Lomborg","preferred":"x","affiliation":"faculty","title":"Assistant Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"African & African American Studies","programs":["Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Curriculum Development","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-26","g":false},{"d":"2025-12-16","g":false},{"d":"2026-07-22","g":false},{"d":"2026-08-02","g":false},{"d":"2026-08-17","g":false},{"d":"2026-11-21","g":false}]},{"id":"DEMO-0007","first":"Kwabena","last":"Delamere","preferred":"x","affiliation":"faculty","title":"Visiting Scholar","rank":"Non-Regular Rank Faculty","school":"Trinity College of Arts & Sciences","org":"Romance Studies","programs":["Faculty Peer Course Evaluation Program"],"staff":["Rosalind Achebe-Voss"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-07","g":false}]},{"id":"DEMO-0008","first":"Reinhold","last":"Bergstrom-Ola","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"Pierre R. Lamond Department of Electrical and Computer Engineering","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Imani Castellanos","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Inclusive Teaching","Program/Dept-Level Consulting","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-25","g":false},{"d":"2025-08-05","g":false},{"d":"2025-10-23","g":false},{"d":"2026-03-26","g":false},{"d":"2026-07-13","g":false},{"d":"2026-08-26","g":false},{"d":"2026-12-16","g":false}]},{"id":"DEMO-0009","first":"Wilhelmina","last":"Okpara-Lentz","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Political Science","programs":["Engaging Learners and Building Community"],"staff":["Rosalind Achebe-Voss"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-21","g":false}]},{"id":"DEMO-0010","first":"Nadira","last":"Ulyanova","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"School of Nursing","org":"DUSON, general","programs":[],"staff":["Theo Nakashima"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-17","g":false}]},{"id":"DEMO-0011","first":"Tobias","last":"Allingham","preferred":"Toby","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"School of Medicine","org":"Population Health Sciences","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-16","g":false}]},{"id":"DEMO-0012","first":"Ferdinand","last":"Achterberg","preferred":"x","affiliation":"faculty","title":"Professor of Teaching","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"","programs":[],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-03","g":false}]},{"id":"DEMO-0013","first":"Katarina","last":"Vasilenko","preferred":"x","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"Sanford School of Public Policy","org":"Sanford Faculty & Research","programs":[],"staff":["Dana Whitlock"],"topics":["Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-22","g":false}]},{"id":"DEMO-0014","first":"Zoltán","last":"Castaneda-Roos","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Fuqua School of Business","org":"Innovation & Entrepreneurship","programs":[],"staff":["Yusuf Barlowe"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-06","g":false}]},{"id":"DEMO-0015","first":"Rafael","last":"Villalobos-Fenn","preferred":"Rafa","affiliation":"faculty","title":"Associate Professor of Duke Quantum Center","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"Duke Quantum Center","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-07","g":false}]},{"id":"DEMO-0016","first":"Cassius","last":"Grenfell-Oba","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"Trinity College of Arts & Sciences","org":"Asian & Middle Eastern Studies","programs":["Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos","Theo Nakashima","Yusuf Barlowe"],"topics":["Curriculum Development","Inclusive Teaching","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-16","g":false},{"d":"2025-11-28","g":false},{"d":"2026-01-17","g":false},{"d":"2026-07-06","g":false},{"d":"2026-07-15","g":false}]},{"id":"DEMO-0017","first":"Sunniva","last":"Ryszard","preferred":"x","affiliation":"staff","title":"Program Director","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"German Studies","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-26","g":false},{"d":"2026-02-23","g":false},{"d":"2026-04-10","g":false},{"d":"2026-08-25","g":false},{"d":"2026-11-01","g":false}]},{"id":"DEMO-0018","first":"Adaeze","last":"Kowalczyk-Ade","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"Trinity College of Arts & Sciences","org":"German Studies","programs":[],"staff":["Theo Nakashima"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-04","g":false}]},{"id":"DEMO-0019","first":"Yevgeni","last":"Mainwaring","preferred":"x","affiliation":"faculty","title":"Associate Professor of Duke Global Health Institute (DGHI)","rank":"Tenured & Tenure Track Faculty","school":"University Institutes and Centers","org":"Duke Global Health Institute (DGHI)","programs":[],"staff":["Dana Whitlock"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-26","g":false}]},{"id":"DEMO-0020","first":"Xiomara","last":"Janowitz","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"University Institutes and Centers","org":"Duke Institute for Brain Sciences","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-10","g":false}]},{"id":"DEMO-0021","first":"Marianne","last":"Drummond-Iyer","preferred":"Annie","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Sanford Faculty & Research","programs":["Engaging Learners and Building Community","Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["Curriculum Development","Educational Research","Inclusive Teaching","New Faculty Orientation & Support","Program/Dept-Level Consulting","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-21","g":false},{"d":"2025-07-23","g":false},{"d":"2025-08-16","g":false},{"d":"2025-09-28","g":false},{"d":"2025-11-03","g":false},{"d":"2026-06-11","g":false},{"d":"2026-09-28","g":false},{"d":"2026-10-16","g":false}]},{"id":"DEMO-0022","first":"Emmeline","last":"Lemercier","preferred":"Emmy","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"School of Medicine","org":"Population Health Sciences","programs":[],"staff":["Theo Nakashima"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-17","g":false}]},{"id":"DEMO-0023","first":"Casimir","last":"Nordstrand","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Divinity School","org":"Divinity, general","programs":[],"staff":["Dana Whitlock"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-09","g":false}]},{"id":"DEMO-0024","first":"Sigrid","last":"Zabriskie","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Slavic & Eurasian Studies","programs":[],"staff":["Imani Castellanos"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-24","g":false}]},{"id":"DEMO-0025","first":"Verity","last":"Kestenbaum","preferred":"x","affiliation":"faculty","title":"Associate Professor of English for International Students","rank":"Tenured & Tenure Track Faculty","school":"Graduate School, The","org":"English for International Students","programs":[],"staff":["Imani Castellanos"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-20","g":false}]},{"id":"DEMO-0026","first":"Folasade","last":"Carmichael-Efe","preferred":"x","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"School of Medicine","org":"Emergency Medicine","programs":[],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-27","g":false}]},{"id":"DEMO-0027","first":"Leontine","last":"Fothergill","preferred":"x","affiliation":"faculty","title":"Research Associate","rank":"Other","school":"Graduate School, The","org":"English for International Students","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Theo Nakashima","Yusuf Barlowe"],"topics":["Assessment & Grading","Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-28","g":false},{"d":"2025-11-10","g":false},{"d":"2026-09-08","g":false},{"d":"2026-11-02","g":false}]},{"id":"DEMO-0028","first":"Liesbeth","last":"Fontanella","preferred":"x","affiliation":"faculty","title":"Affiliate","rank":"Other","school":"University Institutes and Centers","org":"Duke Institute for Brain Sciences","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Imani Castellanos"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-15","g":false}]},{"id":"DEMO-0029","first":"Solveig","last":"Danziger","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Hart Leadership Program","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Assessment & Grading","Course Design","Curriculum Development","Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-09","g":false},{"d":"2026-06-03","g":false},{"d":"2026-06-27","g":false},{"d":"2026-07-02","g":false},{"d":"2026-09-09","g":false},{"d":"2026-10-08","g":false},{"d":"2026-10-26","g":false}]},{"id":"DEMO-0030","first":"Torvald","last":"Wrightsman","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Graduate School, The","org":"","programs":[],"staff":["Theo Nakashima"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-11","g":false}]},{"id":"DEMO-0031","first":"Mirembe","last":"Jourdain","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Pathology","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-14","g":false}]},{"id":"DEMO-0032","first":"Babajide","last":"Krisanthemum","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Duke Clinical Research Institute","programs":[],"staff":["Theo Nakashima"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-10","g":false}]},{"id":"DEMO-0033","first":"Faustina","last":"Zetterlund","preferred":"x","affiliation":"faculty","title":"Professor of Center for Child and Family Policy","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Center for Child and Family Policy","programs":[],"staff":["Theo Nakashima"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-08","g":false}]},{"id":"DEMO-0034","first":"Nkechi","last":"Ashworth-Dike","preferred":"x","affiliation":"faculty","title":"Professor of Biology","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Biology","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-07","g":false}]},{"id":"DEMO-0035","first":"Chukwuemeka","last":"Ibarruri","preferred":"x","affiliation":"faculty","title":"Affiliate","rank":"Other","school":"Pratt School of Engineering","org":"Engineering Graduate and Professional Programs","programs":[],"staff":["Dana Whitlock"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-09","g":false}]},{"id":"DEMO-0036","first":"Isolde","last":"Stavropoulos","preferred":"x","affiliation":"faculty","title":"Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Graduate School, The","org":"Graduate Liberal Studies","programs":[],"staff":["Dana Whitlock"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-07","g":false}]},{"id":"DEMO-0037","first":"Adaora","last":"Fitzwilliam","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Romance Studies","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Romance Studies","programs":["Faculty Peer Course Evaluation Program"],"staff":["Yusuf Barlowe"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-07","g":false}]},{"id":"DEMO-0038","first":"Clothilde","last":"Novotny","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Fuqua School of Business","org":"Innovation & Entrepreneurship","programs":[],"staff":["Imani Castellanos"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-10-16","g":false}]},{"id":"DEMO-0039","first":"Bartholomew","last":"Quennell","preferred":"Bart","affiliation":"faculty","title":"Visiting Scholar","rank":"Non-Regular Rank Faculty","school":"School of Medicine","org":"Pathology","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Rosalind Achebe-Voss"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-12","g":false}]},{"id":"DEMO-0040","first":"Mattias","last":"Lindegaard","preferred":"x","affiliation":"faculty","title":"Associate Professor of Duke Institute for Brain Sciences","rank":"Tenured & Tenure Track Faculty","school":"University Institutes and Centers","org":"Duke Institute for Brain Sciences","programs":[],"staff":["Dana Whitlock"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-09","g":false}]},{"id":"DEMO-0041","first":"Ravindra","last":"Wetherington","preferred":"x","affiliation":"student","title":"PhD Candidate","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"Thomas Lord Department of Mechanical Engineering and Materials Science","programs":[],"staff":["Dana Whitlock","Imani Castellanos","Theo Nakashima"],"topics":["Inclusive Teaching","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-10","g":false},{"d":"2025-11-07","g":false},{"d":"2026-07-24","g":false}]},{"id":"DEMO-0042","first":"Aurelio","last":"Eichenwald","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Graduate Liberal Studies","rank":"Tenured & Tenure Track Faculty","school":"Graduate School, The","org":"Graduate Liberal Studies","programs":["Faculty Peer Course Evaluation Program"],"staff":["Theo Nakashima"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-02","g":false}]},{"id":"DEMO-0043","first":"Kolawole","last":"Kingscote","preferred":"x","affiliation":"faculty","title":"Senior Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Sanford School of Public Policy","org":"Center for Child and Family Policy","programs":[],"staff":["Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["Curriculum Development","Instructional Technology","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-28","g":false},{"d":"2026-02-12","g":false},{"d":"2026-09-15","g":false},{"d":"2026-11-17","g":false},{"d":"2026-12-14","g":false}]},{"id":"DEMO-0044","first":"Oluwaseun","last":"Marchbanks","preferred":"x","affiliation":"student","title":"PhD Candidate","rank":"Grad Student/Postdoc","school":"School of Medicine","org":"Neurology","programs":["AI in Education at Duke Summit, Pre-Summit Workshops","Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Imani Castellanos","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Educational Research","Instructional Technology","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-26","g":false},{"d":"2026-02-02","g":false},{"d":"2026-03-03","g":false},{"d":"2026-11-04","g":false},{"d":"2026-11-10","g":false}]},{"id":"DEMO-0045","first":"Amaranta","last":"Kirkbride","preferred":"x","affiliation":"faculty","title":"Senior Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Other Duke Unit","org":"Duke Student Affairs","programs":[],"staff":["Imani Castellanos"],"topics":["Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-16","g":false}]},{"id":"DEMO-0046","first":"Desmond","last":"Nkosi-Reinholt","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"Trinity College of Arts & Sciences","org":"Cultural Anthropology","programs":[],"staff":["Theo Nakashima"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-05","g":false}]},{"id":"DEMO-0047","first":"Nikolai","last":"Abernethy","preferred":"x","affiliation":"faculty","title":"Associate Professor of African & African American Studies","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"African & African American Studies","programs":[],"staff":["Yusuf Barlowe"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-08","g":false}]},{"id":"DEMO-0048","first":"Evander","last":"Pilkington-Sow","preferred":"x","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"Graduate School, The","org":"Graduate Liberal Studies","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Dana Whitlock"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-11","g":false}]},{"id":"DEMO-0049","first":"Anneliese","last":"Neuwirth","preferred":"x","affiliation":"faculty","title":"Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Pratt School of Engineering","org":"Engineering Graduate and Professional Programs","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Imani Castellanos","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-13","g":false},{"d":"2026-11-09","g":false},{"d":"2026-12-09","g":false}]},{"id":"DEMO-0050","first":"Cordelia","last":"Fenniman","preferred":"Delia","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"Biomedical Engineering","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-14","g":false}]},{"id":"DEMO-0051","first":"Lachlan","last":"Restrepo-Lund","preferred":"x","affiliation":"faculty","title":"Professor of Nasher Museum of Art","rank":"Tenured & Tenure Track Faculty","school":"Other Duke Unit","org":"Nasher Museum of Art","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Inclusive Teaching","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-06","g":false},{"d":"2026-08-05","g":false},{"d":"2026-10-27","g":false},{"d":"2026-12-13","g":false}]},{"id":"DEMO-0052","first":"Emeka","last":"Hjelmslev","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Divinity School","org":"Divinity, general","programs":[],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-24","g":false}]},{"id":"DEMO-0053","first":"Ezequiel","last":"Prendergast","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"Civil and Environmental Engineering","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Dana Whitlock"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-10","g":false}]},{"id":"DEMO-0054","first":"Philippa","last":"Jorgensen-Bem","preferred":"Pippa","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"School of Medicine","org":"Medicine","programs":[],"staff":["Dana Whitlock"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-20","g":false}]},{"id":"DEMO-0055","first":"Halvard","last":"Duplessis","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Graduate Liberal Studies","rank":"Tenured & Tenure Track Faculty","school":"Graduate School, The","org":"Graduate Liberal Studies","programs":[],"staff":["Imani Castellanos"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-02","g":false}]},{"id":"DEMO-0056","first":"Theodora","last":"Chatterjee-Kohl","preferred":"Thea","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"Music","programs":[],"staff":["Theo Nakashima"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-19","g":false}]},{"id":"DEMO-0057","first":"Obiageli","last":"Jamieson-Ude","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Law","org":"Law, general","programs":["Faculty Peer Course Evaluation Program"],"staff":["Yusuf Barlowe"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-08","g":false}]},{"id":"DEMO-0058","first":"Yolanda","last":"Hartsfield","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"Dance Program","programs":[],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-15","g":false}]},{"id":"DEMO-0059","first":"Gustav","last":"Hendriksen","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Fuqua School of Business","org":"Innovation & Entrepreneurship","programs":["Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-01","g":false}]},{"id":"DEMO-0060","first":"Perpetua","last":"Quintrell","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Theater Studies","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-22","g":false}]},{"id":"DEMO-0061","first":"Osvaldo","last":"Selby-Adichie","preferred":"x","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"School of Nursing","org":"","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-12","g":false}]},{"id":"DEMO-0062","first":"Antoinette","last":"Dembélé-Hart","preferred":"Nettie","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Neurology","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-04","g":false}]},{"id":"DEMO-0063","first":"Augustin","last":"Adeniran-Cole","preferred":"x","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"Nicholas School of the Environment","org":"Environmental Social Systems","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-15","g":false}]},{"id":"DEMO-0064","first":"Ngozi","last":"Rademacher","preferred":"x","affiliation":"faculty","title":"Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Music","programs":[],"staff":["Yusuf Barlowe"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-17","g":false}]},{"id":"DEMO-0065","first":"Simone","last":"Ekwueme","preferred":"x","affiliation":"external","title":"External","rank":"Other","school":"External","org":"External","programs":[],"staff":["Yusuf Barlowe"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-21","g":false}]},{"id":"DEMO-0066","first":"Radoslav","last":"Lautenberg","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Center for Child and Family Policy","programs":["Faculty Peer Course Evaluation Program"],"staff":["Yusuf Barlowe"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-15","g":false}]},{"id":"DEMO-0067","first":"Abiodun","last":"Mbeki-Rourke","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Cell Biology","programs":["Engaging Learners and Building Community"],"staff":["Imani Castellanos"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-05","g":false}]},{"id":"DEMO-0068","first":"Bertrand","last":"Kestrelman","preferred":"x","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"Cultural Anthropology","programs":[],"staff":["Yusuf Barlowe"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-19","g":false}]},{"id":"DEMO-0069","first":"Ifeoma","last":"Quaranta","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Pratt School of Engineering","org":"Pratt, general","programs":[],"staff":["Imani Castellanos"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-28","g":false}]},{"id":"DEMO-0070","first":"Ilse","last":"Kruspe-Nwosu","preferred":"x","affiliation":"faculty","title":"Professor of Pediatrics","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Pediatrics","programs":[],"staff":["Theo Nakashima"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-26","g":false}]},{"id":"DEMO-0071","first":"Beatrix","last":"Bracewell","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Religious Studies","programs":["AI in Education at Duke Summit, Pre-Summit Workshops","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Theo Nakashima","Yusuf Barlowe"],"topics":["Assessment & Grading","Course Design","Inclusive Teaching","New Faculty Orientation & Support","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-14","g":false},{"d":"2025-08-14","g":false},{"d":"2026-03-04","g":false},{"d":"2026-03-08","g":false},{"d":"2026-06-24","g":false},{"d":"2026-12-23","g":false}]},{"id":"DEMO-0072","first":"Chidinma","last":"Beauchêne","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"School of Medicine","org":"Pediatrics","programs":[],"staff":["Yusuf Barlowe"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-11","g":false}]},{"id":"DEMO-0073","first":"Océane","last":"Lindenbaum","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"Sanford School of Public Policy","org":"DeWitt Wallace Center for Media and Democracy","programs":["Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Yusuf Barlowe"],"topics":["Assessment & Grading","New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-07","g":false},{"d":"2025-10-13","g":false},{"d":"2026-09-22","g":false}]},{"id":"DEMO-0074","first":"Henrike","last":"Yarborough","preferred":"x","affiliation":"staff","title":"Program Director","rank":"Staff","school":"Graduate School, The","org":"English for International Students","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-03","g":false}]},{"id":"DEMO-0075","first":"Ambrose","last":"Ostrowski","preferred":"Bram","affiliation":"staff","title":"Program Director","rank":"Staff","school":"Pratt School of Engineering","org":"Pierre R. Lamond Department of Electrical and Computer Engineering","programs":[],"staff":["Dana Whitlock"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-11-27","g":false}]},{"id":"DEMO-0076","first":"Thaddeus","last":"Rothermere","preferred":"Thad","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"School of Medicine","org":"Duke Cancer Center","programs":[],"staff":["Dana Whitlock"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-08","g":false}]},{"id":"DEMO-0077","first":"Lorcan","last":"Uzoigwe","preferred":"x","affiliation":"faculty","title":"Senior Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"German Studies","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-24","g":false}]},{"id":"DEMO-0078","first":"Ingrid","last":"Wexler-Adeyemi","preferred":"x","affiliation":"faculty","title":"Senior Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"University Institutes and Centers","org":"","programs":["Engaging Learners and Building Community"],"staff":["Imani Castellanos"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-16","g":false}]},{"id":"DEMO-0079","first":"Marisol","last":"Uttridge","preferred":"Mari","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"German Studies","programs":[],"staff":["Yusuf Barlowe"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-14","g":false}]},{"id":"DEMO-0080","first":"Rosalind","last":"Aldringham","preferred":"x","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"Nicholas School of the Environment","org":"Marine Science and Conservation","programs":[],"staff":["Yusuf Barlowe"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-20","g":false}]},{"id":"DEMO-0081","first":"Kwabena","last":"Trelawney","preferred":"x","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"Pratt School of Engineering","org":"Christensen Family Center for Innovation","programs":[],"staff":["Yusuf Barlowe"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-07","g":false}]},{"id":"DEMO-0082","first":"Reinhold","last":"Steenkamp","preferred":"x","affiliation":"faculty","title":"Senior Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Gender, Sexuality & Feminist Studies","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-02","g":false}]},{"id":"DEMO-0083","first":"Wilhelmina","last":"Grahamslaw","preferred":"x","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"School of Medicine","org":"Emergency Medicine","programs":[],"staff":["Yusuf Barlowe"],"topics":["Curriculum Development","New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-18","g":false},{"d":"2026-04-24","g":false}]},{"id":"DEMO-0084","first":"Nadira","last":"Marchetti-Osei","preferred":"x","affiliation":"staff","title":"Instructional Designer","rank":"Staff","school":"Pratt School of Engineering","org":"Engineering Graduate and Professional Programs","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-18","g":false}]},{"id":"DEMO-0085","first":"Tobias","last":"Tamplin","preferred":"Toby","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"School of Medicine","org":"Psychiatry & Behavioral Sciences","programs":[],"staff":["Yusuf Barlowe"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-05","g":false}]},{"id":"DEMO-0086","first":"Ferdinand","last":"Falkenrath","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"Sanford School of Public Policy","org":"DeWitt Wallace Center for Media and Democracy","programs":[],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-16","g":false}]},{"id":"DEMO-0087","first":"Katarina","last":"Halvorsen-Ba","preferred":"x","affiliation":"faculty","title":"Professor of Teaching","rank":"Tenured & Tenure Track Faculty","school":"University Initiatives & Academic Support Units","org":"","programs":[],"staff":["Dana Whitlock"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-12-08","g":false}]},{"id":"DEMO-0088","first":"Zoltán","last":"Everington","preferred":"x","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Health, Wellness, and Physical Education (HWPE)","org":"HWPE, general","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-14","g":false}]},{"id":"DEMO-0089","first":"Rafael","last":"Jastrzebski","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Graduate School, The","org":"","programs":[],"staff":["Imani Castellanos"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-09","g":false}]},{"id":"DEMO-0090","first":"Cassius","last":"Larkspur","preferred":"x","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Pediatrics","programs":[],"staff":["Theo Nakashima"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-19","g":false}]},{"id":"DEMO-0091","first":"Sunniva","last":"Skarsgård-Obi","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Pratt, general","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"Pratt, general","programs":[],"staff":["Dana Whitlock"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-11-16","g":false}]},{"id":"DEMO-0092","first":"Adaeze","last":"Breckinridge","preferred":"x","affiliation":"staff","title":"Instructional Designer","rank":"Staff","school":"Pratt School of Engineering","org":"Christensen Family Center for Innovation","programs":["Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-08","g":false}]},{"id":"DEMO-0093","first":"Yevgeni","last":"Verhoeven","preferred":"x","affiliation":"student","title":"PhD Candidate","rank":"Grad Student/Postdoc","school":"School of Medicine","org":"Duke Cancer Center","programs":[],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-08","g":false}]},{"id":"DEMO-0094","first":"Xiomara","last":"Ustinova","preferred":"x","affiliation":"faculty","title":"Adjunct Instructor","rank":"Non-Regular Rank Faculty","school":"Pratt School of Engineering","org":"Pratt, general","programs":[],"staff":["Imani Castellanos"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-19","g":false}]},{"id":"DEMO-0095","first":"Marianne","last":"Yaroslav","preferred":"Annie","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"Fuqua School of Business","org":"Innovation & Entrepreneurship","programs":[],"staff":["Imani Castellanos"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-20","g":false}]},{"id":"DEMO-0096","first":"Emmeline","last":"Erlichman","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Health, Wellness, and Physical Education (HWPE)","org":"HWPE, general","programs":[],"staff":["Yusuf Barlowe"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-13","g":false}]},{"id":"DEMO-0097","first":"Casimir","last":"Dunmore","preferred":"x","affiliation":"faculty","title":"Visiting Scholar","rank":"Non-Regular Rank Faculty","school":"Trinity College of Arts & Sciences","org":"Linguistics","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Assessment & Grading","Curriculum Development","Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-13","g":false},{"d":"2026-06-16","g":false},{"d":"2026-10-04","g":false},{"d":"2026-11-06","g":false}]},{"id":"DEMO-0098","first":"Sigrid","last":"Lindqvist","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Hart Leadership Program","programs":[],"staff":["Theo Nakashima"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-11","g":false}]},{"id":"DEMO-0099","first":"Verity","last":"Quirtland","preferred":"x","affiliation":"faculty","title":"Professor of Fuqua, general","rank":"Tenured & Tenure Track Faculty","school":"Fuqua School of Business","org":"Fuqua, general","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-17","g":false}]},{"id":"DEMO-0100","first":"Folasade","last":"Pemberton-Hale","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Sanford Faculty & Research","programs":[],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-13","g":false}]},{"id":"DEMO-0101","first":"Leontine","last":"Edelstein","preferred":"x","affiliation":"faculty","title":"Associate Professor of DeWitt Wallace Center for Media and Democracy","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"DeWitt Wallace Center for Media and Democracy","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Engaging Learners and Building Community"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Assessment & Grading","Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-19","g":false},{"d":"2026-07-16","g":false},{"d":"2026-10-02","g":false},{"d":"2026-11-08","g":false},{"d":"2026-12-08","g":false}]},{"id":"DEMO-0102","first":"Liesbeth","last":"Bettencourt","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"","programs":[],"staff":["Yusuf Barlowe"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-03","g":false}]},{"id":"DEMO-0103","first":"Solveig","last":"Muirhead-Nnamdi","preferred":"x","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Pratt School of Engineering","org":"Civil and Environmental Engineering","programs":[],"staff":["Imani Castellanos"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-07","g":false}]},{"id":"DEMO-0104","first":"Marisol","last":"Fenwick","preferred":"Mari","affiliation":"faculty","title":"Associate Professor of the Practice of Global Health","rank":"Regular Rank Non Tenure Track faculty","school":"University Institutes and Centers","org":"Duke Global Health Institute (DGHI)","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Engaging Learners and Building Community"],"staff":["Dana Whitlock","Imani Castellanos","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Assessment & Grading","Course Design","Curriculum Development","Inclusive Teaching","Instructional Technology","Program/Dept-Level Consulting","Teaching Practices"],"docUrl":null,"viewUrl":"DossierFullView.html?id=DEMO-0104","marks":[{"d":"2026-04-02","g":false},{"d":"2026-04-16","g":false},{"d":"2026-04-30","g":false},{"d":"2026-05-14","g":false},{"d":"2026-05-28","g":false},{"d":"2026-06-09","g":true},{"d":"2026-06-18","g":true},{"d":"2026-06-23","g":false},{"d":"2026-07-02","g":false},{"d":"2026-07-08","g":false},{"d":"2026-07-21","g":false}]},{"id":"DEMO-0105","first":"Mirembe","last":"Vestergaard","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Nursing","org":"","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-14","g":false}]},{"id":"DEMO-0106","first":"Babajide","last":"Ysebaert","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"Fuqua School of Business","org":"Fuqua, general","programs":["Engaging Learners and Building Community","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima"],"topics":["Course Design","Instructional Technology","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-07","g":false},{"d":"2026-07-06","g":false},{"d":"2026-10-26","g":false},{"d":"2026-11-19","g":false},{"d":"2026-12-26","g":false}]},{"id":"DEMO-0107","first":"Faustina","last":"Lindberg-Ude","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"School of Law","org":"Law, general","programs":["AI in Education at Duke Summit, Pre-Summit Workshops","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-20","g":false},{"d":"2026-04-26","g":false},{"d":"2026-12-12","g":false},{"d":"2026-12-16","g":false}]},{"id":"DEMO-0108","first":"Nkechi","last":"Fenn","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Cultural Anthropology","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-10-15","g":false}]},{"id":"DEMO-0109","first":"Chukwuemeka","last":"Jelinek","preferred":"x","affiliation":"faculty","title":"Professor of Biology","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Biology","programs":[],"staff":["Yusuf Barlowe"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-03","g":false}]},{"id":"DEMO-0110","first":"Isolde","last":"Hollingsworth","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Pediatrics","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Pediatrics","programs":[],"staff":["Dana Whitlock","Yusuf Barlowe"],"topics":["Course Design","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-13","g":false},{"d":"2026-11-03","g":false}]},{"id":"DEMO-0111","first":"Adaora","last":"Grünhagen","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"Sanford School of Public Policy","org":"DeWitt Wallace Center for Media and Democracy","programs":[],"staff":["Dana Whitlock"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-20","g":false}]},{"id":"DEMO-0112","first":"Clothilde","last":"Oglethorpe","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"Duke Quantum Center","programs":[],"staff":["Dana Whitlock"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-03","g":false}]},{"id":"DEMO-0113","first":"Bartholomew","last":"Gonzalez-Thay","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Law","org":"","programs":["Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos"],"topics":["AI in Teaching & Learning","Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-18","g":false},{"d":"2026-05-09","g":false}]},{"id":"DEMO-0114","first":"Mattias","last":"Iwuchukwu","preferred":"x","affiliation":"faculty","title":"Assistant Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"German Studies","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Engaging Learners and Building Community"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Theo Nakashima"],"topics":["Inclusive Teaching","New Faculty Orientation & Support","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-18","g":false},{"d":"2026-07-10","g":false},{"d":"2026-08-15","g":false},{"d":"2026-09-10","g":false}]},{"id":"DEMO-0115","first":"Ravindra","last":"Mbaye-Winterle","preferred":"x","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"Information Science + Studies","programs":[],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-16","g":false}]},{"id":"DEMO-0116","first":"Aurelio","last":"Thornbury","preferred":"x","affiliation":"student","title":"Graduate Instructor","rank":"Grad Student/Postdoc","school":"Trinity College of Arts & Sciences","org":"Sociology (incl. Markets & Management Studies)","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-15","g":false}]},{"id":"DEMO-0117","first":"Tobias","last":"Renn","preferred":"x","affiliation":"faculty","title":"Associate Professor of Statistical Science","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Statistical Science","programs":[],"staff":["Imani Castellanos"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":"DossierFullView.html?id=DEMO-0117","marks":[{"d":"2026-07-16","g":false}]},{"id":"DEMO-0118","first":"Oluwaseun","last":"Jandali","preferred":"Seun","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Fuqua School of Business","org":"Fuqua, general","programs":[],"staff":["Imani Castellanos"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-04","g":false}]},{"id":"DEMO-0119","first":"Amaranta","last":"Baek","preferred":"x","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"Fuqua School of Business","org":"Innovation & Entrepreneurship","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Engaging Learners and Building Community","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Assessment & Grading","Curriculum Development","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-22","g":false},{"d":"2026-02-28","g":false},{"d":"2026-07-16","g":false},{"d":"2026-07-22","g":false},{"d":"2026-08-12","g":false},{"d":"2026-08-17","g":false}]},{"id":"DEMO-0120","first":"Desmond","last":"Vanbrugh","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Center for Child and Family Policy","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Center for Child and Family Policy","programs":["AI in Education at Duke Summit, Pre-Summit Workshops","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss"],"topics":["AI in Teaching & Learning","Assessment & Grading","Course Design","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-02","g":false},{"d":"2025-09-06","g":false},{"d":"2026-02-22","g":false},{"d":"2026-07-22","g":false},{"d":"2026-12-22","g":false}]},{"id":"DEMO-0121","first":"Nikolai","last":"Oosterhuis","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"Pratt School of Engineering","org":"Thomas Lord Department of Mechanical Engineering and Materials Science","programs":[],"staff":["Dana Whitlock"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-12","g":false}]},{"id":"DEMO-0122","first":"Evander","last":"Xhaferi","preferred":"Van","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Duke Cancer Center","programs":[],"staff":["Dana Whitlock"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-07","g":false}]},{"id":"DEMO-0123","first":"Anneliese","last":"Rowntree","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Other Duke Unit","org":"Nasher Museum of Art","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-12-05","g":false}]},{"id":"DEMO-0124","first":"Cordelia","last":"Lyngstad","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"University Initiatives & Academic Support Units","org":"Duke University Libraries","programs":[],"staff":["Dana Whitlock"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-04","g":false}]},{"id":"DEMO-0125","first":"Lachlan","last":"Ravenscroft","preferred":"x","affiliation":"external","title":"External","rank":"Other","school":"External","org":"External","programs":[],"staff":["Theo Nakashima"],"topics":["Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-24","g":false}]},{"id":"DEMO-0126","first":"Emeka","last":"Thorsby","preferred":"x","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Cell Biology","programs":[],"staff":["Dana Whitlock"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-03","g":false}]},{"id":"DEMO-0127","first":"Ezequiel","last":"Vanterpool","preferred":"x","affiliation":"faculty","title":"Professor of Rhodes Information Initiative at Duke","rank":"Tenured & Tenure Track Faculty","school":"University Initiatives & Academic Support Units","org":"Rhodes Information Initiative at Duke","programs":[],"staff":["Yusuf Barlowe"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-17","g":false}]},{"id":"DEMO-0128","first":"Philippa","last":"Draycott","preferred":"Pippa","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"School of Medicine","org":"Pediatrics","programs":["Engaging Learners and Building Community"],"staff":["Yusuf Barlowe"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-04","g":false}]},{"id":"DEMO-0129","first":"Halvard","last":"Ottoline","preferred":"x","affiliation":"faculty","title":"Adjunct Instructor","rank":"Non-Regular Rank Faculty","school":"Pratt School of Engineering","org":"","programs":["AI in Education at Duke Summit, Pre-Summit Workshops","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Theo Nakashima"],"topics":["AI in Teaching & Learning","Course Design","Inclusive Teaching","Instructional Technology","New Faculty Orientation & Support","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-24","g":false},{"d":"2025-11-06","g":false},{"d":"2025-11-15","g":false},{"d":"2026-06-06","g":false},{"d":"2026-07-16","g":false},{"d":"2026-09-05","g":false},{"d":"2026-10-28","g":false}]},{"id":"DEMO-0130","first":"Theodora","last":"Garrickson","preferred":"x","affiliation":"faculty","title":"Research Associate","rank":"Other","school":"Trinity College of Arts & Sciences","org":"African & African American Studies","programs":[],"staff":["Imani Castellanos"],"topics":["Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-23","g":false}]},{"id":"DEMO-0131","first":"Obiageli","last":"Ubaldi","preferred":"x","affiliation":"faculty","title":"Associate Professor of Christensen Family Center for Innovation","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"Christensen Family Center for Innovation","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-27","g":false}]},{"id":"DEMO-0132","first":"Yolanda","last":"Whitcombe","preferred":"x","affiliation":"faculty","title":"Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Graduate School, The","org":"English for International Students","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-09-17","g":false}]},{"id":"DEMO-0133","first":"Gustav","last":"Nyongesa","preferred":"x","affiliation":"faculty","title":"Adjunct Instructor","rank":"Non-Regular Rank Faculty","school":"Pratt School of Engineering","org":"Pierre R. Lamond Department of Electrical and Computer Engineering","programs":[],"staff":["Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Assessment & Grading","Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-08","g":false},{"d":"2026-01-07","g":false},{"d":"2026-10-17","g":false}]},{"id":"DEMO-0134","first":"Perpetua","last":"Zaborowski","preferred":"x","affiliation":"student","title":"PhD Candidate","rank":"Grad Student/Postdoc","school":"Trinity College of Arts & Sciences","org":"Religious Studies","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-19","g":false}]},{"id":"DEMO-0135","first":"Osvaldo","last":"Pattinson-Ayo","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Fuqua School of Business","org":"Fuqua, general","programs":[],"staff":["Dana Whitlock"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-13","g":false}]},{"id":"DEMO-0136","first":"Antoinette","last":"Vercingetorix","preferred":"Nettie","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Mathematics","programs":[],"staff":["Dana Whitlock"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-12-17","g":false}]},{"id":"DEMO-0137","first":"Augustin","last":"Quaintance","preferred":"x","affiliation":"staff","title":"Assistant Director","rank":"Staff","school":"Divinity School","org":"Divinity, general","programs":["Faculty Peer Course Evaluation Program"],"staff":["Rosalind Achebe-Voss"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-19","g":false}]},{"id":"DEMO-0138","first":"Ngozi","last":"Ollivander","preferred":"x","affiliation":"staff","title":"Instructional Designer","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"German Studies","programs":[],"staff":["Theo Nakashima"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-15","g":false}]},{"id":"DEMO-0139","first":"Simone","last":"Yerkovich","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Obstetrics and Gynecology","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Imani Castellanos"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-05-24","g":false}]},{"id":"DEMO-0140","first":"Radoslav","last":"Eskildsen","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Graduate School, The","org":"English for International Students","programs":["Faculty Peer Course Evaluation Program"],"staff":["Rosalind Achebe-Voss"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-12","g":false}]},{"id":"DEMO-0141","first":"Abiodun","last":"Isakovic","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Population Health Sciences","programs":[],"staff":["Yusuf Barlowe"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-06","g":false}]},{"id":"DEMO-0142","first":"Bertrand","last":"Zdenek","preferred":"x","affiliation":"faculty","title":"Adjunct Instructor","rank":"Non-Regular Rank Faculty","school":"University Initiatives & Academic Support Units","org":"Duke University Libraries","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock","Imani Castellanos"],"topics":["AI in Teaching & Learning","Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-25","g":false},{"d":"2026-07-17","g":false}]},{"id":"DEMO-0143","first":"Priya","last":"Lachlan","preferred":"x","affiliation":"faculty","title":"Professor of the Practice of Global Health","rank":"Regular Rank Non Tenure Track faculty","school":"University Institutes and Centers","org":"Duke Global Health Institute (DGHI)","programs":[],"staff":["Dana Whitlock","Yusuf Barlowe"],"topics":["Curriculum Development","Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-09","g":true},{"d":"2026-06-18","g":true}]},{"id":"DEMO-0144","first":"Ilse","last":"Fenwick","preferred":"x","affiliation":"staff","title":"Instructional Designer","rank":"Staff","school":"School of Nursing","org":"DUSON, general","programs":["Engaging Learners and Building Community","Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Curriculum Development","Instructional Technology","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-23","g":false},{"d":"2025-11-09","g":false},{"d":"2026-02-23","g":false},{"d":"2026-02-26","g":false},{"d":"2026-07-20","g":false},{"d":"2026-08-15","g":false},{"d":"2026-08-22","g":false}]},{"id":"DEMO-0145","first":"Beatrix","last":"Sotomayor-Quist","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"School of Nursing","org":"DUSON, general","programs":[],"staff":["Yusuf Barlowe"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-03","g":false}]},{"id":"DEMO-0146","first":"Chidinma","last":"Lomborg","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Biology","programs":["Faculty Peer Course Evaluation Program"],"staff":["Rosalind Achebe-Voss"],"topics":["Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-26","g":false}]},{"id":"DEMO-0147","first":"Océane","last":"Delamere","preferred":"x","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"Nicholas School of the Environment","org":"Environmental Social Systems","programs":[],"staff":["Yusuf Barlowe"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-19","g":false}]},{"id":"DEMO-0148","first":"Henrike","last":"Bergstrom-Ola","preferred":"x","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"University Initiatives & Academic Support Units","org":"Duke University Libraries","programs":[],"staff":["Dana Whitlock"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-23","g":false}]},{"id":"DEMO-0149","first":"Ambrose","last":"Ekwueme","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Obstetrics and Gynecology","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Theo Nakashima"],"topics":["Course Design","Curriculum Development","Instructional Technology"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-02","g":false},{"d":"2025-08-26","g":false},{"d":"2025-09-28","g":false},{"d":"2025-11-25","g":false}]},{"id":"DEMO-0150","first":"Thaddeus","last":"Lautenberg","preferred":"x","affiliation":"faculty","title":"Adjunct Instructor","rank":"Non-Regular Rank Faculty","school":"Pratt School of Engineering","org":"Thomas Lord Department of Mechanical Engineering and Materials Science","programs":[],"staff":["Dana Whitlock","Imani Castellanos","Yusuf Barlowe"],"topics":["Course Design","Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-18","g":false},{"d":"2026-05-24","g":false},{"d":"2026-12-28","g":false}]},{"id":"DEMO-0151","first":"Lorcan","last":"Mbeki-Rourke","preferred":"x","affiliation":"faculty","title":"Assistant Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Duke Kunshan University (DKU)","org":"DKU, English","programs":[],"staff":["Yusuf Barlowe"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-05","g":false}]},{"id":"DEMO-0152","first":"Ingrid","last":"Kestrelman","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"School of Nursing","org":"DUSON, general","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-23","g":false},{"d":"2026-08-14","g":false},{"d":"2026-08-27","g":false}]},{"id":"DEMO-0153","first":"Marisol","last":"Quaranta","preferred":"Mari","affiliation":"faculty","title":"Assistant Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Divinity School","org":"Divinity, general","programs":[],"staff":["Dana Whitlock","Imani Castellanos","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Curriculum Development","Program/Dept-Level Consulting","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-26","g":false},{"d":"2025-12-20","g":false},{"d":"2025-12-22","g":false},{"d":"2026-09-14","g":false}]},{"id":"DEMO-0154","first":"Rosalind","last":"Kruspe-Nwosu","preferred":"x","affiliation":"faculty","title":"Associate Professor of Duke University Libraries","rank":"Tenured & Tenure Track Faculty","school":"University Initiatives & Academic Support Units","org":"Duke University Libraries","programs":[],"staff":["Dana Whitlock"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-27","g":false}]},{"id":"DEMO-0155","first":"Kwabena","last":"Bracewell","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"University Institutes and Centers","org":"Kenan Institute for Ethics","programs":[],"staff":["Theo Nakashima"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-26","g":false}]},{"id":"DEMO-0156","first":"Reinhold","last":"Beauchêne","preferred":"x","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Statistical Science","programs":[],"staff":["Yusuf Barlowe"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-10-23","g":false}]},{"id":"DEMO-0157","first":"Wilhelmina","last":"Lindenbaum","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"Nicholas School of the Environment","org":"Marine Science and Conservation","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Engaging Learners and Building Community"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["Inclusive Teaching","Program/Dept-Level Consulting","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-06","g":false},{"d":"2026-04-02","g":false},{"d":"2026-08-27","g":false},{"d":"2026-11-04","g":false},{"d":"2026-12-18","g":false},{"d":"2026-12-20","g":false}]},{"id":"DEMO-0158","first":"Nadira","last":"Yarborough","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"Pratt School of Engineering","org":"Christensen Family Center for Innovation","programs":["Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-05","g":false}]},{"id":"DEMO-0159","first":"Tobias","last":"Applewhaite","preferred":"Toby","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Computer Science","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["Course Design","Inclusive Teaching","Instructional Technology","New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-03","g":false},{"d":"2026-10-06","g":false},{"d":"2026-10-08","g":false},{"d":"2026-10-15","g":false},{"d":"2026-12-06","g":false}]},{"id":"DEMO-0160","first":"Ferdinand","last":"Yankovich","preferred":"x","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"School of Nursing","org":"","programs":[],"staff":["Imani Castellanos"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-02","g":false}]},{"id":"DEMO-0161","first":"Katarina","last":"Oyelaran-Hume","preferred":"Kat","affiliation":"faculty","title":"Associate Professor of Office of the Provost","rank":"Tenured & Tenure Track Faculty","school":"Other Duke Unit","org":"Office of the Provost","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Imani Castellanos"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-10-09","g":false}]},{"id":"DEMO-0162","first":"Zoltán","last":"Fairweather","preferred":"x","affiliation":"faculty","title":"Associate Professor of Dance Program","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Dance Program","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-09","g":false}]},{"id":"DEMO-0163","first":"Rafael","last":"Hasselblad","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Sanford School of Public Policy","org":"Center for Child and Family Policy","programs":["Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-06","g":false}]},{"id":"DEMO-0164","first":"Cassius","last":"Quenneville","preferred":"x","affiliation":"faculty","title":"Associate Professor of Cell Biology","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Cell Biology","programs":[],"staff":["Dana Whitlock"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-22","g":false}]},{"id":"DEMO-0165","first":"Sunniva","last":"Wildeboer","preferred":"x","affiliation":"student","title":"PhD Candidate","rank":"Grad Student/Postdoc","school":"University Institutes and Centers","org":"Social Science Research Institute","programs":[],"staff":["Dana Whitlock"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-24","g":false}]},{"id":"DEMO-0166","first":"Adaeze","last":"Rennebohm","preferred":"x","affiliation":"staff","title":"Program Coordinator","rank":"Staff","school":"Pratt School of Engineering","org":"","programs":[],"staff":["Imani Castellanos"],"topics":["Assessment & Grading"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-13","g":false}]},{"id":"DEMO-0167","first":"Yevgeni","last":"Innocenti","preferred":"x","affiliation":"faculty","title":"Professor","rank":"Tenured & Tenure Track Faculty","school":"University Institutes and Centers","org":"Duke Institute for Brain Sciences","programs":[],"staff":["Theo Nakashima"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-06-09","g":false}]},{"id":"DEMO-0168","first":"Xiomara","last":"Underhill-Osei","preferred":"x","affiliation":"faculty","title":"Senior Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Biology","programs":[],"staff":["Imani Castellanos"],"topics":["Educational Research"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-02","g":false}]},{"id":"DEMO-0169","first":"Marianne","last":"Cunningham-Ife","preferred":"x","affiliation":"faculty","title":"Lecturer","rank":"Regular Rank Non Tenure Track faculty","school":"School of Medicine","org":"Population Health Sciences","programs":[],"staff":["Yusuf Barlowe"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-26","g":false}]},{"id":"DEMO-0170","first":"Emmeline","last":"Paik","preferred":"Emmy","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Divinity School","org":"Divinity, general","programs":[],"staff":["Imani Castellanos"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-15","g":false}]},{"id":"DEMO-0171","first":"Casimir","last":"Nkemdirim","preferred":"x","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"Health, Wellness, and Physical Education (HWPE)","org":"HWPE, general","programs":["Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Yusuf Barlowe"],"topics":["Assessment & Grading","New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-10-16","g":false},{"d":"2026-12-26","g":false}]},{"id":"DEMO-0172","first":"Sigrid","last":"Cazorla-Nnaji","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Graduate School, The","org":"English for International Students","programs":[],"staff":["Yusuf Barlowe"],"topics":["Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-10","g":false}]},{"id":"DEMO-0173","first":"Verity","last":"Okonkwo-Sable","preferred":"x","affiliation":"student","title":"Postdoctoral Associate","rank":"Grad Student/Postdoc","school":"University Initiatives & Academic Support Units","org":"Duke University Libraries","programs":["Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss"],"topics":["AI in Teaching & Learning","Assessment & Grading","Instructional Technology","New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-24","g":false},{"d":"2026-05-13","g":false},{"d":"2026-08-16","g":false},{"d":"2026-09-26","g":false},{"d":"2026-11-19","g":false}]},{"id":"DEMO-0174","first":"Folasade","last":"Zimmerli","preferred":"x","affiliation":"faculty","title":"Clinical Professor","rank":"Regular Rank Non Tenure Track faculty","school":"Trinity College of Arts & Sciences","org":"Physics","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Imani Castellanos"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-10-21","g":false}]},{"id":"DEMO-0175","first":"Leontine","last":"Swinburne","preferred":"x","affiliation":"faculty","title":"Professor of Civil and Environmental Engineering","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"Civil and Environmental Engineering","programs":[],"staff":["Rosalind Achebe-Voss"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-03-13","g":false}]},{"id":"DEMO-0176","first":"Liesbeth","last":"Mordaunt","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Civil and Environmental Engineering","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"Civil and Environmental Engineering","programs":["Faculty Peer Course Evaluation Program"],"staff":["Imani Castellanos"],"topics":["Inclusive Teaching"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-17","g":false}]},{"id":"DEMO-0177","first":"Solveig","last":"Nussbaumer","preferred":"x","affiliation":"faculty","title":"Associate Professor of DKU, English","rank":"Tenured & Tenure Track Faculty","school":"Duke Kunshan University (DKU)","org":"DKU, English","programs":[],"staff":["Dana Whitlock","Imani Castellanos","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Instructional Technology","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-21","g":false},{"d":"2025-11-01","g":false},{"d":"2026-11-11","g":false}]},{"id":"DEMO-0178","first":"Torvald","last":"Gwynneth","preferred":"x","affiliation":"faculty","title":"Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"Pratt School of Engineering","org":"Thomas Lord Department of Mechanical Engineering and Materials Science","programs":[],"staff":["Yusuf Barlowe"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-01","g":false}]},{"id":"DEMO-0179","first":"Mirembe","last":"Mortenson","preferred":"x","affiliation":"staff","title":"Academic Program Manager","rank":"Staff","school":"Trinity College of Arts & Sciences","org":"Linguistics","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Faculty Peer Course Evaluation Program"],"staff":["Dana Whitlock","Rosalind Achebe-Voss","Yusuf Barlowe"],"topics":["Course Design","Inclusive Teaching","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-04-04","g":false},{"d":"2026-08-10","g":false},{"d":"2026-08-21","g":false},{"d":"2026-11-13","g":false}]},{"id":"DEMO-0180","first":"Babajide","last":"Sandoval-Ime","preferred":"x","affiliation":"staff","title":"Instructional Designer","rank":"Staff","school":"University Initiatives & Academic Support Units","org":"Duke Science & Society","programs":[],"staff":["Dana Whitlock"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-01-05","g":false}]},{"id":"DEMO-0181","first":"Faustina","last":"Ashcombe","preferred":"x","affiliation":"student","title":"PhD Candidate","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"Christensen Family Center for Innovation","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","Engaging Learners and Building Community"],"staff":["Dana Whitlock","Rosalind Achebe-Voss"],"topics":["Assessment & Grading","Course Design","New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-23","g":false},{"d":"2026-04-11","g":false},{"d":"2026-07-24","g":false},{"d":"2026-07-26","g":false}]},{"id":"DEMO-0182","first":"Nkechi","last":"Vandermolen","preferred":"x","affiliation":"faculty","title":"Associate Professor","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Theater Studies","programs":[],"staff":["Yusuf Barlowe"],"topics":["Curriculum Development"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-12-17","g":false}]},{"id":"DEMO-0183","first":"Chukwuemeka","last":"Ellingsworth","preferred":"x","affiliation":"staff","title":"Program Director","rank":"Staff","school":"Sanford School of Public Policy","org":"Hart Leadership Program","programs":["Engaging Learners and Building Community"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss"],"topics":["AI in Teaching & Learning","Assessment & Grading","Course Design"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-10","g":false},{"d":"2025-08-19","g":false},{"d":"2026-05-16","g":false},{"d":"2026-08-27","g":false}]},{"id":"DEMO-0184","first":"Isolde","last":"Haverkamp","preferred":"Izzy","affiliation":"faculty","title":"Associate Professor of the Practice","rank":"Regular Rank Non Tenure Track faculty","school":"School of Nursing","org":"DUSON, general","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Dana Whitlock","Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima","Yusuf Barlowe"],"topics":["AI in Teaching & Learning","Course Design","Curriculum Development","Inclusive Teaching","Instructional Technology","Program/Dept-Level Consulting","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-07-19","g":false},{"d":"2025-07-26","g":false},{"d":"2025-12-16","g":false},{"d":"2026-07-06","g":false},{"d":"2026-07-07","g":false},{"d":"2026-09-07","g":false},{"d":"2026-10-17","g":false}]},{"id":"DEMO-0185","first":"Adaora","last":"Quimby-Ade","preferred":"x","affiliation":"student","title":"Teaching Assistant","rank":"Grad Student/Postdoc","school":"Pratt School of Engineering","org":"","programs":[],"staff":["Dana Whitlock","Rosalind Achebe-Voss"],"topics":["Curriculum Development","Educational Research","Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-08-19","g":false},{"d":"2026-12-07","g":false},{"d":"2026-12-27","g":false}]},{"id":"DEMO-0186","first":"Clothilde","last":"Broadhurst","preferred":"x","affiliation":"faculty","title":"Associate Professor of Classical Studies","rank":"Tenured & Tenure Track Faculty","school":"Trinity College of Arts & Sciences","org":"Classical Studies","programs":[],"staff":["Theo Nakashima"],"topics":["AI in Teaching & Learning"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-07-28","g":false}]},{"id":"DEMO-0187","first":"Bartholomew","last":"Delacroix","preferred":"Bart","affiliation":"faculty","title":"Adjunct Associate Professor","rank":"Non-Regular Rank Faculty","school":"University Initiatives & Academic Support Units","org":"Duke University Libraries","programs":["Collaborative Project Courses Faculty Fellows (CPC 2026-2027)"],"staff":["Rosalind Achebe-Voss"],"topics":["Program/Dept-Level Consulting"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2026-02-18","g":false}]},{"id":"DEMO-0188","first":"Mattias","last":"Thistlewood","preferred":"x","affiliation":"faculty","title":"Professor of Fuqua, general","rank":"Tenured & Tenure Track Faculty","school":"Fuqua School of Business","org":"Fuqua, general","programs":[],"staff":["Dana Whitlock"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-11-13","g":false}]},{"id":"DEMO-0189","first":"Ravindra","last":"Glazebrook","preferred":"x","affiliation":"faculty","title":"Associate Professor of Pratt, general","rank":"Tenured & Tenure Track Faculty","school":"Pratt School of Engineering","org":"Pratt, general","programs":["AI in Education at Duke Summit, Pre-Summit Workshops"],"staff":["Dana Whitlock"],"topics":["Teaching Practices"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-09-22","g":false}]},{"id":"DEMO-0190","first":"Aurelio","last":"Renn","preferred":"x","affiliation":"faculty","title":"Assistant Professor of Duke Cancer Center","rank":"Tenured & Tenure Track Faculty","school":"School of Medicine","org":"Duke Cancer Center","programs":[],"staff":["Dana Whitlock"],"topics":["New Faculty Orientation & Support"],"docUrl":null,"viewUrl":null,"marks":[{"d":"2025-08-08","g":false}]}]
+};
+
+/* ═════════ MODE ═════════ */
+const DEMO_MODE = (typeof INJECTED_PAYLOAD === "string");
+const DATA = DEMO_MODE ? SYNTHETIC : INJECTED_PAYLOAD;
+const TODAY = new Date(2026, 7, 4); // mockup fixes "today" so the scale is stable
+
+/* ═════════ HELPERS ═════════ */
+const X = "x";
+function clean(v) {
+  if (v === null || v === undefined) return "";
+  const s = String(v).trim();
+  return (s.toLowerCase() === X) ? "" : s;
+}
+function fold(s) {
+  return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+function parseDay(iso) {
+  const p = String(iso).split("-");
+  return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+}
+function fyOf(d) {
+  const y = d.getFullYear(), m = d.getMonth();
+  const start = (m >= 6) ? y : y - 1;
+  const a = String(start).slice(2), b = String(start + 1).slice(2);
+  return "FY" + a + "-" + b;
+}
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function longDate(d) {
+  const full = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return full[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+}
+function monthLabel(d) { return MONTHS[d.getMonth()] + " " + d.getFullYear(); }
+function shortDate(d) { return MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear(); }
+function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* ═════════ DERIVE ═════════ */
+const ROWS = DATA.contacts.map(function (c) {
+  const first = clean(c.first), last = clean(c.last), pref = clean(c.preferred);
+
+  /* The server supplies `display` from fdcDisplayName_(), which is the single
+     home of the name convention. The fallback below exists only for the
+     hand-authored demo fixture, which omits `display` in order to keep
+     exercising the "x" filter on a rendered heading. */
+  let display = clean(c.display);
+  if (!display) {
+    display = (pref && fold(pref) !== fold(first))
+      ? first + " \u201c" + pref + "\u201d " + last
+      : (first + " " + last).trim();
+  }
+
+  /* One entry per engagement, each carrying its own group flag. Keying group
+     status by DATE would be wrong: a contact can have several engagements on
+     one day, and only some of them a group engagement. */
+  const marks = (c.marks || [])
+    .filter(function (m) { return m && m.d; })
+    .map(function (m) { return { d: parseDay(m.d), g: !!m.g }; })
+    .sort(function (a, b) { return a.d - b.d; });
+
+  const fys = {};
+  marks.forEach(function (m) { fys[fyOf(m.d)] = (fys[fyOf(m.d)] || 0) + 1; });
+
+  const last1 = marks.length ? marks[marks.length - 1].d : null;
+  const haystack = fold([
+    first, last, pref, display, c.id, c.school, c.org, c.title, c.affiliation, c.rank,
+    (c.programs || []).join(" "), (c.staff || []).join(" "), (c.topics || []).join(" ")
+  ].join(" "));
+
+  return {
+    raw: c, id: c.id, first: first, last: last, display: display,
+    school: clean(c.school), org: clean(c.org), title: clean(c.title),
+    affiliation: clean(c.affiliation), rank: clean(c.rank),
+    programs: c.programs || [], staff: c.staff || [], topics: c.topics || [],
+    viewUrl: c.viewUrl || null, docUrl: c.docUrl || null,
+    marks: marks, fys: fys,
+    count: marks.length, lastDate: last1,
+    daysSince: last1 ? daysBetween(last1, TODAY) : null,
+    haystack: haystack,
+    lastKey: fold(last + " " + first)
+  };
+});
+
+/* shared timeline window, derived from the data itself */
+const ALL_DATES = ROWS.reduce(function (a, r) {
+  return a.concat(r.marks.map(function (m) { return m.d; }));
+}, []);
+const WIN_MIN = ALL_DATES.length
+  ? new Date(Math.min.apply(null, ALL_DATES.map(function (d) { return +d; })))
+  : new Date(TODAY.getFullYear(), TODAY.getMonth() - 4, 1);
+const WIN_START = new Date(WIN_MIN.getFullYear(), WIN_MIN.getMonth(), 1);
+const WIN_END = new Date(TODAY.getFullYear(), TODAY.getMonth() + 1, 0);
+const WIN_SPAN = Math.max(1, +WIN_END - +WIN_START);
+function pct(d) { return ((+d - +WIN_START) / WIN_SPAN) * 100; }
+
+/* fiscal-year boundaries inside the window */
+const FY_BOUNDS = [];
+for (let y = WIN_START.getFullYear() - 1; y <= WIN_END.getFullYear() + 1; y++) {
+  const b = new Date(y, 6, 1);
+  if (b > WIN_START && b < WIN_END) FY_BOUNDS.push(b);
+}
+
+/* ═════════ CONTROLS ═════════ */
+function uniqSorted(list) {
+  const seen = {}, out = [];
+  list.forEach(function (v) { if (v && !seen[v]) { seen[v] = 1; out.push(v); } });
+  return out.sort(function (a, b) { return a.localeCompare(b); });
+}
+function fillSelect(el, allLabel, values) {
+  let html = '<option value="">' + esc(allLabel) + "</option>";
+  values.forEach(function (v) {
+    const label = v.length > 44 ? v.slice(0, 42) + "…" : v;
+    html += '<option value="' + esc(v) + '">' + esc(label) + "</option>";
+  });
+  el.innerHTML = html;
+}
+
+const elQ = document.getElementById("q");
+const elClear = document.getElementById("clear");
+const elReset = document.getElementById("reset");
+const elSchool = document.getElementById("f-school");
+const elRank = document.getElementById("f-rank");
+const elFy = document.getElementById("f-fy");
+const elProgram = document.getElementById("f-program");
+const elStaff = document.getElementById("f-staff");
+const elActivity = document.getElementById("f-activity");
+const elDepth = document.getElementById("f-depth");
+const elSort = document.getElementById("f-sort");
+const elResults = document.getElementById("results");
+const elCount = document.getElementById("count");
+const elScale = document.getElementById("scale");
+const elScaleCaption = document.getElementById("scale-caption");
+
+fillSelect(elSchool, "All schools & units", uniqSorted(ROWS.map(function (r) { return r.school; })));
+fillSelect(elProgram, "All programs", uniqSorted(ROWS.reduce(function (a, r) { return a.concat(r.programs); }, [])));
+fillSelect(elStaff, "All staff", uniqSorted(ROWS.reduce(function (a, r) { return a.concat(r.staff); }, [])));
+
+/* Rank options come from Lookups, not from the contacts present, for two
+   reasons: Lookups orders them by seniority where an alphabetical sort would
+   put Assistant above Professor, and the dashboard already reads the same
+   column. Deriving a second vocabulary here is how two pages come to disagree
+   about the same data. Falls back to the ranks in hand if meta is absent, so
+   the static demo still works. */
+const RANK_LABELS = (DATA.meta && DATA.meta.rankLabels && DATA.meta.rankLabels.length)
+  ? DATA.meta.rankLabels.slice()
+  : uniqSorted(ROWS.map(function (r) { return r.rank; }));
+fillSelect(elRank, "All ranks", RANK_LABELS.filter(function (v) {
+  return ROWS.some(function (r) { return r.rank === v; });
+}));
+
+/* Fiscal years are derived from engagement dates by fyOf(), the same way the
+   timeline is. Filtering by year narrows WHICH CONTACTS are listed; it does
+   not narrow the timeline, which stays holistic by design. */
+fillSelect(elFy, "All fiscal years", uniqSorted(ROWS.reduce(function (a, r) {
+  return a.concat(Object.keys(r.fys));
+}, [])));
+
+elActivity.innerHTML =
+  '<option value="">Any recency</option>' +
+  '<option value="fy">Active in ' + fyOf(TODAY) + "</option>" +
+  '<option value="90">Last 90 days</option>' +
+  '<option value="dormant">Quiet 90+ days</option>';
+
+elDepth.innerHTML =
+  '<option value="">Any depth</option>' +
+  '<option value="0">No engagements yet</option>' +
+  '<option value="1">One engagement only</option>' +
+  '<option value="2-5">2\u20135 engagements</option>' +
+  '<option value="6">6+ engagements</option>';
+
+elSort.innerHTML =
+  '<option value="name">Sort: last name A–Z</option>' +
+  '<option value="recent">Sort: most recent</option>' +
+  '<option value="volume">Sort: most engagements</option>' +
+  '<option value="stale">Sort: least recent</option>';
+
+/* ═════════ SCALE ═════════ */
+(function drawScale() {
+  let html = '<div class="axis"></div>';
+  const cur = new Date(WIN_START.getFullYear(), WIN_START.getMonth(), 1);
+  while (cur <= WIN_END) {
+    html += '<div class="tick" style="left:' + pct(cur).toFixed(3) + '%"></div>';
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  FY_BOUNDS.forEach(function (b) {
+    const p = pct(b).toFixed(3);
+    html += '<div class="fy-div" style="left:' + p + '%"></div>';
+    html += '<div class="fy-label left" style="left:' + p + '%">' + fyOf(new Date(b.getFullYear(), 5, 1)) + "</div>";
+    html += '<div class="fy-label right" style="left:' + p + '%">' + fyOf(b) + "</div>";
+  });
+  elScale.innerHTML = html;
+  elScaleCaption.textContent = monthLabel(WIN_START) + " — " + monthLabel(WIN_END) + " · all tracked time";
+})();
+
+/* ═════════ MATCH & SORT ═════════ */
+function scoreRow(r, tokens) {
+  if (!tokens.length) return 0;
+  let worst = 0;
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    let s;
+    if (fold(r.last).indexOf(t) === 0) s = 1;
+    else if (fold(r.first).indexOf(t) === 0 || fold(clean(r.raw.preferred)).indexOf(t) === 0) s = 2;
+    else if (fold(r.display).indexOf(t) >= 0) s = 3;
+    else if (fold(r.id).indexOf(t) >= 0) s = 4;
+    else if (r.haystack.indexOf(t) >= 0) s = 5;
+    else return null;
+    if (s > worst) worst = s;
+  }
+  return worst;
+}
+
+function passFilters(r, f) {
+  if (f.school && r.school !== f.school) return false;
+  if (f.rank && r.rank !== f.rank) return false;
+  if (f.fy && !r.fys[f.fy]) return false;
+  if (f.program && r.programs.indexOf(f.program) < 0) return false;
+  if (f.staff && r.staff.indexOf(f.staff) < 0) return false;
+  if (f.activity === "fy" && !r.fys[fyOf(TODAY)]) return false;
+  if (f.activity === "90" && (r.daysSince === null || r.daysSince > 90)) return false;
+  if (f.activity === "dormant" && (r.daysSince === null || r.daysSince <= 90)) return false;
+  if (f.depth === "0" && r.count !== 0) return false;
+  if (f.depth === "1" && r.count !== 1) return false;
+  if (f.depth === "2-5" && (r.count < 2 || r.count > 5)) return false;
+  if (f.depth === "6" && r.count < 6) return false;
+  return true;
+}
+
+function compareBy(mode) {
+  return function (a, b) {
+    if (mode === "recent") {
+      const av = a.lastDate ? +a.lastDate : -Infinity, bv = b.lastDate ? +b.lastDate : -Infinity;
+      if (bv !== av) return bv - av;
+    } else if (mode === "volume") {
+      if (b.count !== a.count) return b.count - a.count;
+    } else if (mode === "stale") {
+      const av = a.lastDate ? +a.lastDate : Infinity, bv = b.lastDate ? +b.lastDate : Infinity;
+      if (av !== bv) return av - bv;
+    }
+    return a.lastKey.localeCompare(b.lastKey);
+  };
+}
+
+/* ═════════ RENDER ═════════ */
+const ICON_DOC = '<svg width="11" height="12" viewBox="0 0 11 12" fill="none" aria-hidden="true"><path d="M1 1.5h5.2L10 5v5.5H1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M6 1.5V5h4" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>';
+const ICON_VIEW = '<svg width="13" height="11" viewBox="0 0 13 11" fill="none" aria-hidden="true"><path d="M1 5.5C2.6 2.9 4.4 1.6 6.5 1.6S10.4 2.9 12 5.5c-1.6 2.6-3.4 3.9-5.5 3.9S2.6 8.1 1 5.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><circle cx="6.5" cy="5.5" r="1.6" stroke="currentColor" stroke-width="1.1"/></svg>';
+
+function highlight(text, tokens) {
+  let out = esc(text);
+  if (!tokens.length) return out;
+  const folded = fold(text);
+  const spans = [];
+  tokens.forEach(function (t) {
+    let i = folded.indexOf(t);
+    while (i >= 0) { spans.push([i, i + t.length]); i = folded.indexOf(t, i + t.length); }
+  });
+  if (!spans.length) return out;
+  spans.sort(function (a, b) { return a[0] - b[0]; });
+  const merged = [spans[0]];
+  for (let k = 1; k < spans.length; k++) {
+    const prev = merged[merged.length - 1];
+    if (spans[k][0] <= prev[1]) prev[1] = Math.max(prev[1], spans[k][1]);
+    else merged.push(spans[k]);
+  }
+  let res = "", cursor = 0;
+  merged.forEach(function (s) {
+    res += esc(text.slice(cursor, s[0])) + "<mark>" + esc(text.slice(s[0], s[1])) + "</mark>";
+    cursor = s[1];
+  });
+  return res + esc(text.slice(cursor));
+}
+
+function spineHtml(r) {
+  let html = '<div class="base"></div>';
+  FY_BOUNDS.forEach(function (b) {
+    html += '<div class="fy-div" style="left:' + pct(b).toFixed(3) + '%"></div>';
+  });
+  r.marks.forEach(function (m) {
+    const left = Math.min(99.6, Math.max(0, pct(m.d))).toFixed(3);
+    html += '<div class="' + (m.g ? "mk group" : "mk") + '" style="left:' + left + '%"></div>';
+  });
+  return html;
+}
+
+/* A real href when the payload carries one, so middle-click and open-in-new-tab
+   behave normally; an inert marker when it does not, which is the demo case. */
+function link(act, url, cls, icon, label, tip) {
+  const live = !!url;
+  return '<a class="btn ' + cls + '" data-act="' + act + '"' +
+    ' href="' + (live ? esc(url) : "#") + '"' +
+    (live ? ' target="_blank" rel="noopener"' : ' data-inert="1"') +
+    ' title="' + esc(tip) + '">' + icon + esc(label) + "</a>";
+}
+
+function rowHtml(r, tokens, idx) {
+  /* Exact duplicates are suppressed, not merged: the Handbook has External
+     contacts carry "External" across several columns, and student contacts
+     carry "Student" as their title, so a literal repeat says nothing twice.
+     Only case-insensitive exact matches are dropped. */
+  const same = function (a, b) { return a && b && a.toLowerCase() === b.toLowerCase(); };
+  const metaBits = [];
+  if (r.affiliation) metaBits.push('<span>' + highlight(r.affiliation, tokens) + "</span>");
+  if (r.title && !same(r.title, r.affiliation)) {
+    metaBits.push('<span>' + highlight(r.title, tokens) + "</span>");
+  }
+  let line2 = [];
+  if (r.org) line2.push('<span class="unit">' + highlight(r.org, tokens) + "</span>");
+  if (r.school && !same(r.school, r.org)) {
+    line2.push('<span class="unit">' + highlight(r.school, tokens) + "</span>");
+  }
+
+  let programLine = "";
+  if (r.programs.length) {
+    programLine = '<div class="meta"><span class="program">' + highlight(r.programs[0], tokens) + "</span>" +
+      (r.programs.length > 1 ? '<span class="sep">·</span><span>+' + (r.programs.length - 1) + " more</span>" : "") + "</div>";
+  }
+
+  /* Rank is shown because it is now filterable: a filter whose field is
+     invisible in the results gives no way to see why a row matched. */
+  const rankLine = r.rank ? '<div class="rank-line">' + highlight(r.rank, tokens) + "</div>" : "";
+
+  const nameHtml = highlight(r.display, tokens);
+  const extTag = (r.school === "External") ? '<span class="external">External</span>' : "";
+
+  let activity;
+  if (r.count === 0) {
+    activity = '<div class="none">No engagements yet</div>';
+  } else {
+    activity =
+      '<div class="spine">' + spineHtml(r) + "</div>" +
+      '<div class="figures"><b>' + r.count + "</b> " +
+        (r.count === 1 ? "engagement" : "engagements") + "</div>" +
+      '<div class="figures last">last ' + shortDate(r.lastDate) + "</div>";
+  }
+
+  return (
+    '<li class="result row-grid" data-idx="' + idx + '" data-id="' + esc(r.id) + '">' +
+      "<div>" +
+        '<div class="name">' + nameHtml + '<span class="cid">' + highlight(r.id, tokens) + "</span>" + extTag + "</div>" +
+        '<div class="meta">' + metaBits.join('<span class="sep">·</span>') + "</div>" +
+        (line2.length ? '<div class="meta">' + line2.join('<span class="sep">·</span>') + "</div>" : "") +
+        programLine +
+        rankLine +
+      "</div>" +
+      '<div class="activity">' + activity + "</div>" +
+      '<div class="actions">' +
+        link("notes", r.docUrl, "btn-notes", ICON_DOC, "Source notes", "Google Doc \u2014 write and revise notes") +
+        link("view", r.viewUrl, "btn-view", ICON_VIEW, "Full view", "Read-only page \u2014 cataloging, summary, and timeline") +
+      "</div>" +
+      '<p class="inert-note" data-note></p>' +
+    "</li>"
+  );
+}
+
+let VIEW = [];
+let cursor = -1;
+
+function render() {
+  const q = elQ.value.trim();
+  const tokens = fold(q).split(/\s+/).filter(Boolean);
+  const f = {
+    school: elSchool.value, rank: elRank.value, fy: elFy.value,
+    program: elProgram.value,
+    staff: elStaff.value, activity: elActivity.value, depth: elDepth.value
+  };
+
+  const scored = [];
+  ROWS.forEach(function (r) {
+    if (!passFilters(r, f)) return;
+    const s = scoreRow(r, tokens);
+    if (s === null) return;
+    scored.push({ r: r, s: s });
+  });
+
+  const cmp = compareBy(elSort.value);
+  scored.sort(function (a, b) {
+    if (tokens.length && a.s !== b.s) return a.s - b.s;
+    return cmp(a.r, b.r);
+  });
+
+  VIEW = scored.map(function (o) { return o.r; });
+  /* Only pre-select a row once the person has typed. On first load, return
+     would otherwise open whichever contact happens to sort first. */
+  cursor = (VIEW.length && tokens.length) ? 0 : -1;
+
+  elCount.innerHTML = "<b>" + VIEW.length + "</b> of " + ROWS.length + " contacts";
+  elClear.classList.toggle("on", q.length > 0);
+  const anyFilter = !!(f.school || f.rank || f.fy || f.program || f.staff || f.activity || f.depth) || q.length > 0 || elSort.value !== "name";
+  elReset.classList.toggle("on", anyFilter);
+  [elSchool, elRank, elFy, elProgram, elStaff, elActivity, elDepth].forEach(function (el) {
+    el.classList.toggle("active", !!el.value);
+  });
+  elSort.classList.toggle("active", elSort.value !== "name");
+
+  if (!VIEW.length) {
+    elResults.innerHTML =
+      '<li class="empty-state">' +
+        '<p class="big">No contacts match' + (q ? " \u201C" + esc(q) + "\u201D" : " these filters") + ".</p>" +
+        '<p class="small">Check the spelling, or search by school, department, or program instead. A contact logged very recently appears here after the data manager\u2019s next sync.</p>' +
+      "</li>";
+    return;
+  }
+
+  elResults.innerHTML = VIEW.map(function (r, i) { return rowHtml(r, tokens, i); }).join("");
+  paintCursor();
+}
+
+function paintCursor() {
+  const items = elResults.querySelectorAll("li.result");
+  for (let i = 0; i < items.length; i++) items[i].classList.toggle("cursor", i === cursor);
+}
+
+function open(kind, r, liEl) {
+  const url = (kind === "notes") ? r.docUrl : r.viewUrl;
+  if (url) { window.open(url, "_blank", "noopener"); return; }
+  const note = liEl ? liEl.querySelector("[data-note]") : null;
+  if (!note) return;
+  note.textContent = (kind === "notes")
+    ? "In the live directory this opens " + r.display + "\u2019s Dossier_SOURCE NOTES Google Doc."
+    : "In the live directory this opens " + r.display + "\u2019s Dossier_FULL VIEW page.";
+  note.classList.add("on");
+}
+
+/* ═════════ EVENTS ═════════ */
+[elQ].forEach(function (el) { el.addEventListener("input", render); });
+[elSchool, elRank, elFy, elProgram, elStaff, elActivity, elDepth, elSort].forEach(function (el) {
+  el.addEventListener("change", function () { render(); elQ.focus(); });
+});
+elClear.addEventListener("click", function () { elQ.value = ""; render(); elQ.focus(); });
+elReset.addEventListener("click", function () {
+  elQ.value = "";
+  [elSchool, elRank, elFy, elProgram, elStaff, elActivity, elDepth].forEach(function (el) { el.value = ""; });
+  elSort.value = "name";
+  render(); elQ.focus();
+});
+
+elResults.addEventListener("click", function (ev) {
+  const a = ev.target.closest("a.btn");
+  if (!a) return;
+  const li = a.closest("li.result");
+  cursor = Number(li.getAttribute("data-idx"));
+  paintCursor();
+  if (!a.getAttribute("data-inert")) return;   // a real link — let the browser open it
+  ev.preventDefault();
+  open(a.getAttribute("data-act"), VIEW[cursor], li);
+});
+
+document.addEventListener("keydown", function (ev) {
+  if (ev.key === "Escape") {
+    elQ.value = ""; render(); elQ.focus(); return;
+  }
+  if (!VIEW.length) return;
+  if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+    ev.preventDefault();
+    cursor = Math.max(0, Math.min(VIEW.length - 1, cursor + (ev.key === "ArrowDown" ? 1 : -1)));
+    paintCursor();
+    const el = elResults.querySelectorAll("li.result")[cursor];
+    if (el) el.scrollIntoView({ block: "nearest" });
+    return;
+  }
+  if (ev.key === "Enter" && cursor >= 0) {
+    ev.preventDefault();
+    const li = elResults.querySelectorAll("li.result")[cursor];
+    const a = li.querySelector('[data-act="' + (ev.shiftKey ? "notes" : "view") + '"]');
+    if (a) a.click();
+  }
+});
+
+/* The banner and the synthetic footnote are demo artifacts. Served live, the
+   payload is an object rather than the sentinel string, and both come off. */
+/* The Home button points at the front page. Served live that is an absolute
+   URL on another origin, so it is carried in the payload rather than written
+   into this file — no config value lives in a page file. The static demo keeps
+   the relative default, where index.html sits alongside.
+
+   target="_top" is REQUIRED, not stylistic. HtmlService serves this page inside
+   a sandboxed iframe; a target-less link navigates that frame, and GitLab sends
+   X-Frame-Options, so the browser reports "refused to connect". Verified
+   August 9, 2026. Every other outbound link on this page already carries a
+   target for the same reason. _top rather than _blank because Home means
+   leaving, not opening a second tab. */
+if (DATA.meta && DATA.meta.homeUrl) {
+  const home = document.getElementById("home-link");
+  if (home) home.href = DATA.meta.homeUrl;
+}
+
+if (!DEMO_MODE) {
+  const banner = document.querySelector(".demo-banner");
+  if (banner) banner.remove();
+  const foot = document.querySelector(".sheet-foot");
+  if (foot) {
+    foot.innerHTML =
+      "<span>Faculty Development Connect \u00b7 Dossiers</span>" +
+      "<span>" + (DATA.meta.contactCount || ROWS.length) + " contacts \u00b7 " +
+      (DATA.meta.engagementCount || 0) + " engagements</span>";
+  }
+}
+
+render();
+elQ.focus();
+</script>
+</body>
+</html>

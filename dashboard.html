@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Development Connect: Dashboards — Duke CTL</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Source+Sans+3:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', 'Source Sans Pro', -apple-system, sans-serif;
+    background: #f4f6f9; min-height: 100vh; color: #1a2a3a;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #c5d9ed; border-radius: 3px; }
+
+  /* Header */
+  .db-header {
+    background: linear-gradient(135deg, #001A33 0%, #003366 40%, #1a5276 100%);
+    padding: 0 20px; box-shadow: 0 4px 24px rgba(0,26,51,0.2);
+  }
+  .db-header-inner {
+    max-width: 1100px; margin: 0 auto; padding: 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  /* System name in regular, page name in semibold: the four pages read as one
+     system with a changing suffix rather than four separate titles. Both
+     weights are already in the font request above. */
+  .db-header-title {
+    font-size: 26px; font-weight: 500; color: #fff;
+    font-family: 'Playfair Display', Georgia, serif; letter-spacing: 0.3px;
+  }
+  .db-header-title b { font-weight: 700; }
+  .db-header-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; letter-spacing: 0.5px; }
+  .db-live { display: flex; align-items: center; gap: 8px; }
+  .db-live-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.5);
+  }
+  .db-live span { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .db-refresh-btn {
+    margin-left: 16px; padding: 6px 14px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+    color: #fff; font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  /* Tabs */
+  .db-tabs {
+    background: #fff; border-bottom: 1px solid #e8edf2;
+    padding: 0 20px; position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  }
+  .db-tabs-inner { max-width: 1100px; margin: 0 auto; display: flex; gap: 4px; }
+  .db-tab {
+    padding: 14px 18px; border: none; background: none; cursor: pointer;
+    font-size: 14px; font-family: 'Source Sans 3', sans-serif;
+    color: #94a3b8; font-weight: 500; border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .db-tab.active { color: #003366; border-bottom-color: #003366; font-weight: 700; }
+
+  /* Fiscal-year selector bar — global filter driving all four sections */
+  .db-fybar { max-width: 1100px; margin: 20px auto 0; padding: 0 20px; display: flex; justify-content: flex-end; }
+  .db-fybar-inner { display: flex; align-items: center; gap: 10px; }
+  .db-fybar-text { font-size: 12px; font-weight: 600; color: #64748b; }
+  .db-fy-select {
+    font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 700;
+    color: #003366; background: #f0f4f8; border: 1px solid #d1d9e0; border-radius: 8px;
+    padding: 6px 12px; cursor: pointer;
+  }
+  .db-fy-select:hover { border-color: #b1bdc7; }
+
+  /* Year over Year comparison section */
+  .db-yoy-banner { background:#eaf2fb; color:#1a5276; font-size:13px; line-height:1.5; border-radius:8px; padding:9px 14px; margin:0 0 16px; }
+  .db-yoy-legend { display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:#64748b; margin:0 0 4px; }
+  .db-yoy-legend .k { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
+  .db-yoy-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; }
+  .db-yoy-kpi { background:#f8fafc; border:1px solid #e8edf2; border-radius:10px; padding:14px 16px; }
+  .db-yoy-kpi-label { font-size:13px; color:#64748b; margin-bottom:6px; }
+  .db-yoy-kpi-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .db-yoy-kpi-yr { font-size:11px; color:#94a3b8; min-width:56px; }
+  .db-yoy-kpi-track { flex:1; height:10px; background:#eef2f6; border-radius:3px; overflow:hidden; }
+  .db-yoy-kpi-fill { height:100%; border-radius:3px; }
+  .db-yoy-kpi-num { font-family:'Playfair Display',serif; font-size:18px; color:#1a2a3a; min-width:34px; text-align:right; }
+  .db-yoy-kpi-total { border-top:1px solid #e8edf2; margin-top:3px; padding-top:6px; }
+  .db-yoy-kpi-totlab { color:#003366; font-weight:700; white-space:nowrap; }
+  .db-yoy-kpi-totnum { color:#003366; }
+  .db-yoy-grp { display:flex; flex-direction:column; gap:9px; }
+  .db-yoy-row { display:grid; grid-template-columns:130px 1fr; align-items:center; gap:12px; }
+  .db-yoy-label { font-size:13px; color:#475569; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .db-yoy-bars { display:flex; flex-direction:column; gap:3px; }
+  .db-yoy-bar { display:flex; align-items:center; gap:8px; }
+  .db-yoy-track { flex:1; height:13px; background:#eef2f6; border-radius:4px; overflow:hidden; }
+  .db-yoy-fill { height:100%; border-radius:4px; }
+  .db-yoy-val { min-width:96px; font-size:12px; color:#94a3b8; white-space:nowrap; }
+  .db-yoy-val .e { font-weight:700; color:#1a2a3a; }
+  .db-yoy-pf { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .db-yoy-pf-col { background:#f8fafc; border:1px solid #e8edf2; border-radius:10px; padding:14px 16px; }
+  .db-yoy-pf-hd { font-size:14px; font-weight:700; color:#1a2a3a; }
+  .db-yoy-pf-sub { font-size:12px; color:#64748b; margin-bottom:2px; }
+  .db-yoy-pf-prog { padding:8px 0; border-top:1px solid #e8edf2; }
+  .db-yoy-pf-name { font-size:13px; color:#1a2a3a; }
+  .db-yoy-pf-tag { font-size:11px; color:#1a5276; background:#eaf2fb; border-radius:4px; padding:1px 6px; margin-left:4px; white-space:nowrap; }
+  .db-yoy-pf-stats { display:flex; flex-wrap:wrap; gap:12px; margin-top:4px; font-size:12px; color:#64748b; }
+  .db-yoy-pf-stats b { color:#1a2a3a; font-weight:700; }
+  @media (max-width:700px){ .db-yoy-pf { grid-template-columns:1fr; } .db-yoy-row { grid-template-columns:96px 1fr; } }
+
+  /* Content */
+  .db-content { max-width: 1100px; margin: 24px auto; padding: 0 20px; }
+  .db-section { animation: fadeIn 0.3s ease; }
+  .hidden { display: none !important; }
+
+  /* KPI Cards */
+  .db-kpis { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+  .db-kpi {
+    background: #fff; border-radius: 16px; padding: 24px 20px;
+    box-shadow: 0 1px 8px rgba(0,20,50,0.06); border: 1px solid #e8edf2;
+    flex: 1 1 0; min-width: 140; position: relative; overflow: hidden;
+  }
+  .db-kpi-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .db-kpi-num {
+    font-size: 36px; font-weight: 800; line-height: 1;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .db-kpi-label { font-size: 13px; font-weight: 600; color: #475569; margin-top: 6px; }
+  .db-kpi-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+
+  /* Panels */
+  .db-panels { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+  .db-panel {
+    background: #fff; border-radius: 16px; padding: 24px;
+    box-shadow: 0 1px 8px rgba(0,20,50,0.06); border: 1px solid #e8edf2;
+    flex: 1 1 0; min-width: 340;
+  }
+  .db-panel-title {
+    font-size: 16px; font-weight: 700; color: #1a2a3a; margin: 0 0 16px;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .db-panel-note { font-size: 11px; color: #94a3b8; margin: -8px 0 12px; font-style: italic; }
+  .db-panel-full { width: 100%; flex-basis: 100%; }
+
+  /* Panel header row: title on the left, total-N chip on the right.
+     The chip surfaces the denominator so per-bar percentages have an explicit base.
+     On the rank matrix the chip reads "with known rank" because that panel excludes
+     engagements with no matched rank, so its N can be lower than total engagements —
+     the label keeps a smaller N from looking like a bug. */
+  .db-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin: 0 0 16px;
+  }
+  .db-panel-head .db-panel-title { margin: 0; }
+  .db-panel-total {
+    flex-shrink: 0;
+    background: #f0f4f8; border: 1px solid #d1d9e0; border-radius: 999px;
+    padding: 3px 12px; font-size: 12px; font-weight: 700; color: #003366;
+    font-family: 'Source Sans 3', sans-serif; white-space: nowrap;
+  }
+
+  /* Bar chart rows */
+  .db-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .db-bar-label {
+    width: 120px; font-size: 12px; color: #475569; text-align: right;
+    flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .db-bar-track { height: 22px; background: #f1f5f9; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+  .db-bar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; }
+  .db-bar-val { font-size: 12px; font-weight: 700; color: #1a2a3a; min-width: 40px; }
+
+  /* Monthly columns */
+  .db-monthly { display: flex; align-items: flex-end; gap: 16px; height: 130px; margin-top: 28px; overflow: visible; }
+  .db-month-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .db-month-val { font-size: 13px; font-weight: 700; color: #003366; margin-bottom: 4px; }
+  .db-month-bar {
+    width: 100%; max-width: 48px; border-radius: 8px 8px 4px 4px;
+    background: linear-gradient(180deg, #003366, #2e86c1);
+    transition: height 0.5s ease;
+  }
+  .db-month-label { font-size: 12px; color: #64748b; margin-top: 6px; font-weight: 600; }
+
+  /* Heatmap tiles */
+  .db-tiles {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .db-tile {
+    padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+    text-align: center; transition: all 0.3s;
+  }
+  @media (max-width: 700px) {
+    .db-tiles { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 460px) {
+    .db-tiles { grid-template-columns: repeat(2, 1fr); }
+  }
+  .db-tile-num { font-size: 18px; font-weight: 800; margin-top: 2px; font-family: 'Playfair Display', serif; }
+
+  /* School drill-down panel (Schools & Reach tab, third panel) */
+  .db-drill-pills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 16px; padding-bottom: 16px;
+    border-bottom: 1px solid #e8edf2;
+  }
+  .db-drill-pill {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid #d1d9e0; background: #f0f4f8; color: #1a2a3a;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .db-drill-pill:hover { background: #e1e9f1; border-color: #b1bdc7; }
+  .db-drill-pill.active {
+    background: #003366; color: #fff; border-color: #003366;
+  }
+  .db-drill-meta { font-size: 12px; color: #64748b; margin-bottom: 12px; }
+  .db-drill-meta strong { color: #003366; font-weight: 700; }
+  .db-drill-bars { display: flex; flex-direction: column; gap: 6px; }
+  .db-drill-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 64px;
+    align-items: center; gap: 12px;
+    font-size: 12px;
+  }
+  /* Label cell wraps the truncating label so we can put title + custom tooltip on a
+     non-overflow:hidden parent. Without this, ::after escapes get clipped by the label. */
+  .db-drill-label-cell { position: relative; min-width: 0; }
+  .db-drill-label {
+    color: #475569; text-align: right;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* Custom hover tooltip — shows immediately (no native 1s delay), only when the cell
+     has a title attribute (which we only set for labels long enough to truncate). */
+  .db-drill-label-cell[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 4px); right: 0;
+    background: #1a2a3a; color: #fff;
+    padding: 5px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 500;
+    white-space: nowrap; max-width: 420px;
+    overflow: hidden; text-overflow: ellipsis;
+    box-shadow: 0 2px 8px rgba(0,20,50,0.15);
+    z-index: 10; pointer-events: none;
+    font-family: 'Source Sans 3', sans-serif;
+    font-style: normal;
+  }
+  .db-drill-track {
+    background: #f1f5f9; border-radius: 6px;
+    height: 22px; overflow: hidden;
+  }
+  .db-drill-fill {
+    background: linear-gradient(90deg, #1a5276, #1a5276dd);
+    height: 100%; border-radius: 6px;
+    transition: width 0.4s ease;
+  }
+  .db-drill-count {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 14px; font-weight: 700;
+    color: #1a2a3a; text-align: right;
+  }
+  /* Right cell now stacks the engagement count over a muted unique-participant count,
+     so a high-engagement / low-people org (e.g. DGHI) reads as concentrated at a glance. */
+  .db-drill-count-cell { display: flex; flex-direction: column; align-items: flex-end; }
+  .db-drill-people { font-size: 10px; color: #94a3b8; font-weight: 600; line-height: 1.1; margin-top: 1px; }
+  /* "Unspecified" rows are placeholder values for contacts with no Primary Org filled in yet.
+     De-emphasized to distinguish from real sub-orgs without hiding the data from view. */
+  .db-drill-row.unspec .db-drill-label { font-style: italic; color: #94a3b8; }
+  .db-drill-row.unspec .db-drill-fill { background: linear-gradient(90deg, #94a3b8, #94a3b8dd); }
+  .db-drill-row.unspec .db-drill-count { color: #94a3b8; font-style: italic; }
+  .db-drill-row.unspec .db-drill-people { font-style: italic; }
+  @media (max-width: 700px) {
+    .db-drill-row { grid-template-columns: 140px 1fr 56px; gap: 8px; }
+  }
+
+  /* Named Programs panel */
+  .db-program-card {
+    background: #f8fafc; border-radius: 12px; padding: 20px 22px;
+    margin-bottom: 14px; border: 1px solid #e8edf2;
+  }
+  .db-program-card:last-child { margin-bottom: 0; }
+  .db-program-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .db-program-name {
+    font-size: 17px; font-weight: 700; color: #1a2a3a;
+    font-family: 'Playfair Display', serif;
+  }
+  .db-program-stats {
+    font-size: 12px; color: #64748b; margin-top: 4px;
+  }
+  .db-program-stats strong { color: #003366; font-weight: 700; }
+  .db-program-spark-wrap {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  }
+  .db-program-spark-label {
+    font-size: 10px; color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 0.5px; font-weight: 600;
+  }
+  .db-program-subtitle {
+    font-size: 12px; font-weight: 700; color: #475569;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 16px 0 10px;
+  }
+  .db-program-subtitle:first-child { margin-top: 0; }
+  .db-program-empty {
+    text-align: center; padding: 40px 20px; color: #94a3b8; font-size: 13px;
+  }
+
+
+  /* Donut */
+  .db-donut-wrap { display: flex; align-items: center; gap: 24px; }
+  .db-donut-container { position: relative; }
+  .db-donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); text-align: center;
+  }
+  .db-donut-total {
+    font-size: 28px; font-weight: 800; color: #1a2a3a;
+    font-family: 'Playfair Display', serif;
+  }
+  .db-donut-label2 {
+    font-size: 10px; color: #94a3b8; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .db-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .db-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .db-legend-text { font-size: 12px; color: #475569; flex: 1; }
+  .db-legend-val { font-size: 12px; font-weight: 700; color: #1a2a3a; }
+
+  /* Table */
+  .db-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .db-table th {
+    text-align: left; padding: 10px 12px; border-bottom: 2px solid #e8edf2;
+    color: #64748b; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .db-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+  .db-table td.bold { font-weight: 600; color: #1a2a3a; }
+  .db-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 700;
+  }
+  .db-badge-green { background: #ecfdf5; color: #059669; }
+  .db-badge-yellow { background: #fef9c3; color: #b45309; }
+
+  /* Staff heatmap */
+  .db-heat-table { border-collapse: collapse; font-size: 11px; width: 100%; }
+  .db-heat-table th {
+    padding: 6px 8px; text-align: center; color: #64748b;
+    font-weight: 600; border-bottom: 2px solid #e8edf2;
+  }
+  .db-heat-table th:first-child { text-align: left; }
+  .db-heat-table td { padding: 5px 8px; text-align: center; border-radius: 4px; }
+  .db-heat-table td:first-child { text-align: left; color: #475569; white-space: nowrap; }
+
+  /* Loading */
+  .db-loading { text-align: center; padding: 80px 20px; }
+  .db-loading-spinner {
+    width: 40px; height: 40px; border: 3px solid #e8edf2;
+    border-top-color: #003366; border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .db-loading p { color: #94a3b8; font-size: 14px; }
+
+  .db-footer { text-align: center; padding: 32px 20px; font-size: 12px; color: #94a3b8; letter-spacing: 0.3px; }
+
+  @media (max-width: 700px) {
+    .db-kpis { flex-direction: column; }
+    .db-panels { flex-direction: column; }
+    .db-panel { min-width: auto; }
+  }
+  /* Demonstration banner. Same treatment as the dossier pages — dark bar,
+     uppercase, letterspaced mono — in this page's own palette rather than the
+     dossier's, since the two visual languages are not reconciled until the
+     front page migrates (v11 §K19). Present in markup and removed on the live
+     path, so a script failure leaves the banner standing rather than removing
+     it: the failure mode points the safe way. */
+  .demo-banner {
+    padding: 11px 24px;
+    background: #001A33;
+    color: #D8DCE4;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase; text-align: center;
+  }
+  .demo-banner strong { color: #FFFFFF; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- CONFIGURATION — UPDATE THIS VALUE            -->
+<!-- ============================================ -->
+<script>
+  // ============================================================
+  // CONFIGURATION — paste your real values locally before deploy.
+  // (A placeholder -> real-value mapping was provided alongside this file.)
+  // While SPREADSHEET_ID is still the placeholder, the dashboard runs in DEMO mode.
+  // ============================================================
+
+  // Your Google Sheet ID (the long string in the sheet URL between /d/ and /edit).
+  // One canonical workbook — unchanged across fiscal years.
+  const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE";
+
+  // Shared / canonical tabs — identical across every fiscal year.
+  const CONTACTS_GID = "YOUR_CONTACTS_GID_HERE";   // Contacts tab
+  const LOOKUPS_GID  = "YOUR_LOOKUPS_GID_HERE";    // Lookups tab
+
+  // Per-fiscal-year transactional tabs.
+  // To add a future year: copy a block, set its label and two GIDs, and (optionally)
+  // point DEFAULT_FY at it. Nothing else in the file needs to change.
+  const FY_TABS = {
+    "FY25-26": {
+      engagementsGid: "YOUR_ENGAGEMENTS_GID_HERE",
+      eventsGid:      "YOUR_EVENTS_GID_HERE",
+    },
+    "FY26-27": {
+      engagementsGid: "YOUR_ENGAGEMENTS_GID_HERE",
+      eventsGid:      "YOUR_EVENTS_GID_HERE",
+    },
+  };
+
+  // The fiscal year shown on first load (the current FY).
+  const DEFAULT_FY = "FY26-27";
+
+  // Set to true to show the Staff tab, false to hide it
+  const SHOW_STAFF_TAB = false;
+</script>
+
+<!-- Header -->
+<div class="demo-banner">
+  <strong>Demonstration — synthetic data.</strong> No real contact records appear on this page.
+</div>
+<div class="db-header">
+  <div class="db-header-inner">
+    <div>
+      <div class="db-header-title">Faculty Development Connect: <b>Dashboards</b></div>
+      <div class="db-header-sub">Duke University · Center for Teaching & Learning</div>
+    </div>
+    <div class="db-live">
+      <div class="db-live-dot"></div>
+      <span>Live data</span>
+      <button class="db-refresh-btn" onclick="loadAllData()">↻ Refresh</button>
+      <a href="index.html" class="db-refresh-btn" style="text-decoration:none;">⌂ Home</a>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="db-tabs">
+  <div class="db-tabs-inner">
+    <button class="db-tab active" onclick="switchTab('overview',this)">Overview</button>
+    <button class="db-tab" onclick="switchTab('schools',this)">Schools & Reach</button>
+    <button class="db-tab" onclick="switchTab('topics',this)">Topics & Types</button>
+    <button class="db-tab" onclick="switchTab('events',this)">Events</button>
+    <button class="db-tab" onclick="switchTab('yoy',this)">Year over Year</button>
+    <button class="db-tab" id="staffTabBtn" onclick="switchTab('staff',this)">Staff</button>
+  </div>
+</div>
+
+<!-- Fiscal Year selector — global, drives all four sections -->
+<div class="db-fybar hidden" id="fybar">
+  <div class="db-fybar-inner">
+    <span class="db-fybar-text">Showing data for</span>
+    <select id="fySelect" class="db-fy-select" onchange="applyFY(this.value)" aria-label="Fiscal year"></select>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="db-content">
+  <!-- Loading -->
+  <div id="loading" class="db-loading">
+    <div class="db-loading-spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Overview -->
+  <div id="tab-overview" class="db-section hidden"></div>
+  <!-- Schools -->
+  <div id="tab-schools" class="db-section hidden"></div>
+  <!-- Topics -->
+  <div id="tab-topics" class="db-section hidden"></div>
+  <!-- Events -->
+  <div id="tab-events" class="db-section hidden"></div>
+  <!-- Year over Year -->
+  <div id="tab-yoy" class="db-section hidden"></div>
+  <!-- Staff -->
+  <div id="tab-staff" class="db-section hidden"></div>
+</div>
+
+<div class="db-footer">
+  Duke University · Center for Teaching & Learning · Faculty Development
+  <span id="lastUpdated"></span>
+</div>
+
+<script>
+// ============================================================
+// REFERENCE DATA
+// ============================================================
+const SCHOOLS_SHORT = {
+  "Trinity College of Arts & Sciences": "Trinity",
+  "Pratt School of Engineering": "Pratt",
+  "Sanford School of Public Policy": "Sanford",
+  "Nicholas School of the Environment": "Nicholas",
+  "Fuqua School of Business": "Fuqua",
+  "School of Law": "Law",
+  "School of Medicine": "Medicine",
+  "School of Nursing": "Nursing",
+  "Divinity School": "Divinity",
+  "Graduate School, The": "Graduate School",
+  "The Graduate School": "Graduate School", // legacy fallback
+  "Duke Kunshan University (DKU)": "DKU",
+  "Duke Kunshan University": "DKU", // legacy fallback
+  "Health, Wellness, and Physical Education (HWPE)": "HWPE",
+  "Health, Wellness, and Physical Education": "HWPE", // legacy fallback
+  "University Initiatives & Academic Support Units": "Initiatives & Support",
+  "University Institutes and Centers": "Institutes & Centers",
+  "Other Duke Unit": "Other",
+  "External Organization": "External",
+};
+
+// Per-school noun for the within-school drill-down panel.
+// Singular / plural pair. Default fallback: ["unit", "units"].
+// This is a Handbook-level taxonomy decision; edit here when the Handbook updates.
+const SCHOOL_SUBORG_NOUN = {
+  "Trinity College of Arts & Sciences": ["department", "departments"],
+  "Pratt School of Engineering": ["department", "departments"],
+  "School of Medicine": ["department", "departments"],
+  "School of Nursing": ["department", "departments"],
+  "Nicholas School of the Environment": ["division", "divisions"],
+  "Fuqua School of Business": ["unit", "units"],
+  "Sanford School of Public Policy": ["center", "centers"],
+  "School of Law": ["area", "areas"],
+  "Divinity School": ["area", "areas"],
+  "Graduate School, The": ["program", "programs"],
+  "Duke Kunshan University (DKU)": ["unit", "units"],
+  "Health, Wellness, and Physical Education (HWPE)": ["program", "programs"],
+  "University Institutes and Centers": ["center", "centers"],
+  "University Initiatives & Academic Support Units": ["unit", "units"],
+  "Other Duke Unit": ["unit", "units"],
+  "External Organization": ["organization", "organizations"],
+};
+
+const TOPICS_SHORT = {
+  "Course Design": "Course Design",
+  "Curriculum Development": "Curriculum Dev",
+  "Assessment & Grading": "Assessment",
+  "Teaching Practices": "Teaching",
+  "Instructional Technology": "Ed Tech",
+  "Inclusive Teaching": "Inclusive",
+  "AI in Teaching & Learning": "AI in Teaching",
+  "New Faculty Orientation & Support": "New Faculty",
+  "Program/Dept-Level Consulting": "Prog/Dept",
+};
+
+const DONUT_COLORS = ["#003366","#1a5276","#2e86c1","#5dade2","#85c1e9","#aed6f1","#d4e6f1","#1b4f72","#148f77","#1abc9c","#7fb3d8","#a3c4dc"];
+
+// ============================================================
+// DATA LOADING (via published CSV — no API key needed)
+// ============================================================
+let engagements = [];
+let events = [];
+let contacts = [];
+
+// Per-fiscal-year transactional data, keyed by FY label. The render layer reads the flat
+// `engagements` / `events` globals above; applyFY() points them at the selected year's slice.
+let engagementsByFY = {};
+let eventsByFY = {};
+let currentFY = DEFAULT_FY;
+let RANK_LABELS = [
+  "Tenured & Tenure Track Faculty","Regular Rank Non Tenure Track faculty","Non-Regular Rank Faculty",
+  "Grad Student/Postdoc","Staff","Other"
+];
+
+// State for the within-school drill-down panel on the Schools & Reach tab.
+// drillDownActiveSchool holds the canonical (full) school name, not the short label.
+// drillDownData caches the school -> {primaryOrg -> count} lookup so pill clicks update fast.
+let drillDownActiveSchool = null;
+let drillDownData = null;
+
+function parseCSV(text) {
+  const rows = [];
+  let current = '';
+  let inQuotes = false;
+  let row = [];
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"' && text[i+1] === '"') { current += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { current += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ',') { row.push(current.trim()); current = ''; }
+      else if (ch === '\n' || (ch === '\r' && text[i+1] === '\n')) {
+        row.push(current.trim()); current = '';
+        if (row.some(c => c)) rows.push(row);
+        row = [];
+        if (ch === '\r') i++;
+      } else { current += ch; }
+    }
+  }
+  if (current || row.length) { row.push(current.trim()); if (row.some(c => c)) rows.push(row); }
+  return rows;
+}
+
+async function fetchSheet(gid) {
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Failed to load sheet (gid=${gid}): ${resp.status}`);
+  const text = await resp.text();
+  return parseCSV(text);
+}
+
+function rowsToObjects(rows) {
+  if (rows.length < 2) return [];
+  let headerIdx = 0;
+  const row0filled = rows[0].filter(c => c && c.trim()).length;
+  const row1filled = rows.length > 1 ? rows[1].filter(c => c && c.trim()).length : 0;
+  if (row1filled > row0filled) headerIdx = 1;
+
+  const headers = rows[headerIdx].map(h => (h || '').trim());
+  const dataRows = rows.slice(headerIdx + 1);
+  return dataRows.map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { if (h) obj[h] = (row[i] || '').trim(); });
+    return obj;
+  }).filter(obj => Object.values(obj).some(v => v));
+}
+
+async function loadAllData() {
+  document.getElementById('loading').classList.remove('hidden');
+  document.querySelectorAll('.db-section').forEach(s => s.classList.add('hidden'));
+  const fybar = document.getElementById('fybar');
+  if (fybar) fybar.classList.add('hidden');
+
+  try {
+    if (SPREADSHEET_ID === "YOUR_SPREADSHEET_ID_HERE") {
+      // DEMO MODE — generate sample data spanning all configured fiscal years
+      loadDemoData();
+    } else {
+      const b = document.querySelector(".demo-banner");
+      if (b) b.remove();
+      const fyKeys = Object.keys(FY_TABS);
+      // Fetch the shared tabs once, plus each FY's engagement + events tabs, in parallel.
+      const [conRows, lookupRows, ...fyResults] = await Promise.all([
+        fetchSheet(CONTACTS_GID),
+        fetchSheet(LOOKUPS_GID),
+        ...fyKeys.flatMap(fy => [
+          fetchSheet(FY_TABS[fy].engagementsGid),
+          fetchSheet(FY_TABS[fy].eventsGid),
+        ]),
+      ]);
+      contacts = rowsToObjects(conRows);
+      // Parse rank categories from Lookups Column J (index 9), rows after header (row 2 onward)
+      const rankVals = lookupRows.slice(2).map(r => (r[9] || '').trim()).filter(v => v);
+      if (rankVals.length) RANK_LABELS = rankVals;
+      // fyResults is [eng, evt, eng, evt, ...] aligned to fyKeys order.
+      engagementsByFY = {};
+      eventsByFY = {};
+      fyKeys.forEach((fy, i) => {
+        engagementsByFY[fy] = rowsToObjects(fyResults[i * 2]);
+        eventsByFY[fy] = rowsToObjects(fyResults[i * 2 + 1]);
+      });
+    }
+
+    document.getElementById('loading').classList.add('hidden');
+    if (!FY_TABS[currentFY]) currentFY = Object.keys(FY_TABS)[0];
+    populateFYSelect();
+    if (fybar) fybar.classList.remove('hidden');
+    applyFY(currentFY);
+    document.getElementById('lastUpdated').textContent =
+      ` · Last refreshed: ${new Date().toLocaleTimeString()}`;
+  } catch (err) {
+    document.getElementById('loading').innerHTML =
+      `<p style="color:#dc2626;">Error loading data: ${err.message}</p>
+       <p style="color:#94a3b8;margin-top:8px;">Check that your Spreadsheet ID and GID numbers are correct, and that the sheet is published to the web.</p>
+       <button onclick="loadAllData()" style="margin-top:16px;padding:10px 24px;border-radius:10px;border:1.5px solid #003366;background:#fff;color:#003366;font-weight:600;cursor:pointer;">Retry</button>`;
+  }
+}
+
+// Points the flat `engagements` / `events` globals at the selected fiscal year, resets the
+// drill-down cache (so the Schools tab recomputes for the new year), and re-renders the
+// current tab. Contacts and Lookups are shared, so they're untouched here.
+function applyFY(fy) {
+  if (!FY_TABS[fy] && !(fy in engagementsByFY)) return;
+  currentFY = fy;
+  engagements = engagementsByFY[fy] || [];
+  events = eventsByFY[fy] || [];
+  drillDownActiveSchool = null;
+  drillDownData = null;
+  const sel = document.getElementById('fySelect');
+  if (sel && sel.value !== fy) sel.value = fy;
+  renderCurrentTab();
+}
+
+// Fills the FY dropdown from FY_TABS (so adding a future year needs no UI edit) and
+// selects the current fiscal year.
+function populateFYSelect() {
+  const sel = document.getElementById('fySelect');
+  if (!sel) return;
+  sel.innerHTML = Object.keys(FY_TABS)
+    .map(fy => `<option value="${fy}">${fy}</option>`)
+    .join('');
+  sel.value = currentFY;
+}
+
+function loadDemoData() {
+  /* ── ONE COHERENT SYNTHETIC POPULATION ──────────────────────────
+     Generated by population_designer_v1.py (seed 20260804) and shared
+     with quicklog.html and the dossier pages: same people, same IDs,
+     same taxonomy, same staff. Taxonomy is the Handbook's verbatim —
+     16 schools with "External" (not "External Organization"), 10 topic
+     areas including Educational Research, and year-stamped CPC cohorts.
+
+     Stored as index arrays rather than objects: the same data as
+     objects ran past 200KB, and a demo page that takes a moment to
+     paint is a worse demo. Expanded below into the exact shape the
+     live path produces, so every renderer downstream is unchanged.
+
+     Deterministic on purpose. A screenshot taken today still matches
+     the site next term, which the previous Math.random() generator
+     could not promise.
+     ─────────────────────────────────────────────────────────────── */
+  const T = {"sc":["Duke Kunshan University (DKU)","Divinity School","Fuqua School of Business","Graduate School, The","Health, Wellness, and Physical Education (HWPE)","Nicholas School of the Environment","Pratt School of Engineering","Sanford School of Public Policy","School of Law","School of Medicine","School of Nursing","Trinity College of Arts & Sciences","University Initiatives & Academic Support Units","University Institutes and Centers","Other Duke Unit","External"],"ty":["Inquiry","Consultation","Office Hours","Fac Dev Program","Training","Other"],"tp":["Course Design","Curriculum Development","Assessment & Grading","Teaching Practices","Instructional Technology","Inclusive Teaching","AI in Teaching & Learning","New Faculty Orientation & Support","Program/Dept-Level Consulting","Educational Research"],"pr":["","Faculty Peer Course Evaluation Program","Engaging Learners and Building Community","Collaborative Project Courses Faculty Fellows (CPC 2026-2027)","AI in Education at Duke Summit, Pre-Summit Workshops"],"st":["Completed","In Progress","New"],"rk":["Tenured & Tenure Track Faculty","Regular Rank Non Tenure Track faculty","Non-Regular Rank Faculty","Grad Student/Postdoc","Staff","Other"],"sf":["Dana Whitlock","Yusuf Barlowe","Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima"]};
+  const C = [["DEMO-0001",9,"Medicine"],["DEMO-0002",2,""],["DEMO-0003",12,"Duke Center for Teaching and Learning"],["DEMO-0004",2,"Fuqua, general"],["DEMO-0005",3,"Graduate Liberal Studies"],["DEMO-0006",11,"African & African American Studies"],["DEMO-0007",11,"Romance Studies"],["DEMO-0008",6,"Pierre R. Lamond Department of Electrical and Computer Engineering"],["DEMO-0009",11,"Political Science"],["DEMO-0010",10,"DUSON, general"],["DEMO-0011",9,"Population Health Sciences"],["DEMO-0012",6,""],["DEMO-0013",7,"Sanford Faculty & Research"],["DEMO-0014",2,"Innovation & Entrepreneurship"],["DEMO-0015",6,"Duke Quantum Center"],["DEMO-0016",11,"Asian & Middle Eastern Studies"],["DEMO-0017",11,"German Studies"],["DEMO-0018",11,"German Studies"],["DEMO-0019",13,"Duke Global Health Institute (DGHI)"],["DEMO-0020",13,"Duke Institute for Brain Sciences"],["DEMO-0021",7,"Sanford Faculty & Research"],["DEMO-0022",9,"Population Health Sciences"],["DEMO-0023",1,"Divinity, general"],["DEMO-0024",11,"Slavic & Eurasian Studies"],["DEMO-0025",3,"English for International Students"],["DEMO-0026",9,"Emergency Medicine"],["DEMO-0027",3,"English for International Students"],["DEMO-0028",13,"Duke Institute for Brain Sciences"],["DEMO-0029",7,"Hart Leadership Program"],["DEMO-0030",3,""],["DEMO-0031",9,"Pathology"],["DEMO-0032",9,"Duke Clinical Research Institute"],["DEMO-0033",7,"Center for Child and Family Policy"],["DEMO-0034",11,"Biology"],["DEMO-0035",6,"Engineering Graduate and Professional Programs"],["DEMO-0036",3,"Graduate Liberal Studies"],["DEMO-0037",11,"Romance Studies"],["DEMO-0038",2,"Innovation & Entrepreneurship"],["DEMO-0039",9,"Pathology"],["DEMO-0040",13,"Duke Institute for Brain Sciences"],["DEMO-0041",6,"Thomas Lord Department of Mechanical Engineering and Materials Science"],["DEMO-0042",3,"Graduate Liberal Studies"],["DEMO-0043",7,"Center for Child and Family Policy"],["DEMO-0044",9,"Neurology"],["DEMO-0045",14,"Duke Student Affairs"],["DEMO-0046",11,"Cultural Anthropology"],["DEMO-0047",11,"African & African American Studies"],["DEMO-0048",3,"Graduate Liberal Studies"],["DEMO-0049",6,"Engineering Graduate and Professional Programs"],["DEMO-0050",6,"Biomedical Engineering"],["DEMO-0051",14,"Nasher Museum of Art"],["DEMO-0052",1,"Divinity, general"],["DEMO-0053",6,"Civil and Environmental Engineering"],["DEMO-0054",9,"Medicine"],["DEMO-0055",3,"Graduate Liberal Studies"],["DEMO-0056",11,"Music"],["DEMO-0057",8,"Law, general"],["DEMO-0058",11,"Dance Program"],["DEMO-0059",2,"Innovation & Entrepreneurship"],["DEMO-0060",11,"Theater Studies"],["DEMO-0061",10,""],["DEMO-0062",9,"Neurology"],["DEMO-0063",5,"Environmental Social Systems"],["DEMO-0064",11,"Music"],["DEMO-0065",15,"External"],["DEMO-0066",7,"Center for Child and Family Policy"],["DEMO-0067",9,"Cell Biology"],["DEMO-0068",11,"Cultural Anthropology"],["DEMO-0069",6,"Pratt, general"],["DEMO-0070",9,"Pediatrics"],["DEMO-0071",11,"Religious Studies"],["DEMO-0072",9,"Pediatrics"],["DEMO-0073",7,"DeWitt Wallace Center for Media and Democracy"],["DEMO-0074",3,"English for International Students"],["DEMO-0075",6,"Pierre R. Lamond Department of Electrical and Computer Engineering"],["DEMO-0076",9,"Duke Cancer Center"],["DEMO-0077",11,"German Studies"],["DEMO-0078",13,""],["DEMO-0079",11,"German Studies"],["DEMO-0080",5,"Marine Science and Conservation"],["DEMO-0081",6,"Christensen Family Center for Innovation"],["DEMO-0082",11,"Gender, Sexuality & Feminist Studies"],["DEMO-0083",9,"Emergency Medicine"],["DEMO-0084",6,"Engineering Graduate and Professional Programs"],["DEMO-0085",9,"Psychiatry & Behavioral Sciences"],["DEMO-0086",7,"DeWitt Wallace Center for Media and Democracy"],["DEMO-0087",12,""],["DEMO-0088",4,"HWPE, general"],["DEMO-0089",3,""],["DEMO-0090",9,"Pediatrics"],["DEMO-0091",6,"Pratt, general"],["DEMO-0092",6,"Christensen Family Center for Innovation"],["DEMO-0093",9,"Duke Cancer Center"],["DEMO-0094",6,"Pratt, general"],["DEMO-0095",2,"Innovation & Entrepreneurship"],["DEMO-0096",4,"HWPE, general"],["DEMO-0097",11,"Linguistics"],["DEMO-0098",7,"Hart Leadership Program"],["DEMO-0099",2,"Fuqua, general"],["DEMO-0100",7,"Sanford Faculty & Research"],["DEMO-0101",7,"DeWitt Wallace Center for Media and Democracy"],["DEMO-0102",6,""],["DEMO-0103",6,"Civil and Environmental Engineering"],["DEMO-0104",13,"Duke Global Health Institute (DGHI)"],["DEMO-0105",10,""],["DEMO-0106",2,"Fuqua, general"],["DEMO-0107",8,"Law, general"],["DEMO-0108",11,"Cultural Anthropology"],["DEMO-0109",11,"Biology"],["DEMO-0110",9,"Pediatrics"],["DEMO-0111",7,"DeWitt Wallace Center for Media and Democracy"],["DEMO-0112",6,"Duke Quantum Center"],["DEMO-0113",8,""],["DEMO-0114",11,"German Studies"],["DEMO-0115",11,"Information Science + Studies"],["DEMO-0116",11,"Sociology (incl. Markets & Management Studies)"],["DEMO-0117",11,"Statistical Science"],["DEMO-0118",2,"Fuqua, general"],["DEMO-0119",2,"Innovation & Entrepreneurship"],["DEMO-0120",7,"Center for Child and Family Policy"],["DEMO-0121",6,"Thomas Lord Department of Mechanical Engineering and Materials Science"],["DEMO-0122",9,"Duke Cancer Center"],["DEMO-0123",14,"Nasher Museum of Art"],["DEMO-0124",12,"Duke University Libraries"],["DEMO-0125",15,"External"],["DEMO-0126",9,"Cell Biology"],["DEMO-0127",12,"Rhodes Information Initiative at Duke"],["DEMO-0128",9,"Pediatrics"],["DEMO-0129",6,""],["DEMO-0130",11,"African & African American Studies"],["DEMO-0131",6,"Christensen Family Center for Innovation"],["DEMO-0132",3,"English for International Students"],["DEMO-0133",6,"Pierre R. Lamond Department of Electrical and Computer Engineering"],["DEMO-0134",11,"Religious Studies"],["DEMO-0135",2,"Fuqua, general"],["DEMO-0136",11,"Mathematics"],["DEMO-0137",1,"Divinity, general"],["DEMO-0138",11,"German Studies"],["DEMO-0139",9,"Obstetrics and Gynecology"],["DEMO-0140",3,"English for International Students"],["DEMO-0141",9,"Population Health Sciences"],["DEMO-0142",12,"Duke University Libraries"],["DEMO-0143",13,"Duke Global Health Institute (DGHI)"],["DEMO-0144",10,"DUSON, general"],["DEMO-0145",10,"DUSON, general"],["DEMO-0146",11,"Biology"],["DEMO-0147",5,"Environmental Social Systems"],["DEMO-0148",12,"Duke University Libraries"],["DEMO-0149",9,"Obstetrics and Gynecology"],["DEMO-0150",6,"Thomas Lord Department of Mechanical Engineering and Materials Science"],["DEMO-0151",0,"DKU, English"],["DEMO-0152",10,"DUSON, general"],["DEMO-0153",1,"Divinity, general"],["DEMO-0154",12,"Duke University Libraries"],["DEMO-0155",13,"Kenan Institute for Ethics"],["DEMO-0156",11,"Statistical Science"],["DEMO-0157",5,"Marine Science and Conservation"],["DEMO-0158",6,"Christensen Family Center for Innovation"],["DEMO-0159",11,"Computer Science"],["DEMO-0160",10,""],["DEMO-0161",14,"Office of the Provost"],["DEMO-0162",11,"Dance Program"],["DEMO-0163",7,"Center for Child and Family Policy"],["DEMO-0164",9,"Cell Biology"],["DEMO-0165",13,"Social Science Research Institute"],["DEMO-0166",6,""],["DEMO-0167",13,"Duke Institute for Brain Sciences"],["DEMO-0168",11,"Biology"],["DEMO-0169",9,"Population Health Sciences"],["DEMO-0170",1,"Divinity, general"],["DEMO-0171",4,"HWPE, general"],["DEMO-0172",3,"English for International Students"],["DEMO-0173",12,"Duke University Libraries"],["DEMO-0174",11,"Physics"],["DEMO-0175",6,"Civil and Environmental Engineering"],["DEMO-0176",6,"Civil and Environmental Engineering"],["DEMO-0177",0,"DKU, English"],["DEMO-0178",6,"Thomas Lord Department of Mechanical Engineering and Materials Science"],["DEMO-0179",11,"Linguistics"],["DEMO-0180",12,"Duke Science & Society"],["DEMO-0181",6,"Christensen Family Center for Innovation"],["DEMO-0182",11,"Theater Studies"],["DEMO-0183",7,"Hart Leadership Program"],["DEMO-0184",10,"DUSON, general"],["DEMO-0185",6,""],["DEMO-0186",11,"Classical Studies"],["DEMO-0187",12,"Duke University Libraries"],["DEMO-0188",2,"Fuqua, general"],["DEMO-0189",6,"Pratt, general"],["DEMO-0190",9,"Duke Cancer Center"]];
+  const E = {"FY25-26":[["ENG-FY2526-0191",119,7,1,"2025-07-02",0,0,0,0,0],["ENG-FY2526-0117",171,3,2,"2025-07-10",1,0,0,0,0],["ENG-FY2526-0153",40,6,1,"2025-07-10",2,3,0,3,0],["ENG-FY2526-0020",29,3,0,"2025-07-11",4,5,0,0,0],["ENG-FY2526-0090",137,11,4,"2025-07-15",4,6,0,4,0],["ENG-FY2526-0009",15,11,0,"2025-07-16",0,3,0,3,0],["ENG-FY2526-0129",183,10,0,"2025-07-19",1,0,0,1,0],["ENG-FY2526-0167",100,7,4,"2025-07-19",1,0,0,0,0],["ENG-FY2526-0196",20,7,1,"2025-07-21",3,3,0,0,0],["ENG-FY2526-0014",20,7,3,"2025-07-23",1,5,2,0,0],["ENG-FY2526-0186",0,9,2,"2025-07-23",3,1,0,0,0],["ENG-FY2526-0112",164,13,2,"2025-07-24",0,0,0,3,0],["ENG-FY2526-0004",7,6,0,"2025-07-25",2,0,0,3,0],["ENG-FY2526-0155",183,10,4,"2025-07-26",3,3,0,1,0],["ENG-FY2526-0201",43,9,1,"2025-07-26",1,3,0,3,0],["ENG-FY2526-0176",148,9,1,"2025-08-02",0,0,0,0,0],["ENG-FY2526-0083",127,9,3,"2025-08-04",1,5,2,3,0],["ENG-FY2526-0107",157,6,1,"2025-08-05",2,3,1,4,0],["ENG-FY2526-0193",7,6,4,"2025-08-05",2,5,0,3,2],["ENG-FY2526-0133",189,9,1,"2025-08-08",0,7,0,0,0],["ENG-FY2526-0128",182,7,3,"2025-08-10",3,6,2,4,0],["ENG-FY2526-0034",47,3,2,"2025-08-11",0,1,4,2,0],["ENG-FY2526-0067",95,4,0,"2025-08-13",1,4,0,0,0],["ENG-FY2526-0021",30,9,4,"2025-08-14",3,3,0,1,0],["ENG-FY2526-0035",49,6,1,"2025-08-14",3,6,0,3,0],["ENG-FY2526-0051",70,11,3,"2025-08-14",0,5,4,0,0],["ENG-FY2526-0136",70,11,4,"2025-08-14",4,2,0,0,1],["ENG-FY2526-0205",20,7,0,"2025-08-16",1,1,1,0,0],["ENG-FY2526-0146",182,7,5,"2025-08-19",0,2,0,4,0],["ENG-FY2526-0074",110,7,0,"2025-08-20",0,6,0,3,0],["ENG-FY2526-0188",106,8,3,"2025-08-20",0,0,4,3,0],["ENG-FY2526-0190",176,0,4,"2025-08-21",2,3,0,0,0],["ENG-FY2526-0159",143,10,5,"2025-08-23",2,6,0,4,1],["ENG-FY2526-0118",172,12,2,"2025-08-24",2,7,0,3,0],["ENG-FY2526-0002",5,11,1,"2025-08-26",4,0,0,1,1],["ENG-FY2526-0097",145,11,3,"2025-08-26",3,9,1,0,0],["ENG-FY2526-0178",148,9,2,"2025-08-26",4,1,0,0,0],["ENG-FY2526-0185",152,1,0,"2025-08-26",4,6,0,1,0],["ENG-FY2526-0017",25,9,1,"2025-08-27",0,0,0,3,0],["ENG-FY2526-0060",84,9,0,"2025-09-05",1,6,0,2,1],["ENG-FY2526-0093",140,9,1,"2025-09-06",1,7,0,1,0],["ENG-FY2526-0106",156,5,1,"2025-09-06",2,5,0,4,0],["ENG-FY2526-0200",119,7,3,"2025-09-06",3,3,4,0,0],["ENG-FY2526-0040",56,8,0,"2025-09-08",1,4,1,1,0],["ENG-FY2526-0151",4,3,3,"2025-09-10",0,5,4,0,0],["ENG-FY2526-0052",71,9,5,"2025-09-11",1,7,0,4,0],["ENG-FY2526-0080",120,6,1,"2025-09-12",0,5,0,4,0],["ENG-FY2526-0092",139,3,0,"2025-09-12",3,3,1,1,1],["ENG-FY2526-0066",93,6,4,"2025-09-19",2,6,0,2,0],["ENG-FY2526-0098",146,5,1,"2025-09-19",1,8,0,3,0],["ENG-FY2526-0016",24,3,0,"2025-09-20",2,3,0,0,0],["ENG-FY2526-0046",64,15,2,"2025-09-21",1,2,0,5,0],["ENG-FY2526-0132",188,6,4,"2025-09-22",0,3,4,0,0],["ENG-FY2526-0010",16,11,4,"2025-09-26",2,6,0,4,0],["ENG-FY2526-0049",68,6,1,"2025-09-28",2,5,0,1,0],["ENG-FY2526-0165",20,7,2,"2025-09-28",2,3,0,0,0],["ENG-FY2526-0204",148,9,2,"2025-09-28",4,0,0,0,0],["ENG-FY2526-0041",58,2,1,"2025-10-01",0,0,1,1,0],["ENG-FY2526-0003",6,11,3,"2025-10-07",3,1,1,2,2],["ENG-FY2526-0053",72,7,3,"2025-10-07",0,7,1,3,0],["ENG-FY2526-0182",72,7,1,"2025-10-13",1,2,0,3,2],["ENG-FY2526-0101",149,6,1,"2025-10-18",2,5,0,2,1],["ENG-FY2526-0119",173,11,3,"2025-10-21",2,7,4,1,0],["ENG-FY2526-0007",12,7,1,"2025-10-22",0,9,0,3,0],["ENG-FY2526-0170",118,2,1,"2025-10-22",0,2,0,2,0],["ENG-FY2526-0187",7,6,1,"2025-10-23",1,6,0,3,0],["ENG-FY2526-0194",128,6,3,"2025-10-24",4,8,1,2,0],["ENG-FY2526-0104",153,12,1,"2025-10-27",0,3,0,0,0],["ENG-FY2526-0018",26,3,1,"2025-10-28",1,0,0,5,2],["ENG-FY2526-0122",176,0,1,"2025-11-01",0,6,0,0,1],["ENG-FY2526-0115",167,11,2,"2025-11-02",2,9,0,1,0],["ENG-FY2526-0169",20,7,1,"2025-11-03",3,9,0,0,0],["ENG-FY2526-0047",66,9,1,"2025-11-05",2,0,2,0,0],["ENG-FY2526-0179",128,6,1,"2025-11-06",3,8,0,2,0],["ENG-FY2526-0161",40,6,0,"2025-11-07",0,3,0,3,0],["ENG-FY2526-0033",46,11,0,"2025-11-08",1,5,0,0,0],["ENG-FY2526-0025",34,6,0,"2025-11-09",0,6,0,5,0],["ENG-FY2526-0096",143,10,1,"2025-11-09",2,3,0,4,0],["ENG-FY2526-0138",26,3,4,"2025-11-10",4,2,0,5,0],["ENG-FY2526-0192",4,3,2,"2025-11-11",4,8,0,0,0],["ENG-FY2526-0043",60,10,1,"2025-11-12",3,4,0,1,0],["ENG-FY2526-0131",187,2,0,"2025-11-13",0,3,0,0,0],["ENG-FY2526-0077",115,11,3,"2025-11-15",0,0,2,3,1],["ENG-FY2526-0177",128,6,0,"2025-11-15",4,5,0,2,0],["ENG-FY2526-0069",98,2,1,"2025-11-17",3,3,0,0,1],["ENG-FY2526-0111",163,9,1,"2025-11-22",0,1,0,0,0],["ENG-FY2526-0152",151,10,4,"2025-11-23",1,6,0,0,1],["ENG-FY2526-0197",180,6,1,"2025-11-23",0,0,2,3,1],["ENG-FY2526-0037",51,1,2,"2025-11-24",0,0,0,0,0],["ENG-FY2526-0100",148,9,3,"2025-11-25",3,4,2,0,0],["ENG-FY2526-0105",154,13,0,"2025-11-26",4,6,0,4,0],["ENG-FY2526-0173",42,7,1,"2025-11-28",1,8,0,1,2],["ENG-FY2526-0203",15,11,3,"2025-11-28",1,1,1,3,2],["ENG-FY2526-0123",177,6,1,"2025-12-01",1,3,0,1,1],["ENG-FY2526-0029",41,3,3,"2025-12-02",4,0,1,0,0],["ENG-FY2526-0057",81,11,1,"2025-12-02",3,9,0,1,0],["ENG-FY2526-0075",111,6,4,"2025-12-03",0,6,0,3,2],["ENG-FY2526-0011",17,11,1,"2025-12-04",4,3,0,3,0],["ENG-FY2526-0044",61,9,4,"2025-12-04",3,7,0,0,0],["ENG-FY2526-0137",105,2,3,"2025-12-07",0,0,2,4,0],["ENG-FY2526-0086",132,6,4,"2025-12-08",3,2,0,2,2],["ENG-FY2526-0116",169,1,1,"2025-12-15",2,3,0,0,0],["ENG-FY2526-0141",5,11,5,"2025-12-16",1,6,0,1,0],["ENG-FY2526-0158",183,10,1,"2025-12-16",0,1,0,1,0],["ENG-FY2526-0127",181,11,1,"2025-12-17",1,1,0,0,0],["ENG-FY2526-0168",113,11,0,"2025-12-18",3,3,2,1,0],["ENG-FY2526-0171",112,8,4,"2025-12-18",0,2,0,1,0],["ENG-FY2526-0056",79,5,5,"2025-12-20",1,6,0,2,0],["ENG-FY2526-0103",152,1,1,"2025-12-20",0,1,0,1,2],["ENG-FY2526-0180",1,2,3,"2025-12-20",0,3,4,0,0],["ENG-FY2526-0195",152,1,1,"2025-12-22",2,3,0,1,0],["ENG-FY2526-0084",129,11,1,"2025-12-23",2,9,0,5,0],["ENG-FY2526-0094",141,12,1,"2025-12-25",0,9,0,2,0],["ENG-FY2526-0108",159,10,1,"2026-01-02",2,6,0,3,0],["ENG-FY2526-0071",101,6,5,"2026-01-03",1,5,0,3,0],["ENG-FY2526-0125",179,12,0,"2026-01-05",0,6,0,4,2],["ENG-FY2526-0036",50,14,5,"2026-01-06",4,6,0,0,0],["ENG-FY2526-0166",132,6,1,"2026-01-07",1,6,0,2,0],["ENG-FY2526-0062",87,4,1,"2026-01-14",0,1,2,4,0],["ENG-FY2526-0145",1,2,2,"2026-01-16",3,1,0,0,0],["ENG-FY2526-0045",63,11,0,"2026-01-17",1,8,0,1,0],["ENG-FY2526-0082",126,12,2,"2026-01-17",1,6,0,0,0],["ENG-FY2526-0148",15,11,4,"2026-01-17",4,5,0,3,0],["ENG-FY2526-0087",133,11,1,"2026-01-19",3,7,0,3,0],["ENG-FY2526-0012",18,13,4,"2026-01-26",0,4,0,0,0],["ENG-FY2526-0031",43,9,3,"2026-02-02",2,0,4,3,0],["ENG-FY2526-0054",73,3,1,"2026-02-03",3,2,0,4,1],["ENG-FY2526-0013",19,13,3,"2026-02-10",0,0,4,3,0],["ENG-FY2526-0030",42,7,2,"2026-02-12",1,4,0,1,0],["ENG-FY2526-0183",48,6,4,"2026-02-13",2,0,0,1,1],["ENG-FY2526-0005",9,10,0,"2026-02-17",4,0,0,4,0],["ENG-FY2526-0121",175,6,1,"2026-02-17",2,5,1,0,0],["ENG-FY2526-0130",186,12,3,"2026-02-18",3,8,3,2,1],["ENG-FY2526-0163",119,7,2,"2026-02-22",0,6,0,0,1],["ENG-FY2526-0154",16,11,1,"2026-02-23",3,9,0,4,0],["ENG-FY2526-0172",143,10,3,"2026-02-23",4,0,1,4,0],["ENG-FY2526-0081",124,15,0,"2026-02-24",4,4,0,5,0],["ENG-FY2526-0050",69,9,4,"2026-02-26",4,3,0,0,0],["ENG-FY2526-0135",143,10,3,"2026-02-26",1,6,2,4,2],["ENG-FY2526-0085",130,6,2,"2026-02-27",3,3,0,0,0],["ENG-FY2526-0079",118,2,3,"2026-02-28",0,3,2,2,2],["ENG-FY2526-0143",4,3,1,"2026-03-01",4,5,0,0,0],["ENG-FY2526-0073",108,11,0,"2026-03-03",1,7,0,0,0],["ENG-FY2526-0157",43,9,1,"2026-03-03",1,4,0,3,0],["ENG-FY2526-0144",70,11,1,"2026-03-04",4,0,0,0,1],["ENG-FY2526-0032",45,11,4,"2026-03-05",4,3,0,3,0],["ENG-FY2526-0139",70,11,1,"2026-03-08",0,7,0,0,1],["ENG-FY2526-0028",39,13,1,"2026-03-09",0,4,0,0,0],["ENG-FY2526-0109",161,11,3,"2026-03-09",0,1,3,0,1],["ENG-FY2526-0038",52,6,1,"2026-03-10",0,8,4,3,0],["ENG-FY2526-0068",96,11,3,"2026-03-13",4,4,2,2,0],["ENG-FY2526-0088",134,2,4,"2026-03-13",0,6,0,1,0],["ENG-FY2526-0120",174,6,1,"2026-03-13",3,1,0,0,0],["ENG-FY2526-0015",21,9,1,"2026-03-17",4,7,0,3,0],["ENG-FY2526-0189",82,9,1,"2026-03-18",1,1,0,4,0],["ENG-FY2526-0198",1,2,1,"2026-03-18",1,3,0,0,0],["ENG-FY2526-0064",89,9,2,"2026-03-19",4,1,0,1,1],["ENG-FY2526-0089",136,1,1,"2026-03-19",3,5,1,4,0],["ENG-FY2526-0055",76,11,0,"2026-03-24",3,1,0,1,0],["ENG-FY2526-0160",7,6,1,"2026-03-26",2,0,3,3,0],["ENG-FY2526-0132",103,13,0,"2026-04-02",2,5,0,1,0],["ENG-FY2526-0181",156,5,3,"2026-04-02",4,5,2,4,0],["ENG-FY2526-0174",158,11,0,"2026-04-03",3,4,0,0,0],["ENG-FY2526-0078",117,2,4,"2026-04-04",2,4,0,1,0],["ENG-FY2526-0124",178,11,3,"2026-04-04",1,5,1,4,0],["ENG-FY2526-0150",4,3,1,"2026-04-04",2,1,0,0,0],["ENG-FY2526-0102",150,0,1,"2026-04-05",1,8,0,1,0],["ENG-FY2526-0110",162,7,3,"2026-04-06",2,7,1,0,1],["ENG-FY2526-0140",28,7,0,"2026-04-09",0,0,0,0,0],["ENG-FY2526-0147",16,11,0,"2026-04-10",0,6,3,4,0],["ENG-FY2526-0126",180,6,3,"2026-04-11",0,2,3,3,0],["ENG-FY2526-0027",38,9,0,"2026-04-12",3,5,3,2,0],["ENG-FY2526-0154",103,13,0,"2026-04-16",0,6,0,1,0],["ENG-FY2526-0039",55,11,0,"2026-04-19",4,7,0,4,0],["ENG-FY2526-0099",147,12,2,"2026-04-23",0,3,0,1,0],["ENG-FY2526-0058",82,9,1,"2026-04-24",1,7,0,4,0],["ENG-FY2526-0175",106,8,0,"2026-04-26",1,6,0,3,2],["ENG-FY2526-0177",103,13,4,"2026-04-30",0,4,0,1,0],["ENG-FY2526-0001",3,2,2,"2026-05-03",0,5,0,0,0],["ENG-FY2526-0023",32,7,4,"2026-05-08",4,6,0,0,0],["ENG-FY2526-0076",112,8,3,"2026-05-09",2,6,1,1,1],["ENG-FY2526-0022",31,9,4,"2026-05-10",4,4,0,1,0],["ENG-FY2526-0142",172,12,0,"2026-05-13",2,6,0,3,0],["ENG-FY2526-0208",103,13,3,"2026-05-14",1,3,3,1,0],["ENG-FY2526-0061",85,7,1,"2026-05-16",0,0,0,3,2],["ENG-FY2526-0184",182,7,1,"2026-05-16",0,0,0,4,0],["ENG-FY2526-0048",67,11,1,"2026-05-19",1,6,0,4,0],["ENG-FY2526-0042",59,11,3,"2026-05-22",1,0,3,1,2],["ENG-FY2526-0091",138,9,1,"2026-05-24",2,2,4,0,0],["ENG-FY2526-0134",149,6,1,"2026-05-24",1,0,0,2,0],["ENG-FY2526-0231",103,13,3,"2026-05-28",1,3,2,1,0],["ENG-FY2526-0149",28,7,1,"2026-06-03",1,4,0,0,0],["ENG-FY2526-0162",128,6,3,"2026-06-06",0,4,4,2,0],["ENG-FY2526-0008",14,6,4,"2026-06-07",3,6,0,0,0],["ENG-FY2526-0024",33,11,0,"2026-06-07",3,7,0,0,0],["ENG-FY2526-0026",36,11,3,"2026-06-07",1,1,1,0,0],["ENG-FY2526-0065",92,9,2,"2026-06-08",1,0,0,3,0],["ENG-FY2526-0063",88,3,1,"2026-06-09",2,0,0,1,0],["ENG-FY2526-0114",166,13,2,"2026-06-09",4,0,0,0,1],["ENG-FY2526-0243",142,13,1,"2026-06-09",1,8,0,1,0],["ENG-FY2526-0244",103,13,1,"2026-06-09",1,8,0,1,0],["ENG-FY2526-0156",20,7,1,"2026-06-11",3,8,0,0,0],["ENG-FY2526-0070",99,7,1,"2026-06-13",1,0,0,0,0],["ENG-FY2526-0113",165,6,1,"2026-06-13",2,2,0,4,0],["ENG-FY2526-0019",27,13,3,"2026-06-15",2,4,3,5,0],["ENG-FY2526-0006",10,9,3,"2026-06-16",0,3,3,2,0],["ENG-FY2526-0202",96,11,1,"2026-06-16",1,1,0,2,1],["ENG-FY2526-0059",83,6,3,"2026-06-18",0,7,3,4,0],["ENG-FY2526-0261",103,13,1,"2026-06-18",0,1,0,1,0],["ENG-FY2526-0262",142,13,1,"2026-06-18",0,1,0,1,0],["ENG-FY2526-0265",103,13,0,"2026-06-23",0,0,0,1,0],["ENG-FY2526-0164",70,11,3,"2026-06-24",1,7,1,0,0],["ENG-FY2526-0199",28,7,0,"2026-06-27",3,1,3,0,0]],"FY26-27":[["ENG-FY2627-0009",103,13,2,"2026-07-02",1,2,0,1,0],["ENG-FY2627-0082",28,7,4,"2026-07-02",0,0,0,0,0],["ENG-FY2627-0006",11,6,4,"2026-07-03",1,0,0,0,0],["ENG-FY2627-0044",123,12,1,"2026-07-04",0,8,0,0,1],["ENG-FY2627-0077",15,11,4,"2026-07-06",2,1,0,3,0],["ENG-FY2627-0114",183,10,0,"2026-07-06",4,5,0,1,1],["ENG-FY2627-0121",105,2,2,"2026-07-06",0,8,0,4,0],["ENG-FY2627-0067",183,10,1,"2026-07-07",3,8,3,1,0],["ENG-FY2627-0018",103,13,0,"2026-07-08",0,4,0,1,0],["ENG-FY2627-0128",113,11,1,"2026-07-10",0,3,0,1,0],["ENG-FY2627-0136",7,6,1,"2026-07-13",1,3,0,3,1],["ENG-FY2627-0018",57,11,0,"2026-07-15",1,0,0,4,0],["ENG-FY2627-0020",65,7,3,"2026-07-15",1,5,1,0,0],["ENG-FY2627-0119",15,11,0,"2026-07-15",2,1,0,3,1],["ENG-FY2627-0023",77,13,0,"2026-07-16",2,0,2,1,1],["ENG-FY2627-0031",116,11,5,"2026-07-16",2,7,0,0,0],["ENG-FY2627-0039",114,11,4,"2026-07-16",1,0,0,4,0],["ENG-FY2627-0070",118,2,0,"2026-07-16",1,6,0,2,0],["ENG-FY2627-0094",128,6,1,"2026-07-16",0,0,0,2,1],["ENG-FY2627-0108",100,7,3,"2026-07-16",0,0,2,0,0],["ENG-FY2627-0111",141,12,3,"2026-07-17",2,6,2,2,0],["ENG-FY2627-0081",143,10,0,"2026-07-20",2,1,0,4,1],["ENG-FY2627-0005",8,11,3,"2026-07-21",3,0,2,1,0],["ENG-FY2627-0036",103,13,1,"2026-07-21",0,0,0,1,0],["ENG-FY2627-0062",0,9,2,"2026-07-22",3,3,0,0,0],["ENG-FY2627-0064",5,11,0,"2026-07-22",1,1,0,1,1],["ENG-FY2627-0079",119,7,4,"2026-07-22",2,2,0,0,1],["ENG-FY2627-0124",118,2,3,"2026-07-22",3,2,1,2,1],["ENG-FY2627-0009",23,11,0,"2026-07-24",2,3,0,1,0],["ENG-FY2627-0013",40,6,2,"2026-07-24",4,5,0,3,0],["ENG-FY2627-0137",180,6,5,"2026-07-24",3,0,0,3,1],["ENG-FY2627-0004",4,3,2,"2026-07-25",1,5,0,0,0],["ENG-FY2627-0054",168,9,1,"2026-07-26",1,3,0,1,0],["ENG-FY2627-0109",180,6,1,"2026-07-26",0,7,0,3,0],["ENG-FY2627-0057",185,11,1,"2026-07-28",4,6,0,0,0],["ENG-FY2627-0017",54,3,2,"2026-08-02",2,1,0,0,0],["ENG-FY2627-0102",5,11,2,"2026-08-02",4,6,0,1,0],["ENG-FY2627-0045",125,9,1,"2026-08-03",0,5,0,1,0],["ENG-FY2627-0049",144,10,1,"2026-08-03",1,5,0,3,0],["ENG-FY2627-0132",50,14,0,"2026-08-05",0,0,0,0,0],["ENG-FY2627-0011",35,3,1,"2026-08-07",0,1,0,1,0],["ENG-FY2627-0042",121,9,1,"2026-08-07",0,6,0,1,0],["ENG-FY2627-0028",91,6,2,"2026-08-08",2,0,1,4,0],["ENG-FY2627-0076",178,11,3,"2026-08-10",0,3,3,4,0],["ENG-FY2627-0092",118,2,0,"2026-08-12",4,1,0,2,0],["ENG-FY2627-0063",109,9,0,"2026-08-13",0,8,0,0,0],["ENG-FY2627-0024",78,11,2,"2026-08-14",1,4,0,4,0],["ENG-FY2627-0033",104,10,1,"2026-08-14",3,2,0,0,0],["ENG-FY2627-0078",151,10,3,"2026-08-14",0,1,3,0,0],["ENG-FY2627-0038",113,11,2,"2026-08-15",4,5,3,1,0],["ENG-FY2627-0068",143,10,1,"2026-08-15",3,4,0,4,0],["ENG-FY2627-0113",172,12,0,"2026-08-16",2,2,0,3,1],["ENG-FY2627-0083",5,11,2,"2026-08-17",3,1,0,1,2],["ENG-FY2627-0091",118,2,3,"2026-08-17",1,3,3,2,2],["ENG-FY2627-0056",184,6,0,"2026-08-19",3,9,0,3,1],["ENG-FY2627-0016",53,9,0,"2026-08-20",0,1,0,4,0],["ENG-FY2627-0029",94,2,1,"2026-08-20",2,3,0,1,0],["ENG-FY2627-0058",178,11,0,"2026-08-21",3,0,0,4,0],["ENG-FY2627-0085",143,10,4,"2026-08-22",4,6,0,4,0],["ENG-FY2627-0090",16,11,0,"2026-08-25",1,9,0,4,0],["ENG-FY2627-0061",7,6,4,"2026-08-26",1,6,0,3,0],["ENG-FY2627-0050",151,10,1,"2026-08-27",3,0,0,0,2],["ENG-FY2627-0107",182,7,1,"2026-08-27",2,6,0,4,1],["ENG-FY2627-0133",156,5,0,"2026-08-27",3,5,0,4,2],["ENG-FY2627-0003",2,12,3,"2026-08-28",4,3,1,0,0],["ENG-FY2627-0075",128,6,4,"2026-09-05",4,7,0,2,1],["ENG-FY2627-0007",13,2,4,"2026-09-06",1,7,0,0,0],["ENG-FY2627-0025",80,6,2,"2026-09-07",1,3,0,1,0],["ENG-FY2627-0032",102,6,1,"2026-09-07",2,6,0,4,1],["ENG-FY2627-0074",183,10,2,"2026-09-07",2,4,0,1,1],["ENG-FY2627-0022",75,9,5,"2026-09-08",0,2,0,4,0],["ENG-FY2627-0110",26,3,3,"2026-09-08",4,0,3,5,0],["ENG-FY2627-0008",22,1,2,"2026-09-09",0,5,0,0,0],["ENG-FY2627-0115",28,7,3,"2026-09-09",2,2,1,0,0],["ENG-FY2627-0099",113,11,1,"2026-09-10",0,7,0,1,0],["ENG-FY2627-0030",97,7,2,"2026-09-11",4,0,0,0,0],["ENG-FY2627-0080",152,1,4,"2026-09-14",1,8,0,1,0],["ENG-FY2627-0019",62,5,1,"2026-09-15",3,4,0,2,0],["ENG-FY2627-0096",42,7,5,"2026-09-15",3,1,0,1,2],["ENG-FY2627-0014",44,14,1,"2026-09-16",2,9,0,1,0],["ENG-FY2627-0047",131,3,3,"2026-09-17",0,8,2,1,1],["ENG-FY2627-0093",72,7,4,"2026-09-22",0,2,0,3,0],["ENG-FY2627-0065",172,12,1,"2026-09-26",0,2,0,3,0],["ENG-FY2627-0131",20,7,2,"2026-09-28",2,7,0,0,0],["ENG-FY2627-0106",100,7,4,"2026-10-02",0,2,0,0,0],["ENG-FY2627-0084",96,11,4,"2026-10-04",0,6,0,2,0],["ENG-FY2627-0135",158,11,4,"2026-10-06",1,0,0,0,0],["ENG-FY2627-0100",158,11,1,"2026-10-08",4,5,0,0,2],["ENG-FY2627-0126",28,7,1,"2026-10-08",1,2,0,0,0],["ENG-FY2627-0053",160,14,3,"2026-10-09",2,0,3,0,0],["ENG-FY2627-0036",107,11,2,"2026-10-15",3,4,0,0,0],["ENG-FY2627-0103",158,11,3,"2026-10-15",3,4,3,0,0],["ENG-FY2627-0012",37,2,2,"2026-10-16",2,7,0,0,0],["ENG-FY2627-0055",170,4,2,"2026-10-16",0,2,0,3,0],["ENG-FY2627-0138",20,7,0,"2026-10-16",1,5,0,0,0],["ENG-FY2627-0104",183,10,1,"2026-10-17",1,6,0,1,0],["ENG-FY2627-0116",132,6,1,"2026-10-17",1,1,0,2,0],["ENG-FY2627-0051",155,11,1,"2026-10-23",1,3,0,1,0],["ENG-FY2627-0010",28,7,0,"2026-10-26",2,6,0,0,0],["ENG-FY2627-0034",105,2,3,"2026-10-26",2,0,2,4,0],["ENG-FY2627-0112",50,14,1,"2026-10-27",1,3,0,0,0],["ENG-FY2627-0046",128,6,2,"2026-10-28",4,6,0,2,0],["ENG-FY2627-0071",16,11,3,"2026-11-01",0,6,3,4,0],["ENG-FY2627-0097",26,3,1,"2026-11-02",0,0,0,5,0],["ENG-FY2627-0037",109,9,1,"2026-11-03",1,0,0,0,0],["ENG-FY2627-0069",156,5,4,"2026-11-04",1,3,0,4,1],["ENG-FY2627-0117",43,9,1,"2026-11-04",2,9,0,3,0],["ENG-FY2627-0095",96,11,1,"2026-11-06",1,2,0,2,0],["ENG-FY2627-0001",0,9,1,"2026-11-08",0,6,0,0,0],["ENG-FY2627-0060",100,7,0,"2026-11-08",3,2,0,0,0],["ENG-FY2627-0015",48,6,0,"2026-11-09",1,6,0,1,0],["ENG-FY2627-0122",43,9,0,"2026-11-10",4,6,3,3,0],["ENG-FY2627-0130",176,0,1,"2026-11-11",1,4,0,0,0],["ENG-FY2627-0134",178,11,0,"2026-11-13",3,3,1,4,0],["ENG-FY2627-0027",90,6,2,"2026-11-16",0,7,0,0,1],["ENG-FY2627-0086",42,7,1,"2026-11-17",4,1,0,1,0],["ENG-FY2627-0089",172,12,3,"2026-11-19",3,4,1,3,0],["ENG-FY2627-0120",105,2,3,"2026-11-19",3,8,1,4,0],["ENG-FY2627-0072",5,11,3,"2026-11-21",2,8,1,1,0],["ENG-FY2627-0002",1,2,3,"2026-11-22",1,2,1,0,0],["ENG-FY2627-0021",74,6,1,"2026-11-27",0,2,0,4,0],["ENG-FY2627-0043",122,14,0,"2026-12-05",3,5,0,1,0],["ENG-FY2627-0052",158,11,4,"2026-12-06",0,7,0,0,0],["ENG-FY2627-0059",184,6,4,"2026-12-07",3,3,0,3,0],["ENG-FY2627-0026",86,12,4,"2026-12-08",0,8,0,0,0],["ENG-FY2627-0031",100,7,3,"2026-12-08",1,6,3,0,0],["ENG-FY2627-0087",48,6,3,"2026-12-09",0,1,3,1,1],["ENG-FY2627-0066",106,8,3,"2026-12-12",0,3,1,3,0],["ENG-FY2627-0127",50,14,3,"2026-12-13",4,5,3,0,0],["ENG-FY2627-0118",42,7,4,"2026-12-14",4,8,0,1,0],["ENG-FY2627-0035",106,8,1,"2026-12-16",2,3,0,3,0],["ENG-FY2627-0088",7,6,2,"2026-12-16",4,8,0,3,0],["ENG-FY2627-0048",135,11,2,"2026-12-17",0,3,0,0,1],["ENG-FY2627-0129",156,5,0,"2026-12-18",0,8,0,4,0],["ENG-FY2627-0123",156,5,0,"2026-12-20",3,3,3,4,0],["ENG-FY2627-0041",119,7,5,"2026-12-22",2,2,1,0,0],["ENG-FY2627-0125",70,11,1,"2026-12-23",0,3,0,0,0],["ENG-FY2627-0073",105,2,3,"2026-12-26",4,4,1,4,0],["ENG-FY2627-0098",170,4,3,"2026-12-26",1,7,1,3,0],["ENG-FY2627-0101",184,6,2,"2026-12-27",0,1,0,3,0],["ENG-FY2627-0105",149,6,5,"2026-12-28",0,0,0,2,2]]};
+  const V = {"FY25-26":[],"FY26-27":[["EVT-0001","Fall Teaching Strategies Workshop","2026-10-12","Teaching Practices",45,38,7],["EVT-0002","AI in the Classroom Forum","2026-10-25","AI in Teaching & Learning",120,94,10],["EVT-0003","New Faculty Teaching Bootcamp","2026-08-18","New Faculty Orientation & Support",65,62,9],["EVT-0004","Inclusive Pedagogy Reading Group","2026-09-05","Inclusive Teaching",28,22,8],["EVT-0005","Assessment Design Clinic","2026-11-08","Assessment & Grading",30,26,6],["EVT-0006","Course Design Institute","2026-08-20","Course Design",24,22,5],["EVT-0007","Curriculum Mapping Workshop","2026-09-15","Curriculum Development",18,15,4],["EVT-0008","Program-Level Consulting Kickoff","2026-09-03","Program/Dept-Level Consulting",55,48,3],["EVT-0009","Ed Tech Show & Tell","2026-11-14","Instructional Technology",35,28,7],["EVT-0010","Teaching-Research Seminar","2026-10-18","Educational Research",22,19,5],["EVT-0011","Mid-Semester Teaching Check-In","2026-10-22","Teaching Practices",40,34,8],["EVT-0012","AI Tools Hands-On Lab","2026-11-20","AI in Teaching & Learning",48,42,9]]};
+
+  contacts = C.map(function (r) {
+    return { "Contact ID": r[0], "Duke Primary Org (Dept/Center)": r[2] };
+  });
+
+  engagementsByFY = {};
+  Object.keys(E).forEach(function (fy) {
+    engagementsByFY[fy] = E[fy].map(function (r) {
+      return {
+        "Engagement ID":       r[0],
+        "Contact ID":          C[r[1]][0],
+        "School/Unit":         T.sc[r[2]],
+        "Engagement Type":     T.ty[r[3]],
+        "Date of Engagement":  r[4],
+        "Staff Member":        T.sf[r[5]],
+        "Topic Area\n(Primary)": T.tp[r[6]],
+        "Fac Dev Program":     T.pr[r[7]],
+        "Rank":                T.rk[r[8]],
+        "Status":              T.st[r[9]]
+      };
+    });
+  });
+
+  /* FY25-26 holds no events deliberately: it exercises the empty-events
+     state, and it is also the true story — the events programme began
+     in FY26-27. */
+  eventsByFY = {};
+  Object.keys(V).forEach(function (fy) {
+    eventsByFY[fy] = V[fy].map(function (r) {
+      return { "Event ID": r[0], "Event Name": r[1], "Date": r[2],
+               "Topic Area(s)": r[3], "# Registrants": String(r[4]),
+               "# Attendees": String(r[5]), "Schools Reached": String(r[6]) };
+    });
+  });
+}
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+let currentTab = 'overview';
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.db-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  document.querySelectorAll('.db-section').forEach(s => s.classList.add('hidden'));
+  // The single-year FY dropdown is meaningless on the comparison tab — hide it there.
+  const fybar = document.getElementById('fybar');
+  if (fybar) fybar.classList.toggle('hidden', currentTab === 'yoy');
+  const el = document.getElementById('tab-' + currentTab);
+  if (!el) return;
+
+  switch(currentTab) {
+    case 'overview': renderOverview(el); break;
+    case 'schools': renderSchools(el); break;
+    case 'topics': renderTopics(el); break;
+    case 'events': renderEvents(el); break;
+    case 'yoy': renderYoY(el); break;
+    case 'staff': renderStaff(el); break;
+  }
+  el.classList.remove('hidden');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getField(obj, ...keys) {
+  for (const k of keys) {
+    for (const objKey of Object.keys(obj)) {
+      if (objKey.toLowerCase().replace(/[\n\r]/g,' ').includes(k.toLowerCase())) return obj[objKey];
+    }
+  }
+  return '';
+}
+
+function countBy(arr, fieldNames) {
+  const counts = {};
+  arr.forEach(item => {
+    const val = getField(item, ...fieldNames) || 'Unknown';
+    counts[val] = (counts[val] || 0) + 1;
+  });
+  return Object.entries(counts).sort((a,b) => b[1] - a[1]);
+}
+
+function uniqueByField(arr, fieldNames) {
+  const seen = new Set();
+  arr.forEach(item => {
+    const val = getField(item, ...fieldNames);
+    if (val) seen.add(val);
+  });
+  return seen.size;
+}
+
+function getMonth(item) {
+  const d = getField(item, 'Date of Engagement', 'Date');
+  if (!d) return '';
+  const m = d.substring(5,7);
+  const names = {
+    '01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun',
+    '07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'
+  };
+  return names[m] || m;
+}
+
+// Builds a { contactID -> rank } lookup from the Contacts tab.
+// Used by any view that needs to show rank on engagements.
+function buildContactRankMap() {
+  const map = {};
+  contacts.forEach(c => {
+    const id = getField(c, 'Contact ID');
+    const rank = getField(c, 'Rank');
+    if (id && rank) map[id] = rank;
+  });
+  return map;
+}
+
+// Builds a { contactID -> primary org } lookup from the Contacts tab (Column K).
+// Substring match in getField handles "Duke Primary Org (Dept/Center)" or shorter aliases.
+// Used by the within-school drill-down panel in the Schools & Reach tab.
+function buildContactPrimaryOrgMap() {
+  const map = {};
+  contacts.forEach(c => {
+    const id = getField(c, 'Contact ID');
+    const org = getField(c, 'Primary Org', 'Duke Primary Org');
+    if (id && org) map[id] = org;
+  });
+  return map;
+}
+
+// Renders a panel header row: title plus an optional total-N chip on the right.
+// knownLabel (e.g. "with known rank") flags when N is a filtered subset rather than the
+// full engagement count, so a smaller N reads as intentional, not a defect.
+function panelHead(title, n, knownLabel) {
+  const chip = (n != null)
+    ? `<div class="db-panel-total">N = ${n}${knownLabel ? ' ' + knownLabel : ''}</div>`
+    : '';
+  return `<div class="db-panel-head"><div class="db-panel-title">${title}</div>${chip}</div>`;
+}
+
+function barHTML(label, value, max, width, color, showPct, total) {
+  const barW = max > 0 ? (value / max) * width : 0;
+  const pct = showPct && total > 0 ? ` (${Math.round(value/total*100)}%)` : '';
+  return `<div class="db-bar-row">
+    <div class="db-bar-label">${label}</div>
+    <div class="db-bar-track" style="width:${width}px">
+      <div class="db-bar-fill" style="width:${barW}px;background:linear-gradient(90deg,${color},${color}dd)"></div>
+    </div>
+    <div class="db-bar-val">${value}${pct}</div>
+  </div>`;
+}
+
+// ============================================================
+// RENDER: Overview
+// ============================================================
+function renderOverview(el) {
+  const totalEng = engagements.length;
+  const uniqueContacts = uniqueByField(engagements, ['Contact ID']);
+  const totalEvents = events.length;
+  const totalAtt = events.reduce((s,e) => s + (parseInt(getField(e,'Attendees','# Attendees')) || 0), 0);
+
+  // Monthly
+  const monthCounts = {};
+  engagements.forEach(e => { const m = getMonth(e); if(m) monthCounts[m] = (monthCounts[m]||0)+1; });
+  const monthOrder = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+  const monthData = monthOrder.filter(m => monthCounts[m]).map(m => ({month:m, count:monthCounts[m]||0}));
+  const maxMonth = Math.max(...monthData.map(d=>d.count), 1);
+
+  // Topics
+  const topicCounts = countBy(engagements, ['Topic Area','Primary Topic']);
+  const topicMax = topicCounts.length ? topicCounts[0][1] : 1;
+
+  // Types
+  const typeCounts = countBy(engagements, ['Engagement Type']);
+  const typeTotal = typeCounts.reduce((s,t)=>s+t[1],0);
+
+  // Donut SVG
+  const donutSize = 160, thickness = 28, r = (donutSize-thickness)/2, cx = donutSize/2, cy = donutSize/2;
+  let cumPct = 0;
+  const donutPaths = typeCounts.slice(0,9).map((t,i) => {
+    const pct = t[1]/typeTotal;
+    const startAngle = cumPct * 2 * Math.PI - Math.PI/2;
+    const endAngle = (cumPct + pct) * 2 * Math.PI - Math.PI/2;
+    cumPct += pct;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const largeArc = pct > 0.5 ? 1 : 0;
+    // If there's only one segment (100%), render a full circle instead of an arc (arcs can't close on themselves)
+    if (pct >= 0.999) {
+      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${DONUT_COLORS[i]}" stroke-width="${thickness}"/>`;
+    }
+    return `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}" fill="none" stroke="${DONUT_COLORS[i]}" stroke-width="${thickness}"/>`;
+  }).join('');
+
+  const legendHTML = typeCounts.slice(0,6).map((t,i) =>
+    `<div class="db-legend-item">
+      <div class="db-legend-dot" style="background:${DONUT_COLORS[i]}"></div>
+      <span class="db-legend-text">${t[0]}</span>
+      <span class="db-legend-val">${t[1]}</span>
+    </div>`
+  ).join('');
+
+  el.innerHTML = `
+    <div class="db-kpis">
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#003366"></div>
+        <div class="db-kpi-num" style="color:#003366">${totalEng}</div>
+        <div class="db-kpi-label">Total Engagements</div><div class="db-kpi-sub">Programs, consultations, inquiries</div></div>
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#1a5276"></div>
+        <div class="db-kpi-num" style="color:#1a5276">${uniqueContacts}</div>
+        <div class="db-kpi-label">Unique Contacts</div><div class="db-kpi-sub">Individual people engaged</div></div>
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#2e86c1"></div>
+        <div class="db-kpi-num" style="color:#2e86c1">${totalEvents}</div>
+        <div class="db-kpi-label">Events Hosted</div><div class="db-kpi-sub">Large CTL events</div></div>
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#148f77"></div>
+        <div class="db-kpi-num" style="color:#148f77">${totalAtt}</div>
+        <div class="db-kpi-label">Event Attendees</div><div class="db-kpi-sub">Across all events</div></div>
+    </div>
+    <div class="db-panels">
+      <div class="db-panel">
+        <div class="db-panel-title">Monthly Engagement Trend</div>
+        <div class="db-monthly">
+          ${monthData.map(m => `<div class="db-month-col">
+            <div class="db-month-val">${m.count}</div>
+            <div class="db-month-bar" style="height:${(m.count/maxMonth)*100}px"></div>
+            <div class="db-month-label">${m.month}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="db-panel">
+        <div class="db-panel-title">Engagement by Type</div>
+        <div class="db-donut-wrap">
+          <div class="db-donut-container">
+            <svg width="${donutSize}" height="${donutSize}">${donutPaths}</svg>
+            <div class="db-donut-center">
+              <div class="db-donut-total">${typeTotal}</div>
+              <div class="db-donut-label2">Total</div>
+            </div>
+          </div>
+          <div style="flex:1">${legendHTML}</div>
+        </div>
+      </div>
+    </div>
+    <div class="db-panel db-panel-full">
+      ${panelHead('Top Topic Areas', totalEng)}
+      ${topicCounts.slice(0,8).map(t => barHTML(TOPICS_SHORT[t[0]]||t[0], t[1], topicMax, 320, '#003366', true, totalEng)).join('')}
+    </div>
+  `;
+}
+
+// ============================================================
+// RENDER: Schools
+// ============================================================
+function renderSchools(el) {
+  const schoolCounts = countBy(engagements, ['School','School/Unit']);
+  const maxSchool = schoolCounts.length ? schoolCounts[0][1] : 1;
+
+  function tileColor(val) {
+    const intensity = val / maxSchool;
+    if (intensity > 0.7) return {bg:'#003366',fg:'#fff'};
+    if (intensity > 0.5) return {bg:'#1a5276',fg:'#fff'};
+    if (intensity > 0.3) return {bg:'#4a7fb5',fg:'#fff'};
+    if (intensity > 0.15) return {bg:'#85b1d9',fg:'#fff'};
+    if (val > 0) return {bg:'#c5d9ed',fg:'#475569'};
+    return {bg:'#f1f5f9',fg:'#94a3b8'};
+  }
+
+  const tilesHTML = schoolCounts.map(([school, count]) => {
+    const c = tileColor(count);
+    return `<div class="db-tile" style="background:${c.bg};color:${c.fg}">
+      <div>${SCHOOLS_SHORT[school]||school}</div>
+      <div class="db-tile-num">${count}</div>
+    </div>`;
+  }).join('');
+
+  // School x Rank matrix
+  // Join Engagement Log -> Contacts via Contact ID to get Rank per engagement
+  const contactRankMap = buildContactRankMap();
+
+  const RANK_SHORT = {
+    'Tenured & Tenure Track Faculty': 'Tenured/TT',
+    'Regular Rank Non Tenure Track faculty': 'Reg. Non-TT',
+    'Non-Regular Rank Faculty': 'Non-Regular',
+    'Grad Student/Postdoc': 'Grad/Postdoc',
+    'Staff': 'Staff',
+    'Other': 'Other'
+  };
+
+  // Build school x rank counts
+  const schoolRankData = {};
+  const schoolsInMatrix = new Set();
+  engagements.forEach(e => {
+    const school = getField(e, 'School', 'School/Unit');
+    const cid = getField(e, 'Contact ID');
+    const rank = contactRankMap[cid] || getField(e, 'Rank') || '';
+    if (!school || !rank) return;
+    schoolsInMatrix.add(school);
+    const key = `${school}||${rank}`;
+    schoolRankData[key] = (schoolRankData[key] || 0) + 1;
+  });
+
+  const matrixSchools = [...schoolsInMatrix].sort((a,b) => {
+    const ta = Object.values(Object.fromEntries(
+      Object.entries(schoolRankData).filter(([k]) => k.startsWith(a+'||'))
+    )).reduce((s,v)=>s+v,0);
+    const tb = Object.values(Object.fromEntries(
+      Object.entries(schoolRankData).filter(([k]) => k.startsWith(b+'||'))
+    )).reduce((s,v)=>s+v,0);
+    return tb - ta;
+  });
+
+  // Sort schools by total engagement descending
+  const schoolTotals = {};
+  matrixSchools.forEach(s => {
+    schoolTotals[s] = RANK_LABELS.reduce((sum, r) => sum + (schoolRankData[`${s}||${r}`] || 0), 0);
+  });
+  const sortedSchools = [...matrixSchools].sort((a,b) => schoolTotals[b] - schoolTotals[a]);
+
+  const maxCell = Math.max(...sortedSchools.flatMap(s => RANK_LABELS.map(r => schoolRankData[`${s}||${r}`] || 0)), 1);
+
+  // Column totals (down each rank) + grand total. Grand total reconciles the existing
+  // row-total column and the new column-total row in the bottom-right corner.
+  const colTotals = RANK_LABELS.map(rank =>
+    sortedSchools.reduce((s, school) => s + (schoolRankData[`${school}||${rank}`] || 0), 0)
+  );
+  const grandTotal = colTotals.reduce((a, b) => a + b, 0);
+  const totalsRow = `<tr style="border-top:2px solid #e8edf2;background:#f8fafc;font-weight:700">
+    <td style="padding:6px 10px;white-space:nowrap;font-size:12px;color:#1a2a3a;border-right:1px solid #e8edf2">Total</td>
+    ${colTotals.map(c => `<td style="padding:6px 8px;text-align:center;font-size:12px;color:#1a2a3a">${c || '·'}</td>`).join('')}
+    <td style="padding:6px 10px;text-align:center;font-size:12px;color:#003366">${grandTotal}</td>
+  </tr>`;
+
+  const rankHeaders = RANK_LABELS.map(r => `<th style="font-size:11px;padding:6px 8px;white-space:nowrap">${RANK_SHORT[r]||r}</th>`).join('');
+  const matrixRows = sortedSchools.map(school => {
+    const cells = RANK_LABELS.map(rank => {
+      const count = schoolRankData[`${school}||${rank}`] || 0;
+      const intensity = count / maxCell;
+      const bg = count === 0 ? '#f8fafc' : `rgba(0,51,102,${0.12+intensity*0.88})`;
+      const fg = intensity > 0.45 ? '#fff' : '#475569';
+      return `<td style="background:${bg};color:${fg};font-weight:${count>0?700:400};text-align:center;padding:6px 8px;border-radius:4px">${count||'·'}</td>`;
+    }).join('');
+    const rowTotal = schoolTotals[school];
+    return `<tr>
+      <td style="padding:6px 10px;white-space:nowrap;font-size:12px;color:#475569;border-right:1px solid #e8edf2">${SCHOOLS_SHORT[school]||school}</td>
+      ${cells}
+      <td style="padding:6px 10px;text-align:center;font-weight:700;font-size:12px;color:#003366">${rowTotal}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="db-panel db-panel-full" style="margin-bottom:20px">
+      ${panelHead('Engagement Volume by School and Unit', engagements.length)}
+      <p class="db-panel-note">Tile color intensity reflects engagement volume</p>
+      <div class="db-tiles">${tilesHTML}</div>
+    </div>
+    <div class="db-panel db-panel-full">
+      ${panelHead('School/Unit × Rank', grandTotal, 'with known rank')}
+      <p class="db-panel-note">Engagement counts by school and faculty/staff rank. Color intensity reflects volume.</p>
+      <div style="overflow-x:auto">
+        <table class="db-heat-table" style="width:100%">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:6px 10px;border-right:1px solid #e8edf2">School</th>
+              ${rankHeaders}
+              <th style="padding:6px 8px;color:#003366">Total</th>
+            </tr>
+          </thead>
+          <tbody>${matrixRows}${totalsRow}</tbody>
+        </table>
+      </div>
+    </div>
+    ${renderSchoolDrillDownPanel()}
+  `;
+}
+
+// ============================================================
+// RENDER: Within-School Drill-Down (Schools & Reach tab, third panel)
+// ============================================================
+// Renders an interactive panel showing how engagements within a selected school
+// distribute across that school's departments / centers / programs / units (Column K
+// of Contacts). The school selector is a row of pills above the bars; clicking a pill
+// re-renders just the detail (meta + bars) without rebuilding the whole tab.
+function renderSchoolDrillDownPanel() {
+  const contactPrimaryOrgMap = buildContactPrimaryOrgMap();
+
+  // Build { school -> { primaryOrg -> {count, contacts:Set} } } by joining engagements to contacts.
+  // We track distinct Contact IDs (not just engagement counts) so the panel can show unique
+  // participants alongside engagement volume — surfacing concentrated cases like DGHI, where
+  // many engagements represent only a handful of people.
+  // When a contact's Primary Org equals the engagement's School/Unit, we treat it as
+  // Unspecified — that pattern (e.g. Primary Org = "Graduate School, The") is a real-data
+  // signal that the contact has no specific sub-unit assigned, not a meaningful department
+  // or center. Folding into Unspecified keeps the de-emphasis consistent.
+  const schoolToOrgs = {};
+  engagements.forEach(e => {
+    const school = getField(e, 'School', 'School/Unit');
+    if (!school) return;
+    const cid = getField(e, 'Contact ID');
+    const orgRaw = cid && contactPrimaryOrgMap[cid];
+    const org = (!orgRaw || orgRaw === school) ? 'Unspecified' : orgRaw;
+    if (!schoolToOrgs[school]) schoolToOrgs[school] = {};
+    if (!schoolToOrgs[school][org]) schoolToOrgs[school][org] = { count: 0, contacts: new Set() };
+    schoolToOrgs[school][org].count += 1;
+    if (cid) schoolToOrgs[school][org].contacts.add(cid);
+  });
+
+  // Sort schools by total engagement volume descending — highest-volume school becomes the default.
+  const schoolTotals = {};
+  Object.keys(schoolToOrgs).forEach(s => {
+    schoolTotals[s] = Object.values(schoolToOrgs[s]).reduce((a, o) => a + o.count, 0);
+  });
+  const sortedSchools = Object.keys(schoolToOrgs).sort((a, b) => schoolTotals[b] - schoolTotals[a]);
+
+  // Grand total across all schools — the denominator for the per-school "X/grand engagements"
+  // line. Each engagement has exactly one school, so this is total engagements with a school.
+  const grandTotalEng = Object.values(schoolTotals).reduce((a, b) => a + b, 0);
+
+  if (!sortedSchools.length) {
+    return `<div class="db-panel db-panel-full" style="margin-top:20px">
+      <div class="db-panel-title">Engagement Volume Within Selected School</div>
+      <p class="db-panel-note">No engagement data available yet.</p>
+    </div>`;
+  }
+
+  // Pick or preserve active school. If the previous active school is no longer in the data
+  // (e.g., after a refresh removed all its engagements), fall back to the highest-volume school.
+  if (!drillDownActiveSchool || !schoolToOrgs[drillDownActiveSchool]) {
+    drillDownActiveSchool = sortedSchools[0];
+  }
+
+  // Cache for fast pill-click re-renders (selectDrillDownSchool reads from this).
+  drillDownData = { schoolToOrgs, grandTotalEng };
+
+  const pillsHTML = sortedSchools.map(s => {
+    const isActive = s === drillDownActiveSchool;
+    const shortLabel = SCHOOLS_SHORT[s] || s;
+    // Use data-school for the canonical name; the displayed label is the short form.
+    return `<button class="db-drill-pill${isActive ? ' active' : ''}" data-school="${escapeAttr(s)}" onclick="selectDrillDownSchool(this.dataset.school)">${shortLabel}</button>`;
+  }).join('');
+
+  return `<div class="db-panel db-panel-full" style="margin-top:20px">
+    <div class="db-panel-title">Engagement Volume Within Selected School</div>
+    <p class="db-panel-note">Click a school to see how engagements distribute by department, center, program, or unit.</p>
+    <div class="db-drill-pills">${pillsHTML}</div>
+    <div id="db-drill-detail">${renderDrillDownDetail()}</div>
+  </div>`;
+}
+
+// Renders just the meta line + bars for the currently active school.
+// Called both on initial render and on pill click (without rebuilding the whole tab).
+function renderDrillDownDetail() {
+  if (!drillDownData || !drillDownActiveSchool) return '';
+  const orgs = drillDownData.schoolToOrgs[drillDownActiveSchool] || {};
+  // Org entries now carry {count, contacts:Set}; sort by engagement count descending.
+  const orgEntries = Object.entries(orgs).sort((a, b) => b[1].count - a[1].count);
+  const total = orgEntries.reduce((s, [, o]) => s + o.count, 0);
+  const max = orgEntries.length ? orgEntries[0][1].count : 1;
+  const grand = drillDownData.grandTotalEng || total;
+
+  // School-level unique participants = distinct contacts across all of this school's orgs
+  // (Unspecified included — a contact with no sub-org is still a real participant).
+  const schoolContacts = new Set();
+  orgEntries.forEach(([, o]) => o.contacts.forEach(c => schoolContacts.add(c)));
+  const uniqueSchool = schoolContacts.size;
+
+  // Named entries exclude "Unspecified" — that's a placeholder, not a real sub-org.
+  // Counting it as a "department" or "center" would overstate the breadth.
+  const namedCount = orgEntries.filter(([n]) => n !== 'Unspecified').length;
+  const noun = SCHOOL_SUBORG_NOUN[drillDownActiveSchool] || ['unit', 'units'];
+  const nounLabel = namedCount === 1 ? noun[0] : noun[1];
+  const engLabel = total === 1 ? 'engagement' : 'engagements';
+  const partLabel = uniqueSchool === 1 ? 'participant' : 'participants';
+  const shortSchool = SCHOOLS_SHORT[drillDownActiveSchool] || drillDownActiveSchool;
+
+  const meta = `<div class="db-drill-meta"><strong>${shortSchool}</strong> · ${total}/${grand} ${engLabel} · ${uniqueSchool} ${partLabel} · ${namedCount} ${nounLabel}</div>`;
+
+  const barsHTML = orgEntries.map(([name, o]) => {
+    const count = o.count;
+    const people = o.contacts.size;
+    const pct = (count / max) * 100;
+    const isUnspec = (name === 'Unspecified');
+    const cls = isUnspec ? 'db-drill-row unspec' : 'db-drill-row';
+    const peopleLabel = people === 1 ? 'person' : 'people';
+    // Only attach title when the name is long enough that the 220px column will truncate
+    // (rough threshold ~28 chars at 12px Source Sans 3). Short names that already fit don't
+    // need a hover tooltip — that would just feel like noise.
+    const titleAttr = name.length > 28 ? ` title="${escapeAttr(name)}"` : '';
+    return `<div class="${cls}">
+      <div class="db-drill-label-cell"${titleAttr}>
+        <div class="db-drill-label">${name}</div>
+      </div>
+      <div class="db-drill-track"><div class="db-drill-fill" style="width:${pct}%"></div></div>
+      <div class="db-drill-count-cell">
+        <div class="db-drill-count">${count}</div>
+        <div class="db-drill-people">${people} ${peopleLabel}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return meta + `<div class="db-drill-bars">${barsHTML}</div>`;
+}
+
+// Pill click handler. Updates module state, swaps active class on pills, re-renders the
+// detail block. Avoids re-rendering the whole tab so we don't recompute the school-level
+// matrix on every click.
+function selectDrillDownSchool(school) {
+  if (!drillDownData || !drillDownData.schoolToOrgs[school]) return;
+  drillDownActiveSchool = school;
+  document.querySelectorAll('.db-drill-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.school === school);
+  });
+  const detail = document.getElementById('db-drill-detail');
+  if (detail) detail.innerHTML = renderDrillDownDetail();
+}
+
+// Small helper for HTML attribute escaping (single quotes, double quotes, ampersands).
+// Sub-org names like "Markets & Management" and "Pierre R. Lamond Department" need this
+// when they appear in data-school and title attributes.
+function escapeAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ============================================================
+// RENDER: Topics
+// ============================================================
+function renderTopics(el) {
+  const topicCounts = countBy(engagements, ['Topic Area','Primary Topic']);
+  const topicMax = topicCounts.length ? topicCounts[0][1] : 1;
+  const typeCounts = countBy(engagements, ['Engagement Type']);
+  const typeMax = typeCounts.length ? typeCounts[0][1] : 1;
+  const total = engagements.length;
+
+  el.innerHTML = `
+    <div class="db-panels">
+      <div class="db-panel">
+        ${panelHead('All Topic Areas', total)}
+        ${topicCounts.map(t => barHTML(TOPICS_SHORT[t[0]]||t[0], t[1], topicMax, 280, '#003366', true, total)).join('')}
+      </div>
+      <div class="db-panel">
+        ${panelHead('By Engagement Type', total)}
+        ${typeCounts.map(t => barHTML(t[0], t[1], typeMax, 280, '#2e86c1', true, total)).join('')}
+      </div>
+    </div>
+    <div class="db-panel db-panel-full" style="margin-top:20px">
+      <div class="db-panel-title">Summary of Programs</div>
+      <p class="db-panel-note">Per-program detail for engagements in named faculty development programs.</p>
+      ${renderProgramCards()}
+    </div>
+  `;
+}
+
+// ============================================================
+// RENDER: Named Programs (within Topics tab)
+// ============================================================
+function renderProgramCards() {
+  // Group engagements by Program Name (skipping blanks)
+  const byProgram = {};
+  engagements.forEach(e => {
+    const p = getField(e, 'Fac Dev Program', 'Program Name');
+    if (!p) return;
+    if (!byProgram[p]) byProgram[p] = [];
+    byProgram[p].push(e);
+  });
+
+  const programNames = Object.keys(byProgram).sort((a, b) => byProgram[b].length - byProgram[a].length);
+
+  if (!programNames.length) {
+    return `<div class="db-program-empty">
+      No engagements logged to a named program yet. Program data will appear here as staff select a Fac Dev Program when logging engagements.
+    </div>`;
+  }
+
+  const contactRankMap = buildContactRankMap();
+
+  return programNames.map(name => renderSingleProgramCard(name, byProgram[name], contactRankMap)).join('');
+}
+
+function renderSingleProgramCard(name, progEngagements, contactRankMap) {
+  const total = progEngagements.length;
+
+  // Unique participants
+  const uniqueContacts = new Set();
+  progEngagements.forEach(e => {
+    const cid = getField(e, 'Contact ID');
+    if (cid) uniqueContacts.add(cid);
+  });
+  const uniqueCount = uniqueContacts.size;
+
+  // Reach by School (tiles)
+  const schoolCounts = {};
+  progEngagements.forEach(e => {
+    const s = getField(e, 'School', 'School/Unit') || 'Unknown';
+    schoolCounts[s] = (schoolCounts[s] || 0) + 1;
+  });
+  const schoolEntries = Object.entries(schoolCounts).sort((a, b) => b[1] - a[1]);
+  const maxSchool = schoolEntries.length ? schoolEntries[0][1] : 1;
+
+  function tileColor(val) {
+    const intensity = val / maxSchool;
+    if (intensity > 0.7) return { bg:'#003366', fg:'#fff' };
+    if (intensity > 0.5) return { bg:'#1a5276', fg:'#fff' };
+    if (intensity > 0.3) return { bg:'#4a7fb5', fg:'#fff' };
+    if (intensity > 0.15) return { bg:'#85b1d9', fg:'#fff' };
+    if (val > 0) return { bg:'#c5d9ed', fg:'#475569' };
+    return { bg:'#f1f5f9', fg:'#94a3b8' };
+  }
+
+  const tilesHTML = schoolEntries.map(([school, count]) => {
+    const c = tileColor(count);
+    return `<div class="db-tile" style="background:${c.bg};color:${c.fg}">
+      <div>${SCHOOLS_SHORT[school] || school}</div>
+      <div class="db-tile-num">${count}</div>
+    </div>`;
+  }).join('');
+
+  // By Rank (via Contacts join; falls back to rank on engagement itself if present)
+  const rankCounts = {};
+  progEngagements.forEach(e => {
+    const cid = getField(e, 'Contact ID');
+    const rank = contactRankMap[cid] || getField(e, 'Rank') || 'Unknown';
+    rankCounts[rank] = (rankCounts[rank] || 0) + 1;
+  });
+  const rankEntries = Object.entries(rankCounts).sort((a, b) => b[1] - a[1]);
+  const maxRank = rankEntries.length ? rankEntries[0][1] : 1;
+  const rankBarsHTML = rankEntries.map(([rank, count]) =>
+    barHTML(rank, count, maxRank, 260, '#1a5276', true, total)
+  ).join('');
+
+  // Monthly sparkline (only if >15 engagements)
+  let sparkHTML = '';
+  if (total > 15) {
+    const monthCounts = {};
+    progEngagements.forEach(e => {
+      const m = getMonth(e);
+      if (m) monthCounts[m] = (monthCounts[m] || 0) + 1;
+    });
+    const monthOrder = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+    const monthData = monthOrder.map(m => ({ month: m, count: monthCounts[m] || 0 }));
+    sparkHTML = `<div class="db-program-spark-wrap">
+      <div class="db-program-spark-label">Monthly trend</div>
+      ${sparklineSVG(monthData)}
+    </div>`;
+  }
+
+  return `<div class="db-program-card">
+    <div class="db-program-header">
+      <div>
+        <div class="db-program-name">${name}</div>
+        <div class="db-program-stats">
+          <strong>${total}</strong> ${total === 1 ? 'engagement' : 'engagements'} ·
+          <strong>${uniqueCount}</strong> unique ${uniqueCount === 1 ? 'participant' : 'participants'}
+        </div>
+      </div>
+      ${sparkHTML}
+    </div>
+    <div class="db-program-subtitle">Reach by School</div>
+    <div class="db-tiles">${tilesHTML}</div>
+    <div class="db-program-subtitle">By Rank</div>
+    ${rankBarsHTML}
+  </div>`;
+}
+
+function sparklineSVG(monthData) {
+  const w = 160, h = 36, gap = 2;
+  const barW = (w - gap * (monthData.length - 1)) / monthData.length;
+  const maxVal = Math.max(...monthData.map(m => m.count), 1);
+  const bars = monthData.map((m, i) => {
+    const barH = Math.max((m.count / maxVal) * (h - 2), m.count > 0 ? 1 : 0);
+    return `<rect x="${i * (barW + gap)}" y="${h - barH}" width="${barW}" height="${barH}"
+      fill="#003366" opacity="${m.count > 0 ? 0.85 : 0.12}" rx="1"/>`;
+  }).join('');
+  return `<svg width="${w}" height="${h}" style="display:block">${bars}</svg>`;
+}
+
+// ============================================================
+// RENDER: Events
+// ============================================================
+function renderEvents(el) {
+  if (!events.length) {
+    el.innerHTML = `
+      <div class="db-panel db-panel-full">
+        <div class="db-panel-title">Events Summary</div>
+        <div class="db-program-empty">No events recorded for ${currentFY}.</div>
+      </div>`;
+    return;
+  }
+  const totalEvents = events.length;
+  const totalReg = events.reduce((s,e) => s+(parseInt(getField(e,'Registrants','# Registrants'))||0), 0);
+  const totalAtt = events.reduce((s,e) => s+(parseInt(getField(e,'Attendees','# Attendees'))||0), 0);
+  const attRate = totalReg > 0 ? Math.round((totalAtt/totalReg)*100) : 0;
+
+  const rowsHTML = events.map(e => {
+    const reg = parseInt(getField(e,'Registrants','# Registrants'))||0;
+    const att = parseInt(getField(e,'Attendees','# Attendees'))||0;
+    const rate = reg > 0 ? Math.round((att/reg)*100) : 0;
+    const badgeClass = rate >= 80 ? 'db-badge-green' : 'db-badge-yellow';
+    const topic = getField(e,'Topic Area','Topic');
+    return `<tr>
+      <td class="bold">${getField(e,'Event Name','Name')}</td>
+      <td>${getField(e,'Date')}</td>
+      <td>${TOPICS_SHORT[topic]||topic}</td>
+      <td style="font-weight:700">${reg}</td>
+      <td style="font-weight:700">${att}</td>
+      <td><span class="db-badge ${badgeClass}">${rate}%</span></td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="db-kpis">
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#8E44AD"></div>
+        <div class="db-kpi-num" style="color:#8E44AD">${totalEvents}</div>
+        <div class="db-kpi-label">Events This Semester</div></div>
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#6b21a8"></div>
+        <div class="db-kpi-num" style="color:#6b21a8">${totalReg}</div>
+        <div class="db-kpi-label">Total Registrations</div></div>
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#2e86c1"></div>
+        <div class="db-kpi-num" style="color:#2e86c1">${totalAtt}</div>
+        <div class="db-kpi-label">Total Attendees</div></div>
+      <div class="db-kpi"><div class="db-kpi-bar" style="background:#059669"></div>
+        <div class="db-kpi-num" style="color:#059669">${attRate}%</div>
+        <div class="db-kpi-label">Attendance Rate</div></div>
+    </div>
+    <div class="db-panel db-panel-full">
+      <div class="db-panel-title">Events Summary</div>
+      <div style="overflow-x:auto">
+        <table class="db-table">
+          <thead><tr><th>Event</th><th>Date</th><th>Topic</th><th>Reg.</th><th>Att.</th><th>Rate</th></tr></thead>
+          <tbody>${rowsHTML}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// RENDER: Staff
+// ============================================================
+function renderStaff(el) {
+  const staffCounts = countBy(engagements, ['Staff Member','Staff']);
+  const staffMax = staffCounts.length ? staffCounts[0][1] : 1;
+  const total = engagements.length;
+  const staffNames = staffCounts.map(s => s[0]);
+
+  // Get all topics
+  const allTopics = [...new Set(engagements.map(e => getField(e,'Topic Area','Primary Topic')))].filter(Boolean);
+
+  // Build heatmap
+  const heatData = {};
+  engagements.forEach(e => {
+    const s = getField(e,'Staff Member','Staff');
+    const t = getField(e,'Topic Area','Primary Topic');
+    if (s && t) {
+      const key = `${s}|${t}`;
+      heatData[key] = (heatData[key]||0) + 1;
+    }
+  });
+  const maxCell = Math.max(...Object.values(heatData), 1);
+
+  const heatHeaders = staffNames.map(s => `<th>${s}</th>`).join('');
+  const heatRows = allTopics.slice(0,10).map(t => {
+    const cells = staffNames.map(s => {
+      const count = heatData[`${s}|${t}`] || 0;
+      const intensity = count / maxCell;
+      const bg = count === 0 ? '#f8fafc' : `rgba(0,51,102,${0.15+intensity*0.85})`;
+      const fg = intensity > 0.4 ? '#fff' : '#475569';
+      return `<td style="background:${bg};color:${fg};font-weight:${count>0?700:400}">${count||'·'}</td>`;
+    }).join('');
+    return `<tr><td>${TOPICS_SHORT[t]||t}</td>${cells}</tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="db-panels">
+      <div class="db-panel">
+        <div class="db-panel-title">Engagements by Staff Member</div>
+        ${staffCounts.map(s => barHTML(s[0], s[1], staffMax, 300, '#003366', true, total)).join('')}
+      </div>
+      <div class="db-panel">
+        <div class="db-panel-title">Staff × Topic Distribution</div>
+        <div style="overflow-x:auto">
+          <table class="db-heat-table">
+            <thead><tr><th></th>${heatHeaders}</tr></thead>
+            <tbody>${heatRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// RENDER: Year over Year (cross-fiscal-year comparison)
+// ============================================================
+// Reads engagementsByFY / eventsByFY directly (all years), not the single-FY globals.
+
+// Display short labels for long program names (full logged name -> short). Programs not
+// listed here render with their full logged name, so unanticipated programs need no
+// pre-coding. NOTE: CPC carries the cohort year in its name, so its FY26-27 cohort will be
+// a distinct key — revisit a "program family" mapping for cross-year alignment when that
+// cohort's name actually exists (see v5 outstanding work).
+const PROGRAMS_SHORT = {
+  "Faculty Peer Course Evaluation Program": "Faculty Peer Course Evaluation",
+  "Collaborative Project Courses Faculty Fellows (CPC 2026)": "Collaborative Project Courses (2026)",
+  "Collaborative Project Courses Faculty Fellows (CPC 2026-2027)": "Collaborative Project Courses (2026-27)",
+  "AI in Education at Duke Summit, Pre-Summit Workshops": "AI Summit Pre-Summit Workshops",
+};
+
+// Coverage qualifier per FY. An explicit override wins (FY25-26 only ever holds six months
+// of data); otherwise it's derived from today's date — a FY whose June 30 end has passed
+// reads "full year," one still open reads "year to date." So the current FY relabels itself
+// to "full year" the moment the next FY begins, with no manual edit at rollover.
+const FY_COVERAGE_OVERRIDE = { "FY25-26": "six months" };
+function fyCoverage(fy) {
+  if (FY_COVERAGE_OVERRIDE[fy]) return FY_COVERAGE_OVERRIDE[fy];
+  const endYY = parseInt(String(fy).slice(-2), 10);
+  if (isNaN(endYY)) return '';
+  const concluded = new Date() >= new Date(2000 + endYY, 6, 1); // on/after July 1 of end year
+  return concluded ? 'full year' : 'year to date';
+}
+
+const RANK_SHORT_YOY = {
+  'Tenured & Tenure Track Faculty': 'Tenured/TT',
+  'Regular Rank Non Tenure Track faculty': 'Reg. Non-TT',
+  'Non-Regular Rank Faculty': 'Non-Regular',
+  'Grad Student/Postdoc': 'Grad/Postdoc',
+  'Staff': 'Staff',
+};
+// Known ranks shown in the comparison; "Other"/unmatched are set aside, the same way the
+// School x Rank matrix uses "with known rank".
+const YOY_RANKS = ['Tenured & Tenure Track Faculty','Regular Rank Non Tenure Track faculty','Non-Regular Rank Faculty','Grad Student/Postdoc','Staff'];
+
+// Color per FY: the newest (in-progress) year gets Duke navy; older years step through
+// muted shades. Supports more than two years for when the comparison grows.
+function yoyColor(i, n) {
+  if (i === n - 1) return '#003366';
+  return ['#94a3b8','#2e86c1','#7fb3d8','#5dade2'][i] || '#94a3b8';
+}
+
+// One FY -> aggregated metrics (counts + unique-participant Sets per dimension).
+function fyAggregate(fy, rankMap) {
+  const eng = engagementsByFY[fy] || [];
+  const evt = eventsByFY[fy] || [];
+  const a = {
+    totalEng: eng.length,
+    uniqueContacts: uniqueByField(eng, ['Contact ID']),
+    events: evt.length,
+    attendees: evt.reduce((s,e)=> s + (parseInt(getField(e,'Attendees','# Attendees'))||0), 0),
+    type:{}, typeP:{}, topic:{}, topicP:{}, school:{}, schoolP:{}, rank:{}, rankP:{}, programs:{}
+  };
+  function bump(cMap, pMap, key, cid){ if(!key) return; cMap[key]=(cMap[key]||0)+1; if(cid){(pMap[key]=pMap[key]||new Set()).add(cid);} }
+  eng.forEach(e => {
+    const cid = getField(e,'Contact ID');
+    const school = getField(e,'School','School/Unit');
+    const rank = rankMap[cid] || getField(e,'Rank') || '';
+    bump(a.type, a.typeP, getField(e,'Engagement Type'), cid);
+    bump(a.topic, a.topicP, getField(e,'Topic Area','Topic'), cid);
+    bump(a.school, a.schoolP, school, cid);
+    if (rank) bump(a.rank, a.rankP, rank, cid);
+    const prog = getField(e,'Fac Dev Program','Program Name');
+    if (prog) { const p=a.programs[prog]=a.programs[prog]||{eng:0,people:new Set(),schools:new Set()}; p.eng++; if(cid)p.people.add(cid); if(school)p.schools.add(school); }
+  });
+  return a;
+}
+
+// Builds { key -> { fy -> {eng, people} } } for a dimension, unioned across all FYs.
+function yoyDim(aggByFy, fys, cKey, pKey) {
+  const keys = new Set();
+  fys.forEach(fy => Object.keys(aggByFy[fy][cKey]).forEach(k => keys.add(k)));
+  const out = {};
+  keys.forEach(k => {
+    out[k] = {};
+    fys.forEach(fy => {
+      out[k][fy] = { eng: aggByFy[fy][cKey][k]||0, people: aggByFy[fy][pKey][k] ? aggByFy[fy][pKey][k].size : 0 };
+    });
+  });
+  return out;
+}
+
+function yoySumEng(perFy, fys) { return fys.reduce((s,fy)=> s + (perFy[fy] ? perFy[fy].eng : 0), 0); }
+
+function yoyBarsHTML(perFy, fys, colorByFy, max) {
+  return fys.map(fy => {
+    const d = perFy[fy] || {eng:0, people:0};
+    const w = max > 0 ? Math.round(d.eng / max * 100) : 0;
+    return `<div class="db-yoy-bar"><div class="db-yoy-track"><div class="db-yoy-fill" style="width:${w}%;background:${colorByFy[fy]}"></div></div><div class="db-yoy-val"><span class="e">${d.eng}</span> · ${d.people} ppl</div></div>`;
+  }).join('');
+}
+
+function yoyBlock(title, keys, labelFor, dim, fys, colorByFy, note) {
+  let max = 1;
+  keys.forEach(k => fys.forEach(fy => { const v = dim[k] && dim[k][fy] ? dim[k][fy].eng : 0; if (v > max) max = v; }));
+  const rows = keys.length
+    ? keys.map(k => `<div class="db-yoy-row"><div class="db-yoy-label">${labelFor(k)}</div><div class="db-yoy-bars">${yoyBarsHTML(dim[k]||{}, fys, colorByFy, max)}</div></div>`).join('')
+    : `<p class="db-panel-note">No data yet for the years shown.</p>`;
+  return `<div class="db-panel db-panel-full" style="margin-bottom:20px">${panelHead(title)}${note?`<p class="db-panel-note">${note}</p>`:''}<div class="db-yoy-grp">${rows}</div></div>`;
+}
+
+// Reach over time: per-FY unique contacts, distinct contacts across all years (union of
+// Contact IDs — the shared identity that makes de-duplication possible), and returning
+// contacts (a year's contacts also seen in a prior year). The gap between the naive per-FY
+// sum and the all-years distinct total equals the returning count.
+function renderReachOverTime(fys, colorByFy) {
+  const setByFy = {};
+  fys.forEach(fy => {
+    const s = new Set();
+    (engagementsByFY[fy] || []).forEach(e => { const id = getField(e,'Contact ID'); if (id) s.add(id); });
+    setByFy[fy] = s;
+  });
+  const seenPrior = new Set();
+  const rowData = fys.map((fy, i) => {
+    const uniq = setByFy[fy].size;
+    let returning = null;                 // null -> "—" for the first year (no prior year)
+    if (i > 0) { returning = 0; setByFy[fy].forEach(id => { if (seenPrior.has(id)) returning++; }); }
+    setByFy[fy].forEach(id => seenPrior.add(id));
+    return { fy, uniq, returning };
+  });
+  const rows = rowData.map(r => `
+    <tr>
+      <td style="padding:8px 10px;font-size:13px;color:#475569;border-right:1px solid #e8edf2;white-space:nowrap">
+        <span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${colorByFy[r.fy]};margin-right:8px"></span>${r.fy} <span style="color:#94a3b8">(${fyCoverage(r.fy)})</span>
+      </td>
+      <td style="padding:8px 12px;text-align:center;font-size:14px;font-weight:700;color:#1a2a3a">${r.uniq}</td>
+      <td style="padding:8px 12px;text-align:center;font-size:13px;color:${r.returning===null?'#cbd5e1':'#475569'}">${r.returning===null?'—':r.returning}</td>
+    </tr>`).join('');
+
+  return `
+    <div class="db-panel db-panel-full" style="margin:8px 0 20px">
+      ${panelHead('Reach over time')}
+      <p class="db-panel-note">Per-FY unique contacts can't be summed — the same person re-engaging in a later year would be counted twice.</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px 10px;font-size:12px;color:#64748b;border-bottom:1px solid #e8edf2;border-right:1px solid #e8edf2">Fiscal Year</th>
+              <th style="text-align:center;padding:8px 12px;font-size:12px;color:#64748b;border-bottom:1px solid #e8edf2">Unique Contacts (per FY)</th>
+              <th style="text-align:center;padding:8px 12px;font-size:12px;color:#64748b;border-bottom:1px solid #e8edf2">Returning Contacts</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function renderYoY(el) {
+  const fys = Object.keys(FY_TABS);
+  const colorByFy = {}; fys.forEach((fy,i)=> colorByFy[fy] = yoyColor(i, fys.length));
+  const rankMap = buildContactRankMap();
+  const agg = {}; fys.forEach(fy => agg[fy] = fyAggregate(fy, rankMap));
+
+  const inProg = fys.find(fy => fyCoverage(fy) === 'year to date');
+  const banner = inProg
+    ? `<div class="db-yoy-banner">${inProg} is in progress — figures are year to date, so totals aren't a like-for-like comparison with a completed year.</div>`
+    : '';
+  const legend = `<div class="db-yoy-legend">${fys.map(fy => `<span><span class="k" style="background:${colorByFy[fy]}"></span>${fy} (${fyCoverage(fy)})</span>`).join('')}</div>`;
+
+  const allDistinctSet = new Set();
+  fys.forEach(fy => (engagementsByFY[fy]||[]).forEach(e => { const id = getField(e,'Contact ID'); if (id) allDistinctSet.add(id); }));
+  const allDistinct = allDistinctSet.size;
+
+  const kpiDefs = [
+    { label:'Total engagements', val: fy => agg[fy].totalEng },
+    { label:'Unique contacts',   val: fy => agg[fy].uniqueContacts, extra: { label:'All Distinct', value: allDistinct } },
+    { label:'Events hosted',     val: fy => agg[fy].events },
+    { label:'Event attendees',   val: fy => agg[fy].attendees },
+  ];
+  const kpis = kpiDefs.map(def => {
+    const vals = fys.map(def.val);
+    const max = Math.max(1, ...vals, def.extra ? def.extra.value : 0);
+    const rows = fys.map((fy,i) => {
+      const w = Math.round(vals[i]/max*100);
+      return `<div class="db-yoy-kpi-row"><span class="db-yoy-kpi-yr">${fy}</span><div class="db-yoy-kpi-track"><div class="db-yoy-kpi-fill" style="width:${w}%;background:${colorByFy[fy]}"></div></div><span class="db-yoy-kpi-num">${vals[i]}</span></div>`;
+    }).join('');
+    let extraRow = '';
+    if (def.extra) {
+      const w = Math.round(def.extra.value/max*100);
+      extraRow = `<div class="db-yoy-kpi-row db-yoy-kpi-total"><span class="db-yoy-kpi-yr db-yoy-kpi-totlab">${def.extra.label}</span><div class="db-yoy-kpi-track"><div class="db-yoy-kpi-fill" style="width:${w}%;background:#003366"></div></div><span class="db-yoy-kpi-num db-yoy-kpi-totnum">${def.extra.value}</span></div>`;
+    }
+    return `<div class="db-yoy-kpi"><div class="db-yoy-kpi-label">${def.label}</div>${rows}${extraRow}</div>`;
+  }).join('');
+
+  const typeDim = yoyDim(agg, fys, 'type', 'typeP');
+  const typeKeys = Object.keys(typeDim).sort((a,b)=> yoySumEng(typeDim[b],fys)-yoySumEng(typeDim[a],fys));
+  const topicDim = yoyDim(agg, fys, 'topic', 'topicP');
+  const topicKeys = Object.keys(topicDim).sort((a,b)=> yoySumEng(topicDim[b],fys)-yoySumEng(topicDim[a],fys));
+  const schoolDim = yoyDim(agg, fys, 'school', 'schoolP');
+  const schoolKeys = Object.keys(schoolDim).sort((a,b)=> yoySumEng(schoolDim[b],fys)-yoySumEng(schoolDim[a],fys)).slice(0,5);
+  const rankDim = yoyDim(agg, fys, 'rank', 'rankP');
+  const rankKeys = YOY_RANKS.filter(r => rankDim[r]);
+
+  const progRecur = {};
+  fys.forEach(fy => Object.keys(agg[fy].programs).forEach(p => progRecur[p]=(progRecur[p]||0)+1));
+  const pfCols = fys.map(fy => {
+    const progs = Object.entries(agg[fy].programs).sort((a,b)=> b[1].eng - a[1].eng);
+    const lines = progs.length
+      ? progs.map(([name, d]) => {
+          const recur = progRecur[name] > 1 ? `<span class="db-yoy-pf-tag">both years</span>` : '';
+          const disp = PROGRAMS_SHORT[name] || name;
+          return `<div class="db-yoy-pf-prog"><div class="db-yoy-pf-name">${disp}${recur}</div><div class="db-yoy-pf-stats"><span><b>${d.eng}</b> engagements</span><span><b>${d.people.size}</b> participants</span><span><b>${d.schools.size}</b> schools</span></div></div>`;
+        }).join('')
+      : `<div class="db-yoy-pf-prog" style="color:#94a3b8;font-style:italic">No programs logged yet</div>`;
+    const n = progs.length;
+    return `<div class="db-yoy-pf-col"><div class="db-yoy-pf-hd">${fy} <span style="color:#94a3b8;font-weight:400">(${fyCoverage(fy)})</span></div><div class="db-yoy-pf-sub">${n} program${n===1?'':'s'}${fyCoverage(fy)==='year to date'?' so far':''}</div>${lines}</div>`;
+  }).join('');
+
+  el.innerHTML = `
+    ${banner}
+    ${legend}
+    <div class="db-panel db-panel-full" style="margin:8px 0 20px">
+      ${panelHead('Headline metrics')}
+      <div class="db-yoy-kpis">${kpis}</div>
+      <p class="db-panel-note" style="margin-top:12px">The All Distinct figure counts each contact once across all years.</p>
+    </div>
+    ${renderReachOverTime(fys, colorByFy)}
+    ${yoyBlock('Engagement by type', typeKeys, k=>k, typeDim, fys, colorByFy)}
+    ${yoyBlock('Top topic areas', topicKeys, k=>TOPICS_SHORT[k]||k, topicDim, fys, colorByFy)}
+    ${yoyBlock('Engagement by school & unit — top 5', schoolKeys, k=>SCHOOLS_SHORT[k]||k, schoolDim, fys, colorByFy)}
+    ${yoyBlock('Engagement by rank', rankKeys, k=>RANK_SHORT_YOY[k]||k, rankDim, fys, colorByFy, 'Known ranks only; engagements without a matched rank are set aside.')}
+    <div class="db-panel db-panel-full">
+      ${panelHead('Program portfolio')}
+      <p class="db-panel-note">Each year's named programs, with engagements, unique participants, and schools reached. Recurring programs are tagged.</p>
+      <div class="db-yoy-pf">${pfCols}</div>
+    </div>
+  `;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  if (!SHOW_STAFF_TAB) {
+    const btn = document.getElementById('staffTabBtn');
+    if (btn) btn.style.display = 'none';
+  }
+  loadAllData();
+});
+</script>
+</body>
+</html>
