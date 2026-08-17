@@ -827,6 +827,26 @@ function uniqueByField(arr, fieldNames) {
   return seen.size;
 }
 
+/**
+ * Month order for a Duke fiscal year, which runs 1 July through 30 June.
+ *
+ * FIXED 13 AUGUST 2026. This array previously began with 'Aug' and carried
+ * 'Jul' in the final position, so the fiscal year's FIRST month rendered as its
+ * LAST. FY25-26 concealed it: the system launched in January 2026, so that year
+ * holds only Jan-Jun, all in correct relative order within the back half of the
+ * old array. FY26-27 exposed it the moment it held both July and August data —
+ * the Monthly Engagement Trend read "Aug, Jul".
+ *
+ * Defined ONCE and referenced by both the Overview trend and the Year-over-Year
+ * sparkline. It was previously duplicated in each, and the sparkline carried the
+ * same defect unnoticed because it does not filter empty months, so all twelve
+ * bars render and the misordering reads as less obviously wrong.
+ *
+ * The tokens must match what getMonth() returns.
+ */
+const FY_MONTH_ORDER = ['Jul','Aug','Sep','Oct','Nov','Dec',
+                        'Jan','Feb','Mar','Apr','May','Jun'];
+
 function getMonth(item) {
   const d = getField(item, 'Date of Engagement', 'Date');
   if (!d) return '';
@@ -897,8 +917,7 @@ function renderOverview(el) {
   // Monthly
   const monthCounts = {};
   engagements.forEach(e => { const m = getMonth(e); if(m) monthCounts[m] = (monthCounts[m]||0)+1; });
-  const monthOrder = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
-  const monthData = monthOrder.filter(m => monthCounts[m]).map(m => ({month:m, count:monthCounts[m]||0}));
+  const monthData = FY_MONTH_ORDER.filter(m => monthCounts[m]).map(m => ({month:m, count:monthCounts[m]||0}));
   const maxMonth = Math.max(...monthData.map(d=>d.count), 1);
 
   // Topics
@@ -1370,8 +1389,7 @@ function renderSingleProgramCard(name, progEngagements, contactRankMap) {
       const m = getMonth(e);
       if (m) monthCounts[m] = (monthCounts[m] || 0) + 1;
     });
-    const monthOrder = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
-    const monthData = monthOrder.map(m => ({ month: m, count: monthCounts[m] || 0 }));
+    const monthData = FY_MONTH_ORDER.map(m => ({ month: m, count: monthCounts[m] || 0 }));
     sparkHTML = `<div class="db-program-spark-wrap">
       <div class="db-program-spark-label">Monthly trend</div>
       ${sparklineSVG(monthData)}

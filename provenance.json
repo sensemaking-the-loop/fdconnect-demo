@@ -1,18 +1,18 @@
 {
   "schema": "fdconnect-demo-provenance/1",
-  "generated_at": "2026-08-13T21:37:30+00:00",
+  "generated_at": "2026-08-17T15:06:23+00:00",
   "source": {
-    "commit": "30ebd919eb336f1f467bd00a3309e2a45a367f14",
-    "commit_short": "30ebd919",
+    "commit": "4e2ed772b15cdffd39d266a0c9bddd09ff81f49b",
+    "commit_short": "4e2ed772",
     "branch": "main",
-    "committed_at": "2026-08-13T17:35:38-04:00",
+    "committed_at": "2026-08-17T11:03:45-04:00",
     "tree_clean": true,
     "note": "Commit in the private canonical repository. Recorded so the team can identify the exact source state; it grants no access. The remote URL is deliberately omitted."
   },
   "derivation": {
     "deriver": {
-      "path": "tools/derive_demo_v7.py",
-      "sha256": "1005660a23b772202b66f6c89b552790a964bc981601e71fdc26c270ea47bbe1"
+      "path": "tools/derive_demo_v9.py",
+      "sha256": "026d81e62751b2e444fb9f6c20df4359f928f4754a85adb53dee9971b8e2abd6"
     },
     "real_values_harvested_and_denied": 9,
     "assertion_classes_run": [
@@ -24,6 +24,7 @@
       "E1",
       "E2",
       "E3",
+      "E4",
       "F",
       "F2",
       "G",
@@ -37,8 +38,8 @@
     "files": [
       {
         "name": "DossierDirectory.html",
-        "bytes": 130368,
-        "sha256": "3ec3bcd994922380156af2424562701d8eca1040c953ad24ba56c4892184eb1d"
+        "bytes": 130359,
+        "sha256": "37ba3f8bd4cb4532d4d380e77fd5f50c23857653703a9a380706d3893f3804e0"
       },
       {
         "name": "DossierFullView.html",
@@ -52,8 +53,8 @@
       },
       {
         "name": "dashboard.html",
-        "bytes": 109410,
-        "sha256": "92c29806754a57cfc6bf57b0dd080a061b40c9192adb414055aea9d3cc7268c6"
+        "bytes": 110248,
+        "sha256": "ba39bb96c091511a177f7d03b51f9b755aa2519b70be68601e66aac60ff89148"
       },
       {
         "name": "index.html",
@@ -62,11 +63,11 @@
       },
       {
         "name": "quicklog.html",
-        "bytes": 56726,
-        "sha256": "dc6e1fd11a5a089348c65cc44bf30aec027d0de761ec54a6cb8062f45f027086"
+        "bytes": 56708,
+        "sha256": "6859e32403cf8f603e40f09463581d06540f876c58d800449b0cbc5d26e6909a"
       }
     ]
   },
   "about": "Every person, engagement, program, and number in this demonstration is fictional. The taxonomy and the workflow are the real ones. This build was derived from the commit above and published only after every assertion in the derivation gate passed, including screening all synthetic names against the real contact roster.",
-  "human_summary": "Derived from 30ebd919 on 2026-08-13. All gate assertions passed."
+  "human_summary": "Derived from 4e2ed772 on 2026-08-17. All gate assertions passed."
 }
