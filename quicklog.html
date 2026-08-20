@@ -1,161 +1,1503 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faculty Development Connect: Quick Log — Duke CTL Faculty Development</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Source Sans 3', 'Source Sans Pro', -apple-system, sans-serif; background: linear-gradient(160deg, #f0f4f8 0%, #e2e8f0 40%, #f0f4f8 100%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0 16px 40px; color: #1a2a3a; }
-  input::placeholder, textarea::placeholder { color: #94a3b8; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .ql-header { width: 100%; background: linear-gradient(135deg, #001A33 0%, #003366 50%, #1a5276 100%); padding: 0 16px; margin-bottom: 32px; box-shadow: 0 4px 24px rgba(0,26,51,0.15); }
-  .ql-header-inner { max-width: 640px; margin: 0 auto; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; }
-  .ql-header-left { display: flex; align-items: center; gap: 14px; }
-  .ql-logo { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
-  /* System name regular, page name semibold — matching the other three pages.
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faculty Development Connect: Quick Log — Duke CTL Faculty Development</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Source Sans 3",
+          "Source Sans Pro",
+          -apple-system,
+          sans-serif;
+        background: linear-gradient(160deg, #f0f4f8 0%, #e2e8f0 40%, #f0f4f8 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 16px 40px;
+        color: #1a2a3a;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: #94a3b8;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .ql-header {
+        width: 100%;
+        background: linear-gradient(135deg, #001A33 0%, #003366 50%, #1a5276 100%);
+        padding: 0 16px;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 24px rgba(0, 26, 51, 0.15);
+      }
+      .ql-header-inner {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ql-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .ql-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* System name regular, page name semibold — matching the other three pages.
      Size drops to 18px because this header is max-width 640px and the title grew
      from 9 characters to 37; at 20px it crowded the Home button. */
-  .ql-title { font-size: 18px; font-weight: 500; color: #fff; font-family: 'Playfair Display', Georgia, serif; }
-  .ql-title b { font-weight: 700; }
-  .ql-subtitle { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
-  .ql-home-btn { padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Source Sans 3', sans-serif; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
-  .ql-home-btn:hover { background: rgba(255,255,255,0.2); }
-  .ql-mode-tabs { display: flex; gap: 0; max-width: 640px; width: 100%; margin-bottom: -1px; position: relative; z-index: 2; }
-  .ql-mode-tab { flex: 1; padding: 12px 20px; text-align: center; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: #e8edf2; color: #64748b; font-family: 'Source Sans 3', sans-serif; border-radius: 12px 12px 0 0; transition: all 0.2s; }
-  .ql-mode-tab.active { background: #fff; color: #003366; box-shadow: 0 -2px 8px rgba(0,20,50,0.06); }
-  .ql-card { width: 100%; max-width: 640px; background: #fff; border-radius: 0 0 20px 20px; box-shadow: 0 4px 32px rgba(0,20,50,0.08); padding: 36px 32px; animation: fadeUp 0.3s ease; }
-  .ql-progress { display: flex; align-items: center; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9; }
-  .ql-step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; transition: all 0.3s; }
-  .ql-step-dot.active { background: linear-gradient(135deg, #003366, #1a5276); color: #fff; }
-  .ql-step-dot.inactive { background: #e8edf2; color: #94a3b8; }
-  .ql-step-line { width: 60px; height: 2px; margin: 0 6px; border-radius: 2px; }
-  .ql-step-line.active { background: #003366; } .ql-step-line.inactive { background: #e8edf2; }
-  .ql-step-label { margin-left: 12px; font-size: 12px; color: #94a3b8; font-weight: 500; }
-  .ql-step-title { font-size: 22px; font-weight: 700; color: #1a2a3a; margin: 0 0 4px; font-family: 'Playfair Display', Georgia, serif; }
-  .ql-step-desc { font-size: 14px; color: #94a3b8; margin: 0 0 24px; line-height: 1.5; }
-  .ql-field { margin-bottom: 20px; } .ql-label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; } .ql-label .req { color: #dc2626; margin-left: 3px; }
-  .ql-input, .ql-textarea, .ql-select-trigger { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1.5px solid #d1d9e0; font-size: 14px; color: #1a2a3a; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #fff; font-family: 'Source Sans 3', sans-serif; }
-  .ql-input:focus, .ql-textarea:focus { border-color: #003366; box-shadow: 0 0 0 3px rgba(0,51,102,0.08); }
-  .ql-textarea { min-height: 80px; resize: vertical; }
-  .ql-select-wrap { position: relative; } .ql-select-trigger { cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; } .ql-select-trigger.placeholder { color: #94a3b8; } .ql-select-trigger.open { border-color: #003366; box-shadow: 0 0 0 3px rgba(0,51,102,0.08); } .ql-select-arrow { flex-shrink: 0; transition: transform 0.2s; } .ql-select-trigger.open .ql-select-arrow { transform: rotate(180deg); }
-  .ql-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 12px 40px rgba(0,20,50,0.12); z-index: 100; max-height: 240px; overflow-y: auto; padding: 4px; display: none; } .ql-dropdown.open { display: block; } .ql-dropdown-item { padding: 10px 14px; font-size: 14px; color: #334155; cursor: pointer; border-radius: 8px; } .ql-dropdown-item:hover, .ql-dropdown-item.selected { background: #f0f5fa; } .ql-dropdown-item.selected { font-weight: 600; }
-  .ql-radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; } .ql-radio-btn { padding: 10px 20px; border-radius: 10px; border: 1.5px solid #d1d9e0; background: #fff; color: #475569; font-weight: 400; font-size: 14px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; } .ql-radio-btn.active { border: 2px solid #003366; background: #eef3f9; color: #003366; font-weight: 600; }
-  .ql-row { display: flex; gap: 16px; } .ql-actions { display: flex; justify-content: space-between; margin-top: 8px; }
-  .ql-btn-primary { padding: 12px 28px; border-radius: 12px; border: none; background: linear-gradient(135deg, #003366, #1a5276); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Source Sans 3', sans-serif; } .ql-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; } .ql-btn-back { background: none; border: none; color: #64748b; font-size: 14px; cursor: pointer; font-weight: 600; font-family: 'Source Sans 3', sans-serif; padding: 12px 4px; }
-  .ql-success { text-align: center; padding: 60px 30px; animation: fadeUp 0.4s ease; } .ql-success-icon { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 24px rgba(5,150,105,0.25); } .ql-success h2 { font-size: 24px; color: #1a2a3a; font-weight: 700; margin: 0 0 8px; font-family: 'Playfair Display', Georgia, serif; } .ql-success p { font-size: 15px; color: #64748b; margin: 0 0 32px; line-height: 1.5; } .ql-success-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .ql-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; } @keyframes spin { to { transform: rotate(360deg); } }
-  .ql-error { background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; color: #991b1b; font-size: 13px; display: none; } .ql-error.visible { display: block; }
-  .ql-warning { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; color: #92400e; font-size: 13px; display: none; } .ql-warning.visible { display: block; } .ql-warning-btns { margin-top: 10px; display: flex; gap: 8px; } .ql-warning-btns button { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Source Sans 3', sans-serif; } .ql-warn-submit { background: #003366; color: #fff; border: none; } .ql-warn-cancel { background: #fff; color: #92400e; border: 1px solid #fde68a; }
-  .ql-autosuggest { position: relative; } .ql-suggest-list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 12px 40px rgba(0,20,50,0.12); z-index: 100; max-height: 200px; overflow-y: auto; padding: 4px; display: none; } .ql-suggest-list.open { display: block; } .ql-suggest-item { padding: 10px 14px; cursor: pointer; border-radius: 8px; } .ql-suggest-item:hover { background: #f0f5fa; } .ql-suggest-name { font-size: 14px; font-weight: 600; color: #1a2a3a; } .ql-suggest-detail { font-size: 12px; color: #94a3b8; margin-top: 1px; }
-  .ql-recent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; } .ql-recent-title { font-size: 18px; font-weight: 700; color: #1a2a3a; font-family: 'Playfair Display', serif; } .ql-recent-count { font-size: 13px; color: #94a3b8; }
-  .ql-recent-filter { margin-bottom: 16px; } .ql-recent-filter select { padding: 8px 12px; border-radius: 8px; border: 1.5px solid #d1d9e0; font-size: 13px; font-family: 'Source Sans 3', sans-serif; color: #475569; background: #fff; }
-  .ql-entry-card { background: #f8fafc; border-radius: 12px; padding: 14px 18px; border: 1px solid #e8edf2; margin-bottom: 10px; } .ql-entry-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; } .ql-entry-name { font-weight: 700; color: #1a2a3a; font-size: 14px; } .ql-entry-badge { display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; } .ql-entry-badge-eng { background: #eef3f9; color: #003366; } .ql-entry-badge-evt { background: #f3eef9; color: #6b21a8; } .ql-entry-date { font-size: 12px; color: #94a3b8; white-space: nowrap; } .ql-entry-detail { font-size: 13px; color: #64748b; } .ql-entry-staff { font-size: 12px; color: #2e86c1; font-weight: 600; margin-top: 4px; } .ql-entry-notes { font-size: 12px; color: #94a3b8; margin-top: 4px; font-style: italic; }
-  .ql-empty { text-align: center; padding: 40px 20px; color: #94a3b8; }
-  .ql-footer { margin-top: 32px; font-size: 12px; color: #94a3b8; text-align: center; }
-  .hidden { display: none !important; }
-  @media (max-width: 500px) { .ql-card { padding: 24px 20px; } .ql-row { flex-direction: column; gap: 0; } }
-  /* Demonstration banner. Same treatment as the dossier pages — dark bar,
+      .ql-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        font-family: "Playfair Display", Georgia, serif;
+      }
+      .ql-title b {
+        font-weight: 700;
+      }
+      .ql-subtitle {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 2px;
+      }
+      .ql-home-btn {
+        padding: 6px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "Source Sans 3", sans-serif;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s;
+      }
+      .ql-home-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .ql-mode-tabs {
+        display: flex;
+        gap: 0;
+        max-width: 640px;
+        width: 100%;
+        margin-bottom: -1px;
+        position: relative;
+        z-index: 2;
+      }
+      .ql-mode-tab {
+        flex: 1;
+        padding: 12px 20px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: #e8edf2;
+        color: #64748b;
+        font-family: "Source Sans 3", sans-serif;
+        border-radius: 12px 12px 0 0;
+        transition: all 0.2s;
+      }
+      .ql-mode-tab.active {
+        background: #fff;
+        color: #003366;
+        box-shadow: 0 -2px 8px rgba(0, 20, 50, 0.06);
+      }
+      .ql-card {
+        width: 100%;
+        max-width: 640px;
+        background: #fff;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 32px rgba(0, 20, 50, 0.08);
+        padding: 36px 32px;
+        animation: fadeUp 0.3s ease;
+      }
+      .ql-progress {
+        display: flex;
+        align-items: center;
+        margin-bottom: 28px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .ql-step-dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all 0.3s;
+      }
+      .ql-step-dot.active {
+        background: linear-gradient(135deg, #003366, #1a5276);
+        color: #fff;
+      }
+      .ql-step-dot.inactive {
+        background: #e8edf2;
+        color: #94a3b8;
+      }
+      .ql-step-line {
+        width: 60px;
+        height: 2px;
+        margin: 0 6px;
+        border-radius: 2px;
+      }
+      .ql-step-line.active {
+        background: #003366;
+      }
+      .ql-step-line.inactive {
+        background: #e8edf2;
+      }
+      .ql-step-label {
+        margin-left: 12px;
+        font-size: 12px;
+        color: #94a3b8;
+        font-weight: 500;
+      }
+      .ql-step-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a2a3a;
+        margin: 0 0 4px;
+        font-family: "Playfair Display", Georgia, serif;
+      }
+      .ql-step-desc {
+        font-size: 14px;
+        color: #94a3b8;
+        margin: 0 0 24px;
+        line-height: 1.5;
+      }
+      .ql-field {
+        margin-bottom: 20px;
+      }
+      .ql-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+      }
+      .ql-label .req {
+        color: #dc2626;
+        margin-left: 3px;
+      }
+      .ql-input,
+      .ql-textarea,
+      .ql-select-trigger {
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 10px;
+        border: 1.5px solid #d1d9e0;
+        font-size: 14px;
+        color: #1a2a3a;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        background: #fff;
+        font-family: "Source Sans 3", sans-serif;
+      }
+      .ql-input:focus,
+      .ql-textarea:focus {
+        border-color: #003366;
+        box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.08);
+      }
+      .ql-textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+      .ql-select-wrap {
+        position: relative;
+      }
+      .ql-select-trigger {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+      }
+      .ql-select-trigger.placeholder {
+        color: #94a3b8;
+      }
+      .ql-select-trigger.open {
+        border-color: #003366;
+        box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.08);
+      }
+      .ql-select-arrow {
+        flex-shrink: 0;
+        transition: transform 0.2s;
+      }
+      .ql-select-trigger.open .ql-select-arrow {
+        transform: rotate(180deg);
+      }
+      .ql-dropdown {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 12px 40px rgba(0, 20, 50, 0.12);
+        z-index: 100;
+        max-height: 240px;
+        overflow-y: auto;
+        padding: 4px;
+        display: none;
+      }
+      .ql-dropdown.open {
+        display: block;
+      }
+      .ql-dropdown-item {
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #334155;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .ql-dropdown-item:hover,
+      .ql-dropdown-item.selected {
+        background: #f0f5fa;
+      }
+      .ql-dropdown-item.selected {
+        font-weight: 600;
+      }
+      .ql-radio-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      .ql-radio-btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: 1.5px solid #d1d9e0;
+        background: #fff;
+        color: #475569;
+        font-weight: 400;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: "Source Sans 3", sans-serif;
+      }
+      .ql-radio-btn.active {
+        border: 2px solid #003366;
+        background: #eef3f9;
+        color: #003366;
+        font-weight: 600;
+      }
+      .ql-row {
+        display: flex;
+        gap: 16px;
+      }
+      .ql-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+      }
+      .ql-btn-primary {
+        padding: 12px 28px;
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, #003366, #1a5276);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "Source Sans 3", sans-serif;
+      }
+      .ql-btn-primary:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .ql-btn-back {
+        background: none;
+        border: none;
+        color: #64748b;
+        font-size: 14px;
+        cursor: pointer;
+        font-weight: 600;
+        font-family: "Source Sans 3", sans-serif;
+        padding: 12px 4px;
+      }
+      .ql-success {
+        text-align: center;
+        padding: 60px 30px;
+        animation: fadeUp 0.4s ease;
+      }
+      .ql-success-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #059669, #10b981);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        box-shadow: 0 8px 24px rgba(5, 150, 105, 0.25);
+      }
+      .ql-success h2 {
+        font-size: 24px;
+        color: #1a2a3a;
+        font-weight: 700;
+        margin: 0 0 8px;
+        font-family: "Playfair Display", Georgia, serif;
+      }
+      .ql-success p {
+        font-size: 15px;
+        color: #64748b;
+        margin: 0 0 32px;
+        line-height: 1.5;
+      }
+      .ql-success-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .ql-busy {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .ql-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #991b1b;
+        font-size: 13px;
+        display: none;
+      }
+      .ql-error.visible {
+        display: block;
+      }
+      .ql-warning {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #92400e;
+        font-size: 13px;
+        display: none;
+      }
+      .ql-warning.visible {
+        display: block;
+      }
+      .ql-warning-btns {
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+      }
+      .ql-warning-btns button {
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "Source Sans 3", sans-serif;
+      }
+      .ql-warn-submit {
+        background: #003366;
+        color: #fff;
+        border: none;
+      }
+      .ql-warn-cancel {
+        background: #fff;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .ql-autosuggest {
+        position: relative;
+      }
+      .ql-suggest-list {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 12px 40px rgba(0, 20, 50, 0.12);
+        z-index: 100;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 4px;
+        display: none;
+      }
+      .ql-suggest-list.open {
+        display: block;
+      }
+      .ql-suggest-item {
+        padding: 10px 14px;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .ql-suggest-item:hover {
+        background: #f0f5fa;
+      }
+      .ql-suggest-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a2a3a;
+      }
+      .ql-suggest-detail {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 1px;
+      }
+      .ql-recent-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .ql-recent-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a2a3a;
+        font-family: "Playfair Display", serif;
+      }
+      .ql-recent-count {
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .ql-recent-filter {
+        margin-bottom: 16px;
+      }
+      .ql-recent-filter select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1.5px solid #d1d9e0;
+        font-size: 13px;
+        font-family: "Source Sans 3", sans-serif;
+        color: #475569;
+        background: #fff;
+      }
+      .ql-entry-card {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 14px 18px;
+        border: 1px solid #e8edf2;
+        margin-bottom: 10px;
+      }
+      .ql-entry-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 6px;
+      }
+      .ql-entry-name {
+        font-weight: 700;
+        color: #1a2a3a;
+        font-size: 14px;
+      }
+      .ql-entry-badge {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .ql-entry-badge-eng {
+        background: #eef3f9;
+        color: #003366;
+      }
+      .ql-entry-badge-evt {
+        background: #f3eef9;
+        color: #6b21a8;
+      }
+      .ql-entry-date {
+        font-size: 12px;
+        color: #94a3b8;
+        white-space: nowrap;
+      }
+      .ql-entry-detail {
+        font-size: 13px;
+        color: #64748b;
+      }
+      .ql-entry-staff {
+        font-size: 12px;
+        color: #2e86c1;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .ql-entry-notes {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 4px;
+        font-style: italic;
+      }
+      .ql-empty {
+        text-align: center;
+        padding: 40px 20px;
+        color: #94a3b8;
+      }
+      .ql-footer {
+        margin-top: 32px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-align: center;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 500px) {
+        .ql-card {
+          padding: 24px 20px;
+        }
+        .ql-row {
+          flex-direction: column;
+          gap: 0;
+        }
+      }
+      /* Demonstration banner. Same treatment as the dossier pages — dark bar,
      uppercase, letterspaced mono — in this page's own palette rather than the
      dossier's, since the two visual languages are not reconciled until the
      front page migrates (v11 §K19). Present in markup and removed on the live
      path, so a script failure leaves the banner standing rather than removing
      it: the failure mode points the safe way. */
-  .demo-banner {
-    padding: 11px 24px;
-    background: #001A33;
-    color: #D8DCE4;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 10.5px; font-weight: 500;
-    letter-spacing: 0.16em; text-transform: uppercase; text-align: center;
-  }
-  .demo-banner strong { color: #FFFFFF; font-weight: 500; }
-</style>
-</head>
-<body>
-<script>
-  const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
-  const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE";
-  const LOOKUPS_GID = "YOUR_LOOKUPS_GID_HERE";
-  const QUICKLOG_GID = "YOUR_QUICKLOG_GID_HERE";
-  const CONTACTS_GID = "YOUR_CONTACTS_GID_HERE";
-</script>
-<div class="demo-banner">
-  <strong>Demonstration — synthetic data.</strong> No real contact records appear on this page.
-</div>
-<div class="ql-header"><div class="ql-header-inner"><div class="ql-header-left"><div class="ql-logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z"/><path d="M12 12L20 7.5"/><path d="M12 12V21"/><path d="M12 12L4 7.5"/></svg></div><div><div class="ql-title">Faculty Development Connect: <b>Quick Log</b></div><div class="ql-subtitle">Center for Teaching &amp; Learning · Faculty Development</div></div></div><a href="index.html" class="ql-home-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12L12 3L21 12"/><path d="M5 10V20H19V10"/></svg> Home</a></div></div>
-<div class="ql-mode-tabs"><button class="ql-mode-tab active" id="tabForm" onclick="switchMode('form')">New Entry</button><button class="ql-mode-tab" id="tabRecent" onclick="switchMode('recent')">Recent Entries</button></div>
-<div class="ql-card" id="formCard">
-<div id="formMode">
-  <div class="ql-error" id="errorBanner"></div>
-  <div class="ql-warning" id="dupWarning"><strong>Possible duplicate detected.</strong> <span id="dupMessage"></span><div class="ql-warning-btns"><button class="ql-warn-submit" onclick="forceSubmit()">Submit anyway</button><button class="ql-warn-cancel" onclick="dismissDup()">Cancel</button></div></div>
-  <div class="ql-progress" id="progressBar"><div class="ql-step-dot active" id="dot1">1</div><div class="ql-step-line active" id="line1"></div><div class="ql-step-dot inactive" id="dot2">2</div><div class="ql-step-line inactive" id="line2"></div><div class="ql-step-dot inactive" id="dot3">3</div><span class="ql-step-label" id="stepLabel">Step 1 of 3</span></div>
-  <div id="step1"><h3 class="ql-step-title">What are you logging?</h3><p class="ql-step-desc">Select the type of entry, your name, and the date.</p><div class="ql-field"><label class="ql-label">Entry Type<span class="req">*</span></label><div class="ql-radio-group"><button class="ql-radio-btn" onclick="setRadio('logType','engagement',this)">📋 Individual Engagement</button><button class="ql-radio-btn" onclick="setRadio('logType','event',this)">📅 Event</button></div></div><div class="ql-row"><div class="ql-field" style="flex:1" id="staffField"></div><div class="ql-field" style="flex:1"><label class="ql-label">Date<span class="req">*</span></label><input type="date" class="ql-input" id="dateInput"></div></div><div class="ql-actions"><div></div><button class="ql-btn-primary" id="btn1" disabled onclick="goStep(2)">Continue</button></div></div>
-  <div id="step2eng" class="hidden"><h3 class="ql-step-title">Who did you meet with?</h3><p class="ql-step-desc">Start typing a last name to search existing contacts, or enter new info.</p><div class="ql-row"><div class="ql-field" style="flex:1"><label class="ql-label">First Name<span class="req">*</span></label><input type="text" class="ql-input" id="firstName" placeholder="Marisol" oninput="checkStep2()"></div><div class="ql-field ql-autosuggest" style="flex:1"><label class="ql-label">Last Name<span class="req">*</span></label><input type="text" class="ql-input" id="lastName" placeholder="Fenwick" oninput="onLastNameInput()" autocomplete="off"><div class="ql-suggest-list" id="suggestList"></div></div></div><div class="ql-field"><label class="ql-label">Email<span class="req">*</span></label><input type="email" class="ql-input" id="emailInput" placeholder="marisol.fenwick@duke.example" oninput="checkStep2()"></div><div class="ql-field"><label class="ql-label">Internal to Duke?<span class="req">*</span></label><div class="ql-radio-group"><button class="ql-radio-btn" onclick="setRadio('internalDuke','Yes',this);toggleSchool()">Yes</button><button class="ql-radio-btn" onclick="setRadio('internalDuke','No',this);toggleSchool()">No</button><button class="ql-radio-btn" onclick="setRadio('internalDuke','Unsure',this);toggleSchool()">Unsure</button></div></div><div class="ql-field hidden" id="schoolField"></div><div class="ql-actions"><button class="ql-btn-back" onclick="goStep(1)">← Back</button><button class="ql-btn-primary" id="btn2eng" disabled onclick="goStep(3)">Continue</button></div></div>
-  <div id="step2evt" class="hidden"><h3 class="ql-step-title">What's the event?</h3><p class="ql-step-desc">Enter the core details for this event.</p><div class="ql-field"><label class="ql-label">Event Name<span class="req">*</span></label><input type="text" class="ql-input" id="eventName" placeholder="Fall Teaching Strategies Workshop" oninput="checkStep2Evt()"></div><div class="ql-row"><div class="ql-field" style="flex:1"><label class="ql-label">Co-Sponsor(s)</label><input type="text" class="ql-input" id="eventCoSponsor" placeholder="e.g. Office of the Provost"></div><div class="ql-field" style="flex:1"><label class="ql-label">Speakers / Facilitators</label><input type="text" class="ql-input" id="eventSpeakers" placeholder="Names of speakers"></div></div><div class="ql-actions"><button class="ql-btn-back" onclick="goStep(1)">← Back</button><button class="ql-btn-primary" id="btn2evt" disabled onclick="goStep(3)">Continue</button></div></div>
-  <div id="step3eng" class="hidden"><h3 class="ql-step-title">Engagement details</h3><p class="ql-step-desc">Categorize this interaction and add your notes.</p><div class="ql-field" id="engTypeField"></div><div class="ql-row"><div class="ql-field" style="flex:1" id="topicPriField"></div><div class="ql-field" style="flex:1" id="programNameField"></div></div><div class="ql-field"><label class="ql-label">Notes<span class="req">*</span></label><textarea class="ql-textarea" id="engNotes" placeholder="Brief summary — what was discussed, any follow-up needed?" oninput="chk3E()"></textarea></div><div class="ql-actions"><button class="ql-btn-back" onclick="goStep(2)">← Back</button><button class="ql-btn-primary" id="btn3eng" disabled onclick="handleSubmit()">Submit Entry</button></div></div>
-  <div id="step3evt" class="hidden"><h3 class="ql-step-title">Event details</h3><p class="ql-step-desc">Add topics, attendance, and any notes.</p><div class="ql-field" id="evtTopicPriField"></div><div class="ql-row"><div class="ql-field" style="flex:1"><label class="ql-label"># Registrants</label><input type="number" class="ql-input" id="eventRegistrants" placeholder="e.g. 45"></div><div class="ql-field" style="flex:1"><label class="ql-label"># Attendees</label><input type="number" class="ql-input" id="eventAttendees" placeholder="e.g. 38"></div></div><div class="ql-field"><label class="ql-label">Notes (optional)</label><textarea class="ql-textarea" id="evtNotes" placeholder="Highlights, issues, follow-up items..."></textarea></div><div class="ql-actions"><button class="ql-btn-back" onclick="goStep(2)">← Back</button><button class="ql-btn-primary" id="btn3evt" disabled onclick="handleSubmit()">Submit Entry</button></div></div>
-  <div id="successView" class="hidden"><div class="ql-success"><div class="ql-success-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></div><h2>Logged successfully</h2><p>Your entry has been recorded and a confirmation email has been sent.</p><div class="ql-success-buttons"><button class="ql-btn-primary" onclick="resetForm()">Log another</button><button class="ql-btn-back" style="padding:12px 20px;color:#003366" onclick="switchMode('recent')">View recent entries</button></div></div></div>
-</div>
-<div id="recentMode" class="hidden"><div class="ql-recent-header"><div class="ql-recent-title">Recent Entries</div><div class="ql-recent-count" id="recentCount"></div></div><div class="ql-recent-filter"><select id="recentStaffFilter" onchange="renderRecent()"><option value="all">All staff members</option></select></div><div id="recentList"><div class="ql-empty">Loading...</div></div></div>
-</div>
-<div class="ql-footer">Duke University · Center for Teaching &amp; Learning · Faculty Development</div>
-<script>
-let STAFF=["Dana Whitlock","Yusuf Barlowe","Imani Castellanos","Rosalind Achebe-Voss","Theo Nakashima","Other"],STAFF_EMAILS={};
-let FAC_DEV_PROGRAMS=[];
-let ENGAGEMENT_TYPES=["Consultation","Inquiry","Office Hours","Fac Dev Program","Training","Other"];
-let TOPIC_AREAS=["Course Design","Curriculum Development","Assessment & Grading","Teaching Practices","Instructional Technology","Inclusive Teaching","AI in Teaching & Learning","New Faculty Orientation & Support","Program/Dept-Level Consulting","Educational Research"];
-let DUKE_SCHOOLS=["Trinity College of Arts & Sciences","Pratt School of Engineering","Sanford School of Public Policy","Nicholas School of the Environment","Fuqua School of Business","School of Law","School of Medicine","School of Nursing","Divinity School","Graduate School, The","Duke Kunshan University (DKU)","Health, Wellness, and Physical Education (HWPE)","University Initiatives & Academic Support Units","University Institutes and Centers","Other Duke Unit","External Organization"];
-/* Demo contacts for the last-name autosuggest. The live path fills
+      .demo-banner {
+        padding: 11px 24px;
+        background: #001A33;
+        color: #D8DCE4;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .demo-banner strong {
+        color: #FFFFFF;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
+      const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE";
+      const LOOKUPS_GID = "YOUR_LOOKUPS_GID_HERE";
+      const QUICKLOG_GID = "YOUR_QUICKLOG_GID_HERE";
+      const CONTACTS_GID = "YOUR_CONTACTS_GID_HERE";
+    </script>
+    <div class="demo-banner">
+      <strong>Demonstration — synthetic data.</strong> No real contact records appear on this page.
+    </div>
+    <div class="ql-header">
+      <div class="ql-header-inner">
+        <div class="ql-header-left">
+          <div class="ql-logo">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z" />
+              <path d="M12 12L20 7.5" />
+              <path d="M12 12V21" />
+              <path d="M12 12L4 7.5" />
+            </svg>
+          </div>
+          <div>
+            <div class="ql-title">Faculty Development Connect: <b>Quick Log</b></div>
+            <div class="ql-subtitle">Center for Teaching &amp; Learning · Faculty Development</div>
+          </div>
+        </div>
+        <a href="index.html" class="ql-home-btn"
+          ><svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M3 12L12 3L21 12" />
+            <path d="M5 10V20H19V10" />
+          </svg>
+          Home</a
+        >
+      </div>
+    </div>
+    <div class="ql-mode-tabs">
+      <button class="ql-mode-tab active" id="tabForm" onclick="switchMode('form')">New Entry</button
+      ><button class="ql-mode-tab" id="tabRecent" onclick="switchMode('recent')">
+        Recent Entries
+      </button>
+    </div>
+    <div class="ql-card" id="formCard">
+      <div id="formMode">
+        <div class="ql-error" id="errorBanner"></div>
+        <div class="ql-warning" id="dupWarning">
+          <strong>Possible duplicate detected.</strong> <span id="dupMessage"></span>
+          <div class="ql-warning-btns">
+            <button class="ql-warn-submit" onclick="forceSubmit()">Submit anyway</button
+            ><button class="ql-warn-cancel" onclick="dismissDup()">Cancel</button>
+          </div>
+        </div>
+        <div class="ql-progress" id="progressBar">
+          <div class="ql-step-dot active" id="dot1">1</div>
+          <div class="ql-step-line active" id="line1"></div>
+          <div class="ql-step-dot inactive" id="dot2">2</div>
+          <div class="ql-step-line inactive" id="line2"></div>
+          <div class="ql-step-dot inactive" id="dot3">3</div>
+          <span class="ql-step-label" id="stepLabel">Step 1 of 3</span>
+        </div>
+        <div id="step1">
+          <h3 class="ql-step-title">What are you logging?</h3>
+          <p class="ql-step-desc">Select the type of entry, your name, and the date.</p>
+          <div class="ql-field">
+            <label class="ql-label">Entry Type<span class="req">*</span></label>
+            <div class="ql-radio-group">
+              <button class="ql-radio-btn" onclick="setRadio('logType', 'engagement', this)">
+                📋 Individual Engagement</button
+              ><button class="ql-radio-btn" onclick="setRadio('logType', 'event', this)">
+                📅 Event
+              </button>
+            </div>
+          </div>
+          <div class="ql-row">
+            <div class="ql-field" style="flex: 1" id="staffField"></div>
+            <div class="ql-field" style="flex: 1">
+              <label class="ql-label">Date<span class="req">*</span></label
+              ><input type="date" class="ql-input" id="dateInput" />
+            </div>
+          </div>
+          <div class="ql-actions">
+            <div></div>
+            <button class="ql-btn-primary" id="btn1" disabled onclick="goStep(2)">Continue</button>
+          </div>
+        </div>
+        <div id="step2eng" class="hidden">
+          <h3 class="ql-step-title">Who did you meet with?</h3>
+          <p class="ql-step-desc">
+            Start typing a last name to search existing contacts, or enter new info.
+          </p>
+          <div class="ql-row">
+            <div class="ql-field" style="flex: 1">
+              <label class="ql-label">First Name<span class="req">*</span></label
+              ><input
+                type="text"
+                class="ql-input"
+                id="firstName"
+                placeholder="Marisol"
+                oninput="checkStep2()"
+              />
+            </div>
+            <div class="ql-field ql-autosuggest" style="flex: 1">
+              <label class="ql-label">Last Name<span class="req">*</span></label
+              ><input
+                type="text"
+                class="ql-input"
+                id="lastName"
+                placeholder="Fenwick"
+                oninput="onLastNameInput()"
+                autocomplete="off"
+              />
+              <div class="ql-suggest-list" id="suggestList"></div>
+            </div>
+          </div>
+          <div class="ql-field">
+            <label class="ql-label">Email<span class="req">*</span></label
+            ><input
+              type="email"
+              class="ql-input"
+              id="emailInput"
+              placeholder="marisol.fenwick@duke.example"
+              oninput="checkStep2()"
+            />
+          </div>
+          <div class="ql-field">
+            <label class="ql-label">Internal to Duke?<span class="req">*</span></label>
+            <div class="ql-radio-group">
+              <button
+                class="ql-radio-btn"
+                onclick="
+                  setRadio('internalDuke', 'Yes', this);
+                  toggleSchool();
+                "
+              >
+                Yes</button
+              ><button
+                class="ql-radio-btn"
+                onclick="
+                  setRadio('internalDuke', 'No', this);
+                  toggleSchool();
+                "
+              >
+                No</button
+              ><button
+                class="ql-radio-btn"
+                onclick="
+                  setRadio('internalDuke', 'Unsure', this);
+                  toggleSchool();
+                "
+              >
+                Unsure
+              </button>
+            </div>
+          </div>
+          <div class="ql-field hidden" id="schoolField"></div>
+          <div class="ql-actions">
+            <button class="ql-btn-back" onclick="goStep(1)">← Back</button
+            ><button class="ql-btn-primary" id="btn2eng" disabled onclick="goStep(3)">
+              Continue
+            </button>
+          </div>
+        </div>
+        <div id="step2evt" class="hidden">
+          <h3 class="ql-step-title">What's the event?</h3>
+          <p class="ql-step-desc">Enter the core details for this event.</p>
+          <div class="ql-field">
+            <label class="ql-label">Event Name<span class="req">*</span></label
+            ><input
+              type="text"
+              class="ql-input"
+              id="eventName"
+              placeholder="Fall Teaching Strategies Workshop"
+              oninput="checkStep2Evt()"
+            />
+          </div>
+          <div class="ql-row">
+            <div class="ql-field" style="flex: 1">
+              <label class="ql-label">Co-Sponsor(s)</label
+              ><input
+                type="text"
+                class="ql-input"
+                id="eventCoSponsor"
+                placeholder="e.g. Office of the Provost"
+              />
+            </div>
+            <div class="ql-field" style="flex: 1">
+              <label class="ql-label">Speakers / Facilitators</label
+              ><input
+                type="text"
+                class="ql-input"
+                id="eventSpeakers"
+                placeholder="Names of speakers"
+              />
+            </div>
+          </div>
+          <div class="ql-actions">
+            <button class="ql-btn-back" onclick="goStep(1)">← Back</button
+            ><button class="ql-btn-primary" id="btn2evt" disabled onclick="goStep(3)">
+              Continue
+            </button>
+          </div>
+        </div>
+        <div id="step3eng" class="hidden">
+          <h3 class="ql-step-title">Engagement details</h3>
+          <p class="ql-step-desc">Categorize this interaction and add your notes.</p>
+          <div class="ql-field" id="engTypeField"></div>
+          <div class="ql-row">
+            <div class="ql-field" style="flex: 1" id="topicPriField"></div>
+            <div class="ql-field" style="flex: 1" id="programNameField"></div>
+          </div>
+          <div class="ql-field">
+            <label class="ql-label">Notes<span class="req">*</span></label
+            ><textarea
+              class="ql-textarea"
+              id="engNotes"
+              placeholder="Brief summary — what was discussed, any follow-up needed?"
+              oninput="chk3E()"
+            ></textarea>
+          </div>
+          <div class="ql-actions">
+            <button class="ql-btn-back" onclick="goStep(2)">← Back</button
+            ><button class="ql-btn-primary" id="btn3eng" disabled onclick="handleSubmit()">
+              Submit Entry
+            </button>
+          </div>
+        </div>
+        <div id="step3evt" class="hidden">
+          <h3 class="ql-step-title">Event details</h3>
+          <p class="ql-step-desc">Add topics, attendance, and any notes.</p>
+          <div class="ql-field" id="evtTopicPriField"></div>
+          <div class="ql-row">
+            <div class="ql-field" style="flex: 1">
+              <label class="ql-label"># Registrants</label
+              ><input type="number" class="ql-input" id="eventRegistrants" placeholder="e.g. 45" />
+            </div>
+            <div class="ql-field" style="flex: 1">
+              <label class="ql-label"># Attendees</label
+              ><input type="number" class="ql-input" id="eventAttendees" placeholder="e.g. 38" />
+            </div>
+          </div>
+          <div class="ql-field">
+            <label class="ql-label">Notes (optional)</label
+            ><textarea
+              class="ql-textarea"
+              id="evtNotes"
+              placeholder="Highlights, issues, follow-up items..."
+            ></textarea>
+          </div>
+          <div class="ql-actions">
+            <button class="ql-btn-back" onclick="goStep(2)">← Back</button
+            ><button class="ql-btn-primary" id="btn3evt" disabled onclick="handleSubmit()">
+              Submit Entry
+            </button>
+          </div>
+        </div>
+        <div id="successView" class="hidden">
+          <div class="ql-success">
+            <div class="ql-success-icon">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2>Logged successfully</h2>
+            <p>Your entry has been recorded and a confirmation email has been sent.</p>
+            <div class="ql-success-buttons">
+              <button class="ql-btn-primary" onclick="resetForm()">Log another</button
+              ><button
+                class="ql-btn-back"
+                style="padding: 12px 20px; color: #003366"
+                onclick="switchMode('recent')"
+              >
+                View recent entries
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="recentMode" class="hidden">
+        <div class="ql-recent-header">
+          <div class="ql-recent-title">Recent Entries</div>
+          <div class="ql-recent-count" id="recentCount"></div>
+        </div>
+        <div class="ql-recent-filter">
+          <select id="recentStaffFilter" onchange="renderRecent()">
+            <option value="all">All staff members</option>
+          </select>
+        </div>
+        <div id="recentList"><div class="ql-empty">Loading...</div></div>
+      </div>
+    </div>
+    <div class="ql-footer">
+      Duke University · Center for Teaching &amp; Learning · Faculty Development
+    </div>
+    <script>
+      // DEMO DATA. Assigned only inside the demo branch of loadLookups(), the
+      // same shape loadContacts() already uses for DEMO_CONTACTS. It was the
+      // initial value of STAFF until 2026-08-19, which meant the live page
+      // rendered fictional staff whenever the Lookups fetch had not landed. K8.
+      const DEMO_STAFF = [
+        "Dana Whitlock",
+        "Yusuf Barlowe",
+        "Imani Castellanos",
+        "Rosalind Achebe-Voss",
+        "Theo Nakashima",
+        "Other",
+      ];
+      let STAFF = [],
+        STAFF_EMAILS = {};
+      // false = not loaded YET. true = tried and could not. An empty roster
+      // that cannot say which of those it is reads as a loaded one.
+      let staffLoadFailed = false;
+      let FAC_DEV_PROGRAMS = [];
+      let ENGAGEMENT_TYPES = [
+        "Consultation",
+        "Inquiry",
+        "Office Hours",
+        "Fac Dev Program",
+        "Training",
+        "Other",
+      ];
+      let TOPIC_AREAS = [
+        "Course Design",
+        "Curriculum Development",
+        "Assessment & Grading",
+        "Teaching Practices",
+        "Instructional Technology",
+        "Inclusive Teaching",
+        "AI in Teaching & Learning",
+        "New Faculty Orientation & Support",
+        "Program/Dept-Level Consulting",
+        "Educational Research",
+      ];
+      let DUKE_SCHOOLS = [
+        "Trinity College of Arts & Sciences",
+        "Pratt School of Engineering",
+        "Sanford School of Public Policy",
+        "Nicholas School of the Environment",
+        "Fuqua School of Business",
+        "School of Law",
+        "School of Medicine",
+        "School of Nursing",
+        "Divinity School",
+        "Graduate School, The",
+        "Duke Kunshan University (DKU)",
+        "Health, Wellness, and Physical Education (HWPE)",
+        "University Initiatives & Academic Support Units",
+        "University Institutes and Centers",
+        "Other Duke Unit",
+        "External Organization",
+      ];
+      /* Demo contacts for the last-name autosuggest. The live path fills
    knownContacts from the Contacts tab; loadContacts() returns early in
    demo mode, which previously left autosuggest empty and made the most
    distinctive thing about this form impossible to demonstrate. Same 190
    people as the dashboard and the Dossier Directory. */
-const DEMO_CONTACTS=[["Isakovic","Ambrose","ambrose.isakovic@duke.example","School of Medicine","Yes"],["Zdenek","Thaddeus","thaddeus.zdenek@duke.example","Fuqua School of Business","Yes"],["Ingelbrecht","Lorcan","lorcan.ingelbrecht@duke.example","University Initiatives & Academic Support Units","Yes"],["Fenwick","Ingrid","ingrid.fenwick@duke.example","Fuqua School of Business","Yes"],["Sotomayor-Quist","Marisol","marisol.sotomayorquist@duke.example","Graduate School, The","Yes"],["Lomborg","Rosalind","rosalind.lomborg@duke.example","Trinity College of Arts & Sciences","Yes"],["Delamere","Kwabena","kwabena.delamere@duke.example","Trinity College of Arts & Sciences","Yes"],["Bergstrom-Ola","Reinhold","reinhold.bergstromola@duke.example","Pratt School of Engineering","Yes"],["Okpara-Lentz","Wilhelmina","wilhelmina.okparalentz@duke.example","Trinity College of Arts & Sciences","Yes"],["Ulyanova","Nadira","nadira.ulyanova@duke.example","School of Nursing","Yes"],["Allingham","Tobias","tobias.allingham@duke.example","School of Medicine","Yes"],["Achterberg","Ferdinand","ferdinand.achterberg@duke.example","Pratt School of Engineering","Yes"],["Vasilenko","Katarina","katarina.vasilenko@duke.example","Sanford School of Public Policy","Yes"],["Castaneda-Roos","Zoltán","zoltan.castanedaroos@duke.example","Fuqua School of Business","Yes"],["Villalobos-Fenn","Rafael","rafael.villalobosfenn@duke.example","Pratt School of Engineering","Yes"],["Grenfell-Oba","Cassius","cassius.grenfelloba@duke.example","Trinity College of Arts & Sciences","Yes"],["Ryszard","Sunniva","sunniva.ryszard@duke.example","Trinity College of Arts & Sciences","Yes"],["Kowalczyk-Ade","Adaeze","adaeze.kowalczykade@duke.example","Trinity College of Arts & Sciences","Yes"],["Mainwaring","Yevgeni","yevgeni.mainwaring@duke.example","University Institutes and Centers","Yes"],["Janowitz","Xiomara","xiomara.janowitz@duke.example","University Institutes and Centers","Yes"],["Drummond-Iyer","Marianne","marianne.drummondiyer@duke.example","Sanford School of Public Policy","Yes"],["Lemercier","Emmeline","emmeline.lemercier@duke.example","School of Medicine","Yes"],["Nordstrand","Casimir","casimir.nordstrand@duke.example","Divinity School","Yes"],["Zabriskie","Sigrid","sigrid.zabriskie@duke.example","Trinity College of Arts & Sciences","Yes"],["Kestenbaum","Verity","verity.kestenbaum@duke.example","Graduate School, The","Yes"],["Carmichael-Efe","Folasade","folasade.carmichaelefe@duke.example","School of Medicine","Yes"],["Fothergill","Leontine","leontine.fothergill@duke.example","Graduate School, The","Yes"],["Fontanella","Liesbeth","liesbeth.fontanella@duke.example","University Institutes and Centers","Yes"],["Danziger","Solveig","solveig.danziger@duke.example","Sanford School of Public Policy","Yes"],["Wrightsman","Torvald","torvald.wrightsman@duke.example","Graduate School, The","Yes"],["Jourdain","Mirembe","mirembe.jourdain@duke.example","School of Medicine","Yes"],["Krisanthemum","Babajide","babajide.krisanthemum@duke.example","School of Medicine","Yes"],["Zetterlund","Faustina","faustina.zetterlund@duke.example","Sanford School of Public Policy","Yes"],["Ashworth-Dike","Nkechi","nkechi.ashworthdike@duke.example","Trinity College of Arts & Sciences","Yes"],["Ibarruri","Kolawole","kolawole.ibarruri@duke.example","Pratt School of Engineering","Yes"],["Stavropoulos","Isolde","isolde.stavropoulos@duke.example","Graduate School, The","Yes"],["Fitzwilliam","Adaora","adaora.fitzwilliam@duke.example","Trinity College of Arts & Sciences","Yes"],["Novotny","Clothilde","clothilde.novotny@duke.example","Fuqua School of Business","Yes"],["Quennell","Bartholomew","bartholomew.quennell@duke.example","School of Medicine","Yes"],["Lindegaard","Mattias","mattias.lindegaard@duke.example","University Institutes and Centers","Yes"],["Wetherington","Ravindra","ravindra.wetherington@duke.example","Pratt School of Engineering","Yes"],["Eichenwald","Aurelio","aurelio.eichenwald@duke.example","Graduate School, The","Yes"],["Kingscote","Kolawole","kolawole.kingscote@duke.example","Sanford School of Public Policy","Yes"],["Marchbanks","Oluwaseun","oluwaseun.marchbanks@duke.example","School of Medicine","Yes"],["Kirkbride","Amaranta","amaranta.kirkbride@duke.example","Other Duke Unit","Yes"],["Nkosi-Reinholt","Desmond","desmond.nkosireinholt@duke.example","Trinity College of Arts & Sciences","Yes"],["Abernethy","Nikolai","nikolai.abernethy@duke.example","Trinity College of Arts & Sciences","Yes"],["Pilkington-Sow","Evander","evander.pilkingtonsow@duke.example","Graduate School, The","Yes"],["Neuwirth","Anneliese","anneliese.neuwirth@duke.example","Pratt School of Engineering","Yes"],["Fenniman","Cordelia","cordelia.fenniman@duke.example","Pratt School of Engineering","Yes"],["Restrepo-Lund","Lachlan","lachlan.restrepolund@duke.example","Other Duke Unit","Yes"],["Hjelmslev","Emeka","emeka.hjelmslev@duke.example","Divinity School","Yes"],["Prendergast","Ezequiel","ezequiel.prendergast@duke.example","Pratt School of Engineering","Yes"],["Jorgensen-Bem","Philippa","philippa.jorgensenbem@duke.example","School of Medicine","Yes"],["Duplessis","Halvard","halvard.duplessis@duke.example","Graduate School, The","Yes"],["Chatterjee-Kohl","Theodora","theodora.chatterjeekohl@duke.example","Trinity College of Arts & Sciences","Yes"],["Jamieson-Ude","Obiageli","obiageli.jamiesonude@duke.example","School of Law","Yes"],["Hartsfield","Yolanda","yolanda.hartsfield@duke.example","Trinity College of Arts & Sciences","Yes"],["Hendriksen","Gustav","gustav.hendriksen@duke.example","Fuqua School of Business","Yes"],["Quintrell","Perpetua","perpetua.quintrell@duke.example","Trinity College of Arts & Sciences","Yes"],["Selby-Adichie","Osvaldo","osvaldo.selbyadichie@duke.example","School of Nursing","Yes"],["Dembélé-Hart","Antoinette","antoinette.dembelehart@duke.example","School of Medicine","Yes"],["Adeniran-Cole","Augustin","augustin.adenirancole@duke.example","Nicholas School of the Environment","Yes"],["Rademacher","Ngozi","ngozi.rademacher@duke.example","Trinity College of Arts & Sciences","Yes"],["Ekwueme","Simone","simone.ekwueme@example.org","External","No"],["Lautenberg","Radoslav","radoslav.lautenberg@duke.example","Sanford School of Public Policy","Yes"],["Mbeki-Rourke","Abiodun","abiodun.mbekirourke@duke.example","School of Medicine","Yes"],["Kestrelman","Bertrand","bertrand.kestrelman@duke.example","Trinity College of Arts & Sciences","Yes"],["Quaranta","Ifeoma","ifeoma.quaranta@duke.example","Pratt School of Engineering","Yes"],["Kruspe-Nwosu","Ilse","ilse.kruspenwosu@duke.example","School of Medicine","Yes"],["Bracewell","Beatrix","beatrix.bracewell@duke.example","Trinity College of Arts & Sciences","Yes"],["Beauchêne","Chidinma","chidinma.beauchene@duke.example","School of Medicine","Yes"],["Lindenbaum","Océane","oceane.lindenbaum@duke.example","Sanford School of Public Policy","Yes"],["Yarborough","Henrike","henrike.yarborough@duke.example","Graduate School, The","Yes"],["Ostrowski","Ambrose","ambrose.ostrowski@duke.example","Pratt School of Engineering","Yes"],["Rothermere","Thaddeus","thaddeus.rothermere@duke.example","School of Medicine","Yes"],["Uzoigwe","Lorcan","lorcan.uzoigwe@duke.example","Trinity College of Arts & Sciences","Yes"],["Wexler-Adeyemi","Ingrid","ingrid.wexleradeyemi@duke.example","University Institutes and Centers","Yes"],["Uttridge","Marisol","marisol.uttridge@duke.example","Trinity College of Arts & Sciences","Yes"],["Aldringham","Rosalind","rosalind.aldringham@duke.example","Nicholas School of the Environment","Yes"],["Trelawney","Kwabena","kwabena.trelawney@duke.example","Pratt School of Engineering","Yes"],["Steenkamp","Reinhold","reinhold.steenkamp@duke.example","Trinity College of Arts & Sciences","Yes"],["Grahamslaw","Wilhelmina","wilhelmina.grahamslaw@duke.example","School of Medicine","Yes"],["Marchetti-Osei","Nadira","nadira.marchettiosei@duke.example","Pratt School of Engineering","Yes"],["Tamplin","Tobias","tobias.tamplin@duke.example","School of Medicine","Yes"],["Falkenrath","Ferdinand","ferdinand.falkenrath@duke.example","Sanford School of Public Policy","Yes"],["Halvorsen-Ba","Katarina","katarina.halvorsenba@duke.example","University Initiatives & Academic Support Units","Yes"],["Everington","Zoltán","zoltan.everington@duke.example","Health, Wellness, and Physical Education (HWPE)","Yes"],["Jastrzebski","Rafael","rafael.jastrzebski@duke.example","Graduate School, The","Yes"],["Larkspur","Cassius","cassius.larkspur@duke.example","School of Medicine","Yes"],["Skarsgård-Obi","Sunniva","sunniva.skarsgardobi@duke.example","Pratt School of Engineering","Yes"],["Breckinridge","Adaeze","adaeze.breckinridge@duke.example","Pratt School of Engineering","Yes"],["Verhoeven","Yevgeni","yevgeni.verhoeven@duke.example","School of Medicine","Yes"],["Ustinova","Xiomara","xiomara.ustinova@duke.example","Pratt School of Engineering","Yes"],["Yaroslav","Marianne","marianne.yaroslav@duke.example","Fuqua School of Business","Yes"],["Erlichman","Emmeline","emmeline.erlichman@duke.example","Health, Wellness, and Physical Education (HWPE)","Yes"],["Dunmore","Casimir","casimir.dunmore@duke.example","Trinity College of Arts & Sciences","Yes"],["Lindqvist","Sigrid","sigrid.lindqvist@duke.example","Sanford School of Public Policy","Yes"],["Quirtland","Verity","verity.quirtland@duke.example","Fuqua School of Business","Yes"],["Pemberton-Hale","Folasade","folasade.pembertonhale@duke.example","Sanford School of Public Policy","Yes"],["Edelstein","Leontine","leontine.edelstein@duke.example","Sanford School of Public Policy","Yes"],["Bettencourt","Liesbeth","liesbeth.bettencourt@duke.example","Pratt School of Engineering","Yes"],["Muirhead-Nnamdi","Solveig","solveig.muirheadnnamdi@duke.example","Pratt School of Engineering","Yes"],["Fenwick","Marisol","marisol.fenwick@duke.example","University Institutes and Centers","Yes"],["Vestergaard","Mirembe","mirembe.vestergaard@duke.example","School of Nursing","Yes"],["Ysebaert","Babajide","babajide.ysebaert@duke.example","Fuqua School of Business","Yes"],["Lindberg-Ude","Faustina","faustina.lindbergude@duke.example","School of Law","Yes"],["Fenn","Nkechi","nkechi.fenn@duke.example","Trinity College of Arts & Sciences","Yes"],["Jelinek","Kolawole","kolawole.jelinek@duke.example","Trinity College of Arts & Sciences","Yes"],["Hollingsworth","Isolde","isolde.hollingsworth@duke.example","School of Medicine","Yes"],["Grünhagen","Adaora","adaora.grunhagen@duke.example","Sanford School of Public Policy","Yes"],["Oglethorpe","Clothilde","clothilde.oglethorpe@duke.example","Pratt School of Engineering","Yes"],["Gonzalez-Thay","Bartholomew","bartholomew.gonzalezthay@duke.example","School of Law","Yes"],["Iwuchukwu","Mattias","mattias.iwuchukwu@duke.example","Trinity College of Arts & Sciences","Yes"],["Mbaye-Winterle","Ravindra","ravindra.mbayewinterle@duke.example","Trinity College of Arts & Sciences","Yes"],["Thornbury","Aurelio","aurelio.thornbury@duke.example","Trinity College of Arts & Sciences","Yes"],["Renn","Tobias","tobias.renn@duke.example","Trinity College of Arts & Sciences","Yes"],["Jandali","Oluwaseun","oluwaseun.jandali@duke.example","Fuqua School of Business","Yes"],["Baek","Amaranta","amaranta.baek@duke.example","Fuqua School of Business","Yes"],["Vanbrugh","Desmond","desmond.vanbrugh@duke.example","Sanford School of Public Policy","Yes"],["Oosterhuis","Nikolai","nikolai.oosterhuis@duke.example","Pratt School of Engineering","Yes"],["Xhaferi","Evander","evander.xhaferi@duke.example","School of Medicine","Yes"],["Rowntree","Anneliese","anneliese.rowntree@duke.example","Other Duke Unit","Yes"],["Lyngstad","Cordelia","cordelia.lyngstad@duke.example","University Initiatives & Academic Support Units","Yes"],["Ravenscroft","Lachlan","lachlan.ravenscroft@example.org","External","No"],["Thorsby","Emeka","emeka.thorsby@duke.example","School of Medicine","Yes"],["Vanterpool","Ezequiel","ezequiel.vanterpool@duke.example","University Initiatives & Academic Support Units","Yes"],["Draycott","Philippa","philippa.draycott@duke.example","School of Medicine","Yes"],["Ottoline","Halvard","halvard.ottoline@duke.example","Pratt School of Engineering","Yes"],["Garrickson","Theodora","theodora.garrickson@duke.example","Trinity College of Arts & Sciences","Yes"],["Ubaldi","Obiageli","obiageli.ubaldi@duke.example","Pratt School of Engineering","Yes"],["Whitcombe","Yolanda","yolanda.whitcombe@duke.example","Graduate School, The","Yes"],["Nyongesa","Gustav","gustav.nyongesa@duke.example","Pratt School of Engineering","Yes"],["Zaborowski","Perpetua","perpetua.zaborowski@duke.example","Trinity College of Arts & Sciences","Yes"],["Pattinson-Ayo","Osvaldo","osvaldo.pattinsonayo@duke.example","Fuqua School of Business","Yes"],["Vercingetorix","Antoinette","antoinette.vercingetorix@duke.example","Trinity College of Arts & Sciences","Yes"],["Quaintance","Augustin","augustin.quaintance@duke.example","Divinity School","Yes"],["Ollivander","Ngozi","ngozi.ollivander@duke.example","Trinity College of Arts & Sciences","Yes"],["Yerkovich","Simone","simone.yerkovich@duke.example","School of Medicine","Yes"],["Eskildsen","Radoslav","radoslav.eskildsen@duke.example","Graduate School, The","Yes"],["Isakovic","Abiodun","abiodun.isakovic@duke.example","School of Medicine","Yes"],["Zdenek","Bertrand","bertrand.zdenek@duke.example","University Initiatives & Academic Support Units","Yes"],["Lachlan","Priya","priya.lachlan@duke.example","University Institutes and Centers","Yes"],["Fenwick","Ilse","ilse.fenwick@duke.example","School of Nursing","Yes"],["Sotomayor-Quist","Beatrix","beatrix.sotomayorquist@duke.example","School of Nursing","Yes"],["Lomborg","Chidinma","chidinma.lomborg@duke.example","Trinity College of Arts & Sciences","Yes"],["Delamere","Océane","oceane.delamere@duke.example","Nicholas School of the Environment","Yes"],["Bergstrom-Ola","Henrike","henrike.bergstromola@duke.example","University Initiatives & Academic Support Units","Yes"],["Ekwueme","Ambrose","ambrose.ekwueme@duke.example","School of Medicine","Yes"],["Lautenberg","Thaddeus","thaddeus.lautenberg@duke.example","Pratt School of Engineering","Yes"],["Mbeki-Rourke","Lorcan","lorcan.mbekirourke@duke.example","Duke Kunshan University (DKU)","Yes"],["Kestrelman","Ingrid","ingrid.kestrelman@duke.example","School of Nursing","Yes"],["Quaranta","Marisol","marisol.quaranta@duke.example","Divinity School","Yes"],["Kruspe-Nwosu","Rosalind","rosalind.kruspenwosu@duke.example","University Initiatives & Academic Support Units","Yes"],["Bracewell","Kwabena","kwabena.bracewell@duke.example","University Institutes and Centers","Yes"],["Beauchêne","Reinhold","reinhold.beauchene@duke.example","Trinity College of Arts & Sciences","Yes"],["Lindenbaum","Wilhelmina","wilhelmina.lindenbaum@duke.example","Nicholas School of the Environment","Yes"],["Yarborough","Nadira","nadira.yarborough@duke.example","Pratt School of Engineering","Yes"],["Applewhaite","Tobias","tobias.applewhaite@duke.example","Trinity College of Arts & Sciences","Yes"],["Yankovich","Ferdinand","ferdinand.yankovich@duke.example","School of Nursing","Yes"],["Oyelaran-Hume","Katarina","katarina.oyelaranhume@duke.example","Other Duke Unit","Yes"],["Fairweather","Zoltán","zoltan.fairweather@duke.example","Trinity College of Arts & Sciences","Yes"],["Hasselblad","Rafael","rafael.hasselblad@duke.example","Sanford School of Public Policy","Yes"],["Quenneville","Cassius","cassius.quenneville@duke.example","School of Medicine","Yes"],["Wildeboer","Sunniva","sunniva.wildeboer@duke.example","University Institutes and Centers","Yes"],["Rennebohm","Adaeze","adaeze.rennebohm@duke.example","Pratt School of Engineering","Yes"],["Innocenti","Yevgeni","yevgeni.innocenti@duke.example","University Institutes and Centers","Yes"],["Underhill-Osei","Xiomara","xiomara.underhillosei@duke.example","Trinity College of Arts & Sciences","Yes"],["Cunningham-Ife","Marianne","marianne.cunninghamife@duke.example","School of Medicine","Yes"],["Paik","Emmeline","emmeline.paik@duke.example","Divinity School","Yes"],["Nkemdirim","Casimir","casimir.nkemdirim@duke.example","Health, Wellness, and Physical Education (HWPE)","Yes"],["Cazorla-Nnaji","Sigrid","sigrid.cazorlannaji@duke.example","Graduate School, The","Yes"],["Okonkwo-Sable","Verity","verity.okonkwosable@duke.example","University Initiatives & Academic Support Units","Yes"],["Zimmerli","Folasade","folasade.zimmerli@duke.example","Trinity College of Arts & Sciences","Yes"],["Swinburne","Leontine","leontine.swinburne@duke.example","Pratt School of Engineering","Yes"],["Mordaunt","Liesbeth","liesbeth.mordaunt@duke.example","Pratt School of Engineering","Yes"],["Nussbaumer","Solveig","solveig.nussbaumer@duke.example","Duke Kunshan University (DKU)","Yes"],["Gwynneth","Torvald","torvald.gwynneth@duke.example","Pratt School of Engineering","Yes"],["Mortenson","Mirembe","mirembe.mortenson@duke.example","Trinity College of Arts & Sciences","Yes"],["Sandoval-Ime","Babajide","babajide.sandovalime@duke.example","University Initiatives & Academic Support Units","Yes"],["Ashcombe","Faustina","faustina.ashcombe@duke.example","Pratt School of Engineering","Yes"],["Vandermolen","Nkechi","nkechi.vandermolen@duke.example","Trinity College of Arts & Sciences","Yes"],["Ellingsworth","Kolawole","kolawole.ellingsworth@duke.example","Sanford School of Public Policy","Yes"],["Haverkamp","Isolde","isolde.haverkamp@duke.example","School of Nursing","Yes"],["Quimby-Ade","Adaora","adaora.quimbyade@duke.example","Pratt School of Engineering","Yes"],["Broadhurst","Clothilde","clothilde.broadhurst@duke.example","Trinity College of Arts & Sciences","Yes"],["Delacroix","Bartholomew","bartholomew.delacroix@duke.example","University Initiatives & Academic Support Units","Yes"],["Thistlewood","Mattias","mattias.thistlewood@duke.example","Fuqua School of Business","Yes"],["Glazebrook","Ravindra","ravindra.glazebrook@duke.example","Pratt School of Engineering","Yes"],["Renn","Aurelio","aurelio.renn@duke.example","School of Medicine","Yes"]];
-let knownContacts=[],recentEntries=[];
+      const DEMO_CONTACTS = [["Isakovic","Ambrose","ambrose.isakovic@duke.example","School of Medicine","Yes"],["Zdenek","Thaddeus","thaddeus.zdenek@duke.example","Fuqua School of Business","Yes"],["Ingelbrecht","Lorcan","lorcan.ingelbrecht@duke.example","University Initiatives & Academic Support Units","Yes"],["Fenwick","Ingrid","ingrid.fenwick@duke.example","Fuqua School of Business","Yes"],["Sotomayor-Quist","Marisol","marisol.sotomayorquist@duke.example","Graduate School, The","Yes"],["Lomborg","Rosalind","rosalind.lomborg@duke.example","Trinity College of Arts & Sciences","Yes"],["Delamere","Kwabena","kwabena.delamere@duke.example","Trinity College of Arts & Sciences","Yes"],["Bergstrom-Ola","Reinhold","reinhold.bergstromola@duke.example","Pratt School of Engineering","Yes"],["Okpara-Lentz","Wilhelmina","wilhelmina.okparalentz@duke.example","Trinity College of Arts & Sciences","Yes"],["Ulyanova","Nadira","nadira.ulyanova@duke.example","School of Nursing","Yes"],["Allingham","Tobias","tobias.allingham@duke.example","School of Medicine","Yes"],["Achterberg","Ferdinand","ferdinand.achterberg@duke.example","Pratt School of Engineering","Yes"],["Vasilenko","Katarina","katarina.vasilenko@duke.example","Sanford School of Public Policy","Yes"],["Castaneda-Roos","Zoltán","zoltan.castanedaroos@duke.example","Fuqua School of Business","Yes"],["Villalobos-Fenn","Rafael","rafael.villalobosfenn@duke.example","Pratt School of Engineering","Yes"],["Grenfell-Oba","Cassius","cassius.grenfelloba@duke.example","Trinity College of Arts & Sciences","Yes"],["Ryszard","Sunniva","sunniva.ryszard@duke.example","Trinity College of Arts & Sciences","Yes"],["Kowalczyk-Ade","Adaeze","adaeze.kowalczykade@duke.example","Trinity College of Arts & Sciences","Yes"],["Mainwaring","Yevgeni","yevgeni.mainwaring@duke.example","University Institutes and Centers","Yes"],["Janowitz","Xiomara","xiomara.janowitz@duke.example","University Institutes and Centers","Yes"],["Drummond-Iyer","Marianne","marianne.drummondiyer@duke.example","Sanford School of Public Policy","Yes"],["Lemercier","Emmeline","emmeline.lemercier@duke.example","School of Medicine","Yes"],["Nordstrand","Casimir","casimir.nordstrand@duke.example","Divinity School","Yes"],["Zabriskie","Sigrid","sigrid.zabriskie@duke.example","Trinity College of Arts & Sciences","Yes"],["Kestenbaum","Verity","verity.kestenbaum@duke.example","Graduate School, The","Yes"],["Carmichael-Efe","Folasade","folasade.carmichaelefe@duke.example","School of Medicine","Yes"],["Fothergill","Leontine","leontine.fothergill@duke.example","Graduate School, The","Yes"],["Fontanella","Liesbeth","liesbeth.fontanella@duke.example","University Institutes and Centers","Yes"],["Danziger","Solveig","solveig.danziger@duke.example","Sanford School of Public Policy","Yes"],["Wrightsman","Torvald","torvald.wrightsman@duke.example","Graduate School, The","Yes"],["Jourdain","Mirembe","mirembe.jourdain@duke.example","School of Medicine","Yes"],["Krisanthemum","Babajide","babajide.krisanthemum@duke.example","School of Medicine","Yes"],["Zetterlund","Faustina","faustina.zetterlund@duke.example","Sanford School of Public Policy","Yes"],["Ashworth-Dike","Nkechi","nkechi.ashworthdike@duke.example","Trinity College of Arts & Sciences","Yes"],["Ibarruri","Kolawole","kolawole.ibarruri@duke.example","Pratt School of Engineering","Yes"],["Stavropoulos","Isolde","isolde.stavropoulos@duke.example","Graduate School, The","Yes"],["Fitzwilliam","Adaora","adaora.fitzwilliam@duke.example","Trinity College of Arts & Sciences","Yes"],["Novotny","Clothilde","clothilde.novotny@duke.example","Fuqua School of Business","Yes"],["Quennell","Bartholomew","bartholomew.quennell@duke.example","School of Medicine","Yes"],["Lindegaard","Mattias","mattias.lindegaard@duke.example","University Institutes and Centers","Yes"],["Wetherington","Ravindra","ravindra.wetherington@duke.example","Pratt School of Engineering","Yes"],["Eichenwald","Aurelio","aurelio.eichenwald@duke.example","Graduate School, The","Yes"],["Kingscote","Kolawole","kolawole.kingscote@duke.example","Sanford School of Public Policy","Yes"],["Marchbanks","Oluwaseun","oluwaseun.marchbanks@duke.example","School of Medicine","Yes"],["Kirkbride","Amaranta","amaranta.kirkbride@duke.example","Other Duke Unit","Yes"],["Nkosi-Reinholt","Desmond","desmond.nkosireinholt@duke.example","Trinity College of Arts & Sciences","Yes"],["Abernethy","Nikolai","nikolai.abernethy@duke.example","Trinity College of Arts & Sciences","Yes"],["Pilkington-Sow","Evander","evander.pilkingtonsow@duke.example","Graduate School, The","Yes"],["Neuwirth","Anneliese","anneliese.neuwirth@duke.example","Pratt School of Engineering","Yes"],["Fenniman","Cordelia","cordelia.fenniman@duke.example","Pratt School of Engineering","Yes"],["Restrepo-Lund","Lachlan","lachlan.restrepolund@duke.example","Other Duke Unit","Yes"],["Hjelmslev","Emeka","emeka.hjelmslev@duke.example","Divinity School","Yes"],["Prendergast","Ezequiel","ezequiel.prendergast@duke.example","Pratt School of Engineering","Yes"],["Jorgensen-Bem","Philippa","philippa.jorgensenbem@duke.example","School of Medicine","Yes"],["Duplessis","Halvard","halvard.duplessis@duke.example","Graduate School, The","Yes"],["Chatterjee-Kohl","Theodora","theodora.chatterjeekohl@duke.example","Trinity College of Arts & Sciences","Yes"],["Jamieson-Ude","Obiageli","obiageli.jamiesonude@duke.example","School of Law","Yes"],["Hartsfield","Yolanda","yolanda.hartsfield@duke.example","Trinity College of Arts & Sciences","Yes"],["Hendriksen","Gustav","gustav.hendriksen@duke.example","Fuqua School of Business","Yes"],["Quintrell","Perpetua","perpetua.quintrell@duke.example","Trinity College of Arts & Sciences","Yes"],["Selby-Adichie","Osvaldo","osvaldo.selbyadichie@duke.example","School of Nursing","Yes"],["Dembélé-Hart","Antoinette","antoinette.dembelehart@duke.example","School of Medicine","Yes"],["Adeniran-Cole","Augustin","augustin.adenirancole@duke.example","Nicholas School of the Environment","Yes"],["Rademacher","Ngozi","ngozi.rademacher@duke.example","Trinity College of Arts & Sciences","Yes"],["Ekwueme","Simone","simone.ekwueme@example.org","External","No"],["Lautenberg","Radoslav","radoslav.lautenberg@duke.example","Sanford School of Public Policy","Yes"],["Mbeki-Rourke","Abiodun","abiodun.mbekirourke@duke.example","School of Medicine","Yes"],["Kestrelman","Bertrand","bertrand.kestrelman@duke.example","Trinity College of Arts & Sciences","Yes"],["Quaranta","Ifeoma","ifeoma.quaranta@duke.example","Pratt School of Engineering","Yes"],["Kruspe-Nwosu","Ilse","ilse.kruspenwosu@duke.example","School of Medicine","Yes"],["Bracewell","Beatrix","beatrix.bracewell@duke.example","Trinity College of Arts & Sciences","Yes"],["Beauchêne","Chidinma","chidinma.beauchene@duke.example","School of Medicine","Yes"],["Lindenbaum","Océane","oceane.lindenbaum@duke.example","Sanford School of Public Policy","Yes"],["Yarborough","Henrike","henrike.yarborough@duke.example","Graduate School, The","Yes"],["Ostrowski","Ambrose","ambrose.ostrowski@duke.example","Pratt School of Engineering","Yes"],["Rothermere","Thaddeus","thaddeus.rothermere@duke.example","School of Medicine","Yes"],["Uzoigwe","Lorcan","lorcan.uzoigwe@duke.example","Trinity College of Arts & Sciences","Yes"],["Wexler-Adeyemi","Ingrid","ingrid.wexleradeyemi@duke.example","University Institutes and Centers","Yes"],["Uttridge","Marisol","marisol.uttridge@duke.example","Trinity College of Arts & Sciences","Yes"],["Aldringham","Rosalind","rosalind.aldringham@duke.example","Nicholas School of the Environment","Yes"],["Trelawney","Kwabena","kwabena.trelawney@duke.example","Pratt School of Engineering","Yes"],["Steenkamp","Reinhold","reinhold.steenkamp@duke.example","Trinity College of Arts & Sciences","Yes"],["Grahamslaw","Wilhelmina","wilhelmina.grahamslaw@duke.example","School of Medicine","Yes"],["Marchetti-Osei","Nadira","nadira.marchettiosei@duke.example","Pratt School of Engineering","Yes"],["Tamplin","Tobias","tobias.tamplin@duke.example","School of Medicine","Yes"],["Falkenrath","Ferdinand","ferdinand.falkenrath@duke.example","Sanford School of Public Policy","Yes"],["Halvorsen-Ba","Katarina","katarina.halvorsenba@duke.example","University Initiatives & Academic Support Units","Yes"],["Everington","Zoltán","zoltan.everington@duke.example","Health, Wellness, and Physical Education (HWPE)","Yes"],["Jastrzebski","Rafael","rafael.jastrzebski@duke.example","Graduate School, The","Yes"],["Larkspur","Cassius","cassius.larkspur@duke.example","School of Medicine","Yes"],["Skarsgård-Obi","Sunniva","sunniva.skarsgardobi@duke.example","Pratt School of Engineering","Yes"],["Breckinridge","Adaeze","adaeze.breckinridge@duke.example","Pratt School of Engineering","Yes"],["Verhoeven","Yevgeni","yevgeni.verhoeven@duke.example","School of Medicine","Yes"],["Ustinova","Xiomara","xiomara.ustinova@duke.example","Pratt School of Engineering","Yes"],["Yaroslav","Marianne","marianne.yaroslav@duke.example","Fuqua School of Business","Yes"],["Erlichman","Emmeline","emmeline.erlichman@duke.example","Health, Wellness, and Physical Education (HWPE)","Yes"],["Dunmore","Casimir","casimir.dunmore@duke.example","Trinity College of Arts & Sciences","Yes"],["Lindqvist","Sigrid","sigrid.lindqvist@duke.example","Sanford School of Public Policy","Yes"],["Quirtland","Verity","verity.quirtland@duke.example","Fuqua School of Business","Yes"],["Pemberton-Hale","Folasade","folasade.pembertonhale@duke.example","Sanford School of Public Policy","Yes"],["Edelstein","Leontine","leontine.edelstein@duke.example","Sanford School of Public Policy","Yes"],["Bettencourt","Liesbeth","liesbeth.bettencourt@duke.example","Pratt School of Engineering","Yes"],["Muirhead-Nnamdi","Solveig","solveig.muirheadnnamdi@duke.example","Pratt School of Engineering","Yes"],["Fenwick","Marisol","marisol.fenwick@duke.example","University Institutes and Centers","Yes"],["Vestergaard","Mirembe","mirembe.vestergaard@duke.example","School of Nursing","Yes"],["Ysebaert","Babajide","babajide.ysebaert@duke.example","Fuqua School of Business","Yes"],["Lindberg-Ude","Faustina","faustina.lindbergude@duke.example","School of Law","Yes"],["Fenn","Nkechi","nkechi.fenn@duke.example","Trinity College of Arts & Sciences","Yes"],["Jelinek","Kolawole","kolawole.jelinek@duke.example","Trinity College of Arts & Sciences","Yes"],["Hollingsworth","Isolde","isolde.hollingsworth@duke.example","School of Medicine","Yes"],["Grünhagen","Adaora","adaora.grunhagen@duke.example","Sanford School of Public Policy","Yes"],["Oglethorpe","Clothilde","clothilde.oglethorpe@duke.example","Pratt School of Engineering","Yes"],["Gonzalez-Thay","Bartholomew","bartholomew.gonzalezthay@duke.example","School of Law","Yes"],["Iwuchukwu","Mattias","mattias.iwuchukwu@duke.example","Trinity College of Arts & Sciences","Yes"],["Mbaye-Winterle","Ravindra","ravindra.mbayewinterle@duke.example","Trinity College of Arts & Sciences","Yes"],["Thornbury","Aurelio","aurelio.thornbury@duke.example","Trinity College of Arts & Sciences","Yes"],["Renn","Tobias","tobias.renn@duke.example","Trinity College of Arts & Sciences","Yes"],["Jandali","Oluwaseun","oluwaseun.jandali@duke.example","Fuqua School of Business","Yes"],["Baek","Amaranta","amaranta.baek@duke.example","Fuqua School of Business","Yes"],["Vanbrugh","Desmond","desmond.vanbrugh@duke.example","Sanford School of Public Policy","Yes"],["Oosterhuis","Nikolai","nikolai.oosterhuis@duke.example","Pratt School of Engineering","Yes"],["Xhaferi","Evander","evander.xhaferi@duke.example","School of Medicine","Yes"],["Rowntree","Anneliese","anneliese.rowntree@duke.example","Other Duke Unit","Yes"],["Lyngstad","Cordelia","cordelia.lyngstad@duke.example","University Initiatives & Academic Support Units","Yes"],["Ravenscroft","Lachlan","lachlan.ravenscroft@example.org","External","No"],["Thorsby","Emeka","emeka.thorsby@duke.example","School of Medicine","Yes"],["Vanterpool","Ezequiel","ezequiel.vanterpool@duke.example","University Initiatives & Academic Support Units","Yes"],["Draycott","Philippa","philippa.draycott@duke.example","School of Medicine","Yes"],["Ottoline","Halvard","halvard.ottoline@duke.example","Pratt School of Engineering","Yes"],["Garrickson","Theodora","theodora.garrickson@duke.example","Trinity College of Arts & Sciences","Yes"],["Ubaldi","Obiageli","obiageli.ubaldi@duke.example","Pratt School of Engineering","Yes"],["Whitcombe","Yolanda","yolanda.whitcombe@duke.example","Graduate School, The","Yes"],["Nyongesa","Gustav","gustav.nyongesa@duke.example","Pratt School of Engineering","Yes"],["Zaborowski","Perpetua","perpetua.zaborowski@duke.example","Trinity College of Arts & Sciences","Yes"],["Pattinson-Ayo","Osvaldo","osvaldo.pattinsonayo@duke.example","Fuqua School of Business","Yes"],["Vercingetorix","Antoinette","antoinette.vercingetorix@duke.example","Trinity College of Arts & Sciences","Yes"],["Quaintance","Augustin","augustin.quaintance@duke.example","Divinity School","Yes"],["Ollivander","Ngozi","ngozi.ollivander@duke.example","Trinity College of Arts & Sciences","Yes"],["Yerkovich","Simone","simone.yerkovich@duke.example","School of Medicine","Yes"],["Eskildsen","Radoslav","radoslav.eskildsen@duke.example","Graduate School, The","Yes"],["Isakovic","Abiodun","abiodun.isakovic@duke.example","School of Medicine","Yes"],["Zdenek","Bertrand","bertrand.zdenek@duke.example","University Initiatives & Academic Support Units","Yes"],["Lachlan","Priya","priya.lachlan@duke.example","University Institutes and Centers","Yes"],["Fenwick","Ilse","ilse.fenwick@duke.example","School of Nursing","Yes"],["Sotomayor-Quist","Beatrix","beatrix.sotomayorquist@duke.example","School of Nursing","Yes"],["Lomborg","Chidinma","chidinma.lomborg@duke.example","Trinity College of Arts & Sciences","Yes"],["Delamere","Océane","oceane.delamere@duke.example","Nicholas School of the Environment","Yes"],["Bergstrom-Ola","Henrike","henrike.bergstromola@duke.example","University Initiatives & Academic Support Units","Yes"],["Ekwueme","Ambrose","ambrose.ekwueme@duke.example","School of Medicine","Yes"],["Lautenberg","Thaddeus","thaddeus.lautenberg@duke.example","Pratt School of Engineering","Yes"],["Mbeki-Rourke","Lorcan","lorcan.mbekirourke@duke.example","Duke Kunshan University (DKU)","Yes"],["Kestrelman","Ingrid","ingrid.kestrelman@duke.example","School of Nursing","Yes"],["Quaranta","Marisol","marisol.quaranta@duke.example","Divinity School","Yes"],["Kruspe-Nwosu","Rosalind","rosalind.kruspenwosu@duke.example","University Initiatives & Academic Support Units","Yes"],["Bracewell","Kwabena","kwabena.bracewell@duke.example","University Institutes and Centers","Yes"],["Beauchêne","Reinhold","reinhold.beauchene@duke.example","Trinity College of Arts & Sciences","Yes"],["Lindenbaum","Wilhelmina","wilhelmina.lindenbaum@duke.example","Nicholas School of the Environment","Yes"],["Yarborough","Nadira","nadira.yarborough@duke.example","Pratt School of Engineering","Yes"],["Applewhaite","Tobias","tobias.applewhaite@duke.example","Trinity College of Arts & Sciences","Yes"],["Yankovich","Ferdinand","ferdinand.yankovich@duke.example","School of Nursing","Yes"],["Oyelaran-Hume","Katarina","katarina.oyelaranhume@duke.example","Other Duke Unit","Yes"],["Fairweather","Zoltán","zoltan.fairweather@duke.example","Trinity College of Arts & Sciences","Yes"],["Hasselblad","Rafael","rafael.hasselblad@duke.example","Sanford School of Public Policy","Yes"],["Quenneville","Cassius","cassius.quenneville@duke.example","School of Medicine","Yes"],["Wildeboer","Sunniva","sunniva.wildeboer@duke.example","University Institutes and Centers","Yes"],["Rennebohm","Adaeze","adaeze.rennebohm@duke.example","Pratt School of Engineering","Yes"],["Innocenti","Yevgeni","yevgeni.innocenti@duke.example","University Institutes and Centers","Yes"],["Underhill-Osei","Xiomara","xiomara.underhillosei@duke.example","Trinity College of Arts & Sciences","Yes"],["Cunningham-Ife","Marianne","marianne.cunninghamife@duke.example","School of Medicine","Yes"],["Paik","Emmeline","emmeline.paik@duke.example","Divinity School","Yes"],["Nkemdirim","Casimir","casimir.nkemdirim@duke.example","Health, Wellness, and Physical Education (HWPE)","Yes"],["Cazorla-Nnaji","Sigrid","sigrid.cazorlannaji@duke.example","Graduate School, The","Yes"],["Okonkwo-Sable","Verity","verity.okonkwosable@duke.example","University Initiatives & Academic Support Units","Yes"],["Zimmerli","Folasade","folasade.zimmerli@duke.example","Trinity College of Arts & Sciences","Yes"],["Swinburne","Leontine","leontine.swinburne@duke.example","Pratt School of Engineering","Yes"],["Mordaunt","Liesbeth","liesbeth.mordaunt@duke.example","Pratt School of Engineering","Yes"],["Nussbaumer","Solveig","solveig.nussbaumer@duke.example","Duke Kunshan University (DKU)","Yes"],["Gwynneth","Torvald","torvald.gwynneth@duke.example","Pratt School of Engineering","Yes"],["Mortenson","Mirembe","mirembe.mortenson@duke.example","Trinity College of Arts & Sciences","Yes"],["Sandoval-Ime","Babajide","babajide.sandovalime@duke.example","University Initiatives & Academic Support Units","Yes"],["Ashcombe","Faustina","faustina.ashcombe@duke.example","Pratt School of Engineering","Yes"],["Vandermolen","Nkechi","nkechi.vandermolen@duke.example","Trinity College of Arts & Sciences","Yes"],["Ellingsworth","Kolawole","kolawole.ellingsworth@duke.example","Sanford School of Public Policy","Yes"],["Haverkamp","Isolde","isolde.haverkamp@duke.example","School of Nursing","Yes"],["Quimby-Ade","Adaora","adaora.quimbyade@duke.example","Pratt School of Engineering","Yes"],["Broadhurst","Clothilde","clothilde.broadhurst@duke.example","Trinity College of Arts & Sciences","Yes"],["Delacroix","Bartholomew","bartholomew.delacroix@duke.example","University Initiatives & Academic Support Units","Yes"],["Thistlewood","Mattias","mattias.thistlewood@duke.example","Fuqua School of Business","Yes"],["Glazebrook","Ravindra","ravindra.glazebrook@duke.example","Pratt School of Engineering","Yes"],["Renn","Aurelio","aurelio.renn@duke.example","School of Medicine","Yes"]];
+      let knownContacts = [],
+        recentEntries = [];
 
-function parseCSV(t){const R=[];let c='',q=false,r=[];for(let i=0;i<t.length;i++){const x=t[i];if(q){if(x==='"'&&t[i+1]==='"'){c+='"';i++}else if(x==='"')q=false;else c+=x}else{if(x==='"')q=true;else if(x===','){r.push(c.trim());c=''}else if(x==='\n'||(x==='\r'&&t[i+1]==='\n')){r.push(c.trim());c='';if(r.some(v=>v))R.push(r);r=[];if(x==='\r')i++}else c+=x}}if(c||r.length){r.push(c.trim());if(r.some(v=>v))R.push(r)}return R}
-function extCol(rows,i){return rows.slice(2).map(r=>(r[i]||'').trim()).filter(v=>v)}
-async function fetchCSV(gid){const r=await fetch(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`);if(!r.ok)throw new Error(r.status);return parseCSV(await r.text())}
+      function parseCSV(t) {
+        const R = [];
+        let c = "",
+          q = false,
+          r = [];
+        for (let i = 0; i < t.length; i++) {
+          const x = t[i];
+          if (q) {
+            if (x === '"' && t[i + 1] === '"') {
+              c += '"';
+              i++;
+            } else if (x === '"') q = false;
+            else c += x;
+          } else {
+            if (x === '"') q = true;
+            else if (x === ",") {
+              r.push(c.trim());
+              c = "";
+            } else if (x === "\n" || (x === "\r" && t[i + 1] === "\n")) {
+              r.push(c.trim());
+              c = "";
+              if (r.some((v) => v)) R.push(r);
+              r = [];
+              if (x === "\r") i++;
+            } else c += x;
+          }
+        }
+        if (c || r.length) {
+          r.push(c.trim());
+          if (r.some((v) => v)) R.push(r);
+        }
+        return R;
+      }
+      function extCol(rows, i) {
+        return rows
+          .slice(2)
+          .map((r) => (r[i] || "").trim())
+          .filter((v) => v);
+      }
+      async function fetchCSV(gid) {
+        const r = await fetch(
+          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`,
+        );
+        if (!r.ok) throw new Error(r.status);
+        return parseCSV(await r.text());
+      }
 
-async function loadLookups(){if(SPREADSHEET_ID==="YOUR_SPREADSHEET_ID_HERE")return;try{const R=await fetchCSV(LOOKUPS_GID);const e=extCol(R,1),t=extCol(R,3),p=extCol(R,4),s=extCol(R,5),st=extCol(R,7),em=extCol(R,8);if(e.length)ENGAGEMENT_TYPES=e;if(t.length)TOPIC_AREAS=t;if(p.length)FAC_DEV_PROGRAMS=p;if(s.length)DUKE_SCHOOLS=s;if(st.length){STAFF=st;STAFF_EMAILS={};st.forEach((n,i)=>{if(em[i])STAFF_EMAILS[n]=em[i]})}}catch(e){console.warn('Lookups:',e)}}
-async function loadContacts(){if(SPREADSHEET_ID==="YOUR_SPREADSHEET_ID_HERE"){knownContacts=DEMO_CONTACTS.map(function(r){return{lastName:r[0],firstName:r[1],email:r[2],school:r[3],internal:r[4]}});return}if(CONTACTS_GID==="YOUR_CONTACTS_GID_HERE")return;try{const R=await fetchCSV(CONTACTS_GID);if(R.length<3)return;let hI=0;if(R.length>1&&R[1].filter(c=>c).length>R[0].filter(c=>c).length)hI=1;const h=R[hI].map(x=>(x||'').trim().toLowerCase()),d=R.slice(hI+1);const fc=(...k)=>h.findIndex(x=>k.some(kk=>x.includes(kk)));const cL=fc('last name'),cF=fc('first name'),cE=fc('preferred email','email'),cS=fc('parent org','school'),cI=fc('internal');knownContacts=d.map(r=>({lastName:(r[cL]||'').trim(),firstName:(r[cF]||'').trim(),email:(r[cE]||'').trim(),school:cS>=0?(r[cS]||'').trim():'',internal:cI>=0?(r[cI]||'').trim():''})).filter(c=>c.lastName)}catch(e){console.warn('Contacts:',e)}}
-async function loadRecentRaw(){if(SPREADSHEET_ID==="YOUR_SPREADSHEET_ID_HERE")return;try{const R=await fetchCSV(QUICKLOG_GID);if(R.length<2){recentEntries=[];return}const h=R[0].map(x=>(x||'').trim()),d=R.slice(1);recentEntries=d.map(r=>{const o={};h.forEach((hh,i)=>{o[hh]=(r[i]||'').trim()});return o}).filter(o=>Object.values(o).some(v=>v));const cut=new Date();cut.setDate(cut.getDate()-7);recentEntries=recentEntries.filter(e=>{const dd=e['Date']||e['Timestamp']||'';if(!dd)return true;const p=new Date(dd);return!isNaN(p)&&p>=cut})}catch(e){console.warn('Recent:',e)}}
+      async function loadLookups() {
+        if (SPREADSHEET_ID === "YOUR_SPREADSHEET_ID_HERE") {
+          STAFF = DEMO_STAFF.slice();
+          return;
+        }
+        try {
+          const R = await fetchCSV(LOOKUPS_GID);
+          const e = extCol(R, 1),
+            t = extCol(R, 3),
+            p = extCol(R, 4),
+            s = extCol(R, 5),
+            st = extCol(R, 7),
+            em = extCol(R, 8);
+          if (e.length) ENGAGEMENT_TYPES = e;
+          if (t.length) TOPIC_AREAS = t;
+          if (p.length) FAC_DEV_PROGRAMS = p;
+          if (s.length) DUKE_SCHOOLS = s;
+          if (st.length) {
+            STAFF = st;
+            STAFF_EMAILS = {};
+            st.forEach((n, i) => {
+              if (em[i]) STAFF_EMAILS[n] = em[i];
+            });
+          } else {
+            // The fetch succeeded and column 7 came back empty. An empty roster
+            // is not a roster, and must not be reported as one.
+            staffLoadFailed = true;
+          }
+        } catch (e) {
+          console.warn("Lookups:", e);
+          staffLoadFailed = true;
+        }
+      }
+      async function loadContacts() {
+        if (SPREADSHEET_ID === "YOUR_SPREADSHEET_ID_HERE") {
+          knownContacts = DEMO_CONTACTS.map(function (r) {
+            return { lastName: r[0], firstName: r[1], email: r[2], school: r[3], internal: r[4] };
+          });
+          return;
+        }
+        if (CONTACTS_GID === "YOUR_CONTACTS_GID_HERE") return;
+        try {
+          const R = await fetchCSV(CONTACTS_GID);
+          if (R.length < 3) return;
+          let hI = 0;
+          if (R.length > 1 && R[1].filter((c) => c).length > R[0].filter((c) => c).length) hI = 1;
+          const h = R[hI].map((x) => (x || "").trim().toLowerCase()),
+            d = R.slice(hI + 1);
+          const fc = (...k) => h.findIndex((x) => k.some((kk) => x.includes(kk)));
+          const cL = fc("last name"),
+            cF = fc("first name"),
+            cE = fc("preferred email", "email"),
+            cS = fc("parent org", "school"),
+            cI = fc("internal");
+          knownContacts = d
+            .map((r) => ({
+              lastName: (r[cL] || "").trim(),
+              firstName: (r[cF] || "").trim(),
+              email: (r[cE] || "").trim(),
+              school: cS >= 0 ? (r[cS] || "").trim() : "",
+              internal: cI >= 0 ? (r[cI] || "").trim() : "",
+            }))
+            .filter((c) => c.lastName);
+        } catch (e) {
+          console.warn("Contacts:", e);
+        }
+      }
+      async function loadRecentRaw() {
+        if (SPREADSHEET_ID === "YOUR_SPREADSHEET_ID_HERE") return;
+        try {
+          const R = await fetchCSV(QUICKLOG_GID);
+          if (R.length < 2) {
+            recentEntries = [];
+            return;
+          }
+          const h = R[0].map((x) => (x || "").trim()),
+            d = R.slice(1);
+          recentEntries = d
+            .map((r) => {
+              const o = {};
+              h.forEach((hh, i) => {
+                o[hh] = (r[i] || "").trim();
+              });
+              return o;
+            })
+            .filter((o) => Object.values(o).some((v) => v));
+          const cut = new Date();
+          cut.setDate(cut.getDate() - 7);
+          recentEntries = recentEntries.filter((e) => {
+            const dd = e["Date"] || e["Timestamp"] || "";
+            if (!dd) return true;
+            const p = new Date(dd);
+            return !isNaN(p) && p >= cut;
+          });
+        } catch (e) {
+          console.warn("Recent:", e);
+        }
+      }
 
-let currentStep=1,currentMode='form',dupConfirmed=false;
-let formData={logType:"",staffMember:"",date:new Date().toISOString().split("T")[0],firstName:"",lastName:"",email:"",internalDuke:"",schoolUnit:"",engagementType:"",topicPrimary:"",programName:"",notes:"",eventName:"",eventCoSponsor:"",eventTopicPrimary:"",eventSpeakers:"",eventRegistrants:"",eventAttendees:"",eventNotes:""};
+      let currentStep = 1,
+        currentMode = "form",
+        dupConfirmed = false;
+      let formData = {
+        logType: "",
+        staffMember: "",
+        date: new Date().toISOString().split("T")[0],
+        firstName: "",
+        lastName: "",
+        email: "",
+        internalDuke: "",
+        schoolUnit: "",
+        engagementType: "",
+        topicPrimary: "",
+        programName: "",
+        notes: "",
+        eventName: "",
+        eventCoSponsor: "",
+        eventTopicPrimary: "",
+        eventSpeakers: "",
+        eventRegistrants: "",
+        eventAttendees: "",
+        eventNotes: "",
+      };
 
-function switchMode(m){currentMode=m;document.getElementById('tabForm').classList.toggle('active',m==='form');document.getElementById('tabRecent').classList.toggle('active',m==='recent');document.getElementById('formMode').classList.toggle('hidden',m!=='form');document.getElementById('recentMode').classList.toggle('hidden',m!=='recent');if(m==='recent')loadRecentRaw().then(renderRecent)}
-function renderRecent(){const f=document.getElementById('recentStaffFilter').value;let E=f==='all'?recentEntries:recentEntries.filter(e=>(e['Staff Member']||'')===f);document.getElementById('recentCount').textContent=`${E.length} ${E.length===1?'entry':'entries'} in last 7 days`;const el=document.getElementById('recentList');if(!E.length){el.innerHTML='<div class="ql-empty">No entries found for this period.</div>';return}
-el.innerHTML=E.slice().reverse().map(e=>{const isE=(e['Entry Type']||'').toLowerCase().includes('engagement');const nm=isE?`${e['First Name']||''} ${e['Last Name']||''}`.trim():(e['Event Name']||'Event');const bc=isE?'ql-entry-badge-eng':'ql-entry-badge-evt';const bt=isE?'Engagement':'Event';const det=isE?[e['Engagement Type'],e['Primary Topic'],e['School/Unit']].filter(Boolean).join(' · '):[e['Primary Event Topic'],e['Event Topic']].filter(Boolean).join(' · ');const n=e['Notes']||e['Event Notes']||'';return`<div class="ql-entry-card"><div class="ql-entry-top"><div><span class="ql-entry-name">${nm}</span><span class="ql-entry-badge ${bc}">${bt}</span></div><span class="ql-entry-date">${e['Date']||''}</span></div><div class="ql-entry-detail">${det||'—'}</div><div class="ql-entry-staff">Logged by ${e['Staff Member']||'—'}</div>${n?`<div class="ql-entry-notes">${n}</div>`:''}</div>`}).join('')}
+      function switchMode(m) {
+        currentMode = m;
+        document.getElementById("tabForm").classList.toggle("active", m === "form");
+        document.getElementById("tabRecent").classList.toggle("active", m === "recent");
+        document.getElementById("formMode").classList.toggle("hidden", m !== "form");
+        document.getElementById("recentMode").classList.toggle("hidden", m !== "recent");
+        if (m === "recent") loadRecentRaw().then(renderRecent);
+      }
+      function renderRecent() {
+        const f = document.getElementById("recentStaffFilter").value;
+        let E =
+          f === "all"
+            ? recentEntries
+            : recentEntries.filter((e) => (e["Staff Member"] || "") === f);
+        document.getElementById("recentCount").textContent =
+          `${E.length} ${E.length === 1 ? "entry" : "entries"} in last 7 days`;
+        const el = document.getElementById("recentList");
+        if (!E.length) {
+          el.innerHTML = '<div class="ql-empty">No entries found for this period.</div>';
+          return;
+        }
+        el.innerHTML = E.slice()
+          .reverse()
+          .map((e) => {
+            const isE = (e["Entry Type"] || "").toLowerCase().includes("engagement");
+            const nm = isE
+              ? `${e["First Name"] || ""} ${e["Last Name"] || ""}`.trim()
+              : e["Event Name"] || "Event";
+            const bc = isE ? "ql-entry-badge-eng" : "ql-entry-badge-evt";
+            const bt = isE ? "Engagement" : "Event";
+            const det = isE
+              ? [e["Engagement Type"], e["Primary Topic"], e["School/Unit"]]
+                  .filter(Boolean)
+                  .join(" · ")
+              : [e["Primary Event Topic"], e["Event Topic"]].filter(Boolean).join(" · ");
+            const n = e["Notes"] || e["Event Notes"] || "";
+            return `<div class="ql-entry-card"><div class="ql-entry-top"><div><span class="ql-entry-name">${nm}</span><span class="ql-entry-badge ${bc}">${bt}</span></div><span class="ql-entry-date">${e["Date"] || ""}</span></div><div class="ql-entry-detail">${det || "—"}</div><div class="ql-entry-staff">Logged by ${e["Staff Member"] || "—"}</div>${n ? `<div class="ql-entry-notes">${n}</div>` : ""}</div>`;
+          })
+          .join("");
+      }
 
-function onLastNameInput(){const v=document.getElementById('lastName').value.trim().toLowerCase();const L=document.getElementById('suggestList');checkStep2();if(v.length<2||!knownContacts.length){L.classList.remove('open');return}const m=knownContacts.filter(c=>c.lastName.toLowerCase().includes(v)).slice(0,6);if(!m.length){L.classList.remove('open');return}L.innerHTML=m.map((c,i)=>`<div class="ql-suggest-item" onclick="pickContact(${i})"><div class="ql-suggest-name">${c.lastName}, ${c.firstName}</div><div class="ql-suggest-detail">${c.email}${c.school?' · '+c.school:''}</div></div>`).join('');L._m=m;L.classList.add('open')}
-function pickContact(i){const L=document.getElementById('suggestList');const c=L._m[i];if(!c)return;document.getElementById('lastName').value=c.lastName;document.getElementById('firstName').value=c.firstName;document.getElementById('emailInput').value=c.email;formData.lastName=c.lastName;formData.firstName=c.firstName;formData.email=c.email;if(c.internal){formData.internalDuke=c.internal;document.querySelectorAll('#step2eng .ql-radio-btn').forEach(b=>{b.classList.toggle('active',b.textContent.trim()===c.internal)});toggleSchool()}if(c.school&&formData.internalDuke==='Yes'){formData.schoolUnit=c.school;buildSelect('schoolField','School / Unit',DUKE_SCHOOLS,'schoolUnit',false,'Select school or unit');const tr=document.getElementById('sel_schoolUnit');if(tr){tr.querySelector('span').textContent=c.school;tr.classList.remove('placeholder')}}L.classList.remove('open');checkStep2()}
+      function onLastNameInput() {
+        const v = document.getElementById("lastName").value.trim().toLowerCase();
+        const L = document.getElementById("suggestList");
+        checkStep2();
+        if (v.length < 2 || !knownContacts.length) {
+          L.classList.remove("open");
+          return;
+        }
+        const m = knownContacts.filter((c) => c.lastName.toLowerCase().includes(v)).slice(0, 6);
+        if (!m.length) {
+          L.classList.remove("open");
+          return;
+        }
+        L.innerHTML = m
+          .map(
+            (c, i) =>
+              `<div class="ql-suggest-item" onclick="pickContact(${i})"><div class="ql-suggest-name">${c.lastName}, ${c.firstName}</div><div class="ql-suggest-detail">${c.email}${c.school ? " · " + c.school : ""}</div></div>`,
+          )
+          .join("");
+        L._m = m;
+        L.classList.add("open");
+      }
+      function pickContact(i) {
+        const L = document.getElementById("suggestList");
+        const c = L._m[i];
+        if (!c) return;
+        document.getElementById("lastName").value = c.lastName;
+        document.getElementById("firstName").value = c.firstName;
+        document.getElementById("emailInput").value = c.email;
+        formData.lastName = c.lastName;
+        formData.firstName = c.firstName;
+        formData.email = c.email;
+        if (c.internal) {
+          formData.internalDuke = c.internal;
+          document.querySelectorAll("#step2eng .ql-radio-btn").forEach((b) => {
+            b.classList.toggle("active", b.textContent.trim() === c.internal);
+          });
+          toggleSchool();
+        }
+        if (c.school && formData.internalDuke === "Yes") {
+          formData.schoolUnit = c.school;
+          buildSelect(
+            "schoolField",
+            "School / Unit",
+            DUKE_SCHOOLS,
+            "schoolUnit",
+            false,
+            "Select school or unit",
+          );
+          const tr = document.getElementById("sel_schoolUnit");
+          if (tr) {
+            tr.querySelector("span").textContent = c.school;
+            tr.classList.remove("placeholder");
+          }
+        }
+        L.classList.remove("open");
+        checkStep2();
+      }
 
-function checkDup(){if(!recentEntries.length)return false;if(formData.logType==='engagement')return recentEntries.some(e=>(e['Date']||'')===formData.date&&(e['Last Name']||'').toLowerCase()===formData.lastName.toLowerCase()&&(e['First Name']||'').toLowerCase()===formData.firstName.toLowerCase()&&(e['Entry Type']||'').toLowerCase().includes('engagement'));return recentEntries.some(e=>(e['Date']||'')===formData.date&&(e['Event Name']||'').toLowerCase()===formData.eventName.toLowerCase())}
-function handleSubmit(){gatherInputs();if(!dupConfirmed&&checkDup()){const msg=formData.logType==='engagement'?` An engagement with ${formData.firstName} ${formData.lastName} on ${formData.date} already appears in recent entries.`:` An event named "${formData.eventName}" on ${formData.date} already appears in recent entries.`;document.getElementById('dupMessage').textContent=msg;document.getElementById('dupWarning').classList.add('visible');return}submitForm()}
-function forceSubmit(){dupConfirmed=true;document.getElementById('dupWarning').classList.remove('visible');submitForm()}
-function dismissDup(){document.getElementById('dupWarning').classList.remove('visible')}
+      function checkDup() {
+        if (!recentEntries.length) return false;
+        if (formData.logType === "engagement")
+          return recentEntries.some(
+            (e) =>
+              (e["Date"] || "") === formData.date &&
+              (e["Last Name"] || "").toLowerCase() === formData.lastName.toLowerCase() &&
+              (e["First Name"] || "").toLowerCase() === formData.firstName.toLowerCase() &&
+              (e["Entry Type"] || "").toLowerCase().includes("engagement"),
+          );
+        return recentEntries.some(
+          (e) =>
+            (e["Date"] || "") === formData.date &&
+            (e["Event Name"] || "").toLowerCase() === formData.eventName.toLowerCase(),
+        );
+      }
+      function handleSubmit() {
+        gatherInputs();
+        if (!dupConfirmed && checkDup()) {
+          const msg =
+            formData.logType === "engagement"
+              ? ` An engagement with ${formData.firstName} ${formData.lastName} on ${formData.date} already appears in recent entries.`
+              : ` An event named "${formData.eventName}" on ${formData.date} already appears in recent entries.`;
+          document.getElementById("dupMessage").textContent = msg;
+          document.getElementById("dupWarning").classList.add("visible");
+          return;
+        }
+        submitForm();
+      }
+      function forceSubmit() {
+        dupConfirmed = true;
+        document.getElementById("dupWarning").classList.remove("visible");
+        submitForm();
+      }
+      function dismissDup() {
+        document.getElementById("dupWarning").classList.remove("visible");
+      }
 
-function buildSelect(id,label,opts,key,req,ph){document.getElementById(id).innerHTML=`<label class="ql-label">${label}${req?'<span class="req">*</span>':''}</label><div class="ql-select-wrap"><div class="ql-select-trigger placeholder" id="sel_${key}" onclick="toggleDD('${key}')"><span id="sel_${key}_text">${ph||'Select...'}</span><svg class="ql-select-arrow" width="12" height="12" viewBox="0 0 12 12"><path d="M2 4L6 8L10 4" stroke="#64748b" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="ql-dropdown" id="dd_${key}">${opts.map(o=>`<div class="ql-dropdown-item" onclick="selOpt('${key}',\`${o.replace(/`/g,'')}\`,this)">${o}</div>`).join('')}</div></div>`}
-function toggleDD(k){document.querySelectorAll('.ql-dropdown').forEach(d=>{if(d.id!=='dd_'+k)d.classList.remove('open')});document.querySelectorAll('.ql-select-trigger').forEach(t=>{if(t.id!=='sel_'+k)t.classList.remove('open')});document.getElementById('dd_'+k).classList.toggle('open');document.getElementById('sel_'+k).classList.toggle('open')}
-function selOpt(k,v,el){formData[k]=v;document.getElementById('sel_'+k+'_text').textContent=v;document.getElementById('sel_'+k).classList.remove('placeholder');document.getElementById('dd_'+k).classList.remove('open');document.getElementById('sel_'+k).classList.remove('open');el.parentElement.querySelectorAll('.ql-dropdown-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected');checkCur()}
-document.addEventListener('click',function(e){if(!e.target.closest('.ql-select-wrap')){document.querySelectorAll('.ql-dropdown').forEach(d=>d.classList.remove('open'));document.querySelectorAll('.ql-select-trigger').forEach(t=>t.classList.remove('open'))}if(!e.target.closest('.ql-autosuggest')){const s=document.getElementById('suggestList');if(s)s.classList.remove('open')}});
-function setRadio(k,v,el){formData[k]=v;el.parentElement.querySelectorAll('.ql-radio-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');checkCur()}
-function goStep(s){currentStep=s;['step1','step2eng','step2evt','step3eng','step3evt','successView'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('progressBar').classList.remove('hidden');if(s===1)document.getElementById('step1').classList.remove('hidden');else if(s===2)document.getElementById(formData.logType==='engagement'?'step2eng':'step2evt').classList.remove('hidden');else if(s===3)document.getElementById(formData.logType==='engagement'?'step3eng':'step3evt').classList.remove('hidden');updProg(s);checkCur()}
-function updProg(s){for(let i=1;i<=3;i++){const d=document.getElementById('dot'+i);d.className='ql-step-dot '+(i<=s?'active':'inactive');d.innerHTML=i<s?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round"/></svg>':i}for(let i=1;i<=2;i++)document.getElementById('line'+i).className='ql-step-line '+(i<s?'active':'inactive');document.getElementById('stepLabel').textContent=`Step ${s} of 3`}
-function checkCur(){if(currentStep===1)chk1();else if(currentStep===2){formData.logType==='engagement'?checkStep2():checkStep2Evt()}else if(currentStep===3){formData.logType==='engagement'?chk3E():chk3Ev()}}
-function chk1(){document.getElementById('btn1').disabled=!(formData.logType&&formData.staffMember&&document.getElementById('dateInput').value)}
-function checkStep2(){document.getElementById('btn2eng').disabled=!(document.getElementById('firstName').value&&document.getElementById('lastName').value&&document.getElementById('emailInput').value&&formData.internalDuke)}
-function checkStep2Evt(){document.getElementById('btn2evt').disabled=!(document.getElementById('eventName').value)}
-function chk3E(){document.getElementById('btn3eng').disabled=!(formData.engagementType&&formData.topicPrimary&&document.getElementById('engNotes').value.trim())}
-function chk3Ev(){document.getElementById('btn3evt').disabled=!(formData.eventTopicPrimary)}
-function toggleSchool(){const f=document.getElementById('schoolField');if(formData.internalDuke==='Yes')f.classList.remove('hidden');else{f.classList.add('hidden');formData.schoolUnit=''}checkStep2()}
-function gatherInputs(){formData.date=document.getElementById('dateInput').value;if(formData.logType==='engagement'){formData.firstName=document.getElementById('firstName').value;formData.lastName=document.getElementById('lastName').value;formData.email=document.getElementById('emailInput').value;formData.notes=document.getElementById('engNotes').value}else{formData.eventName=document.getElementById('eventName').value;formData.eventCoSponsor=document.getElementById('eventCoSponsor').value;formData.eventSpeakers=document.getElementById('eventSpeakers').value;formData.eventRegistrants=document.getElementById('eventRegistrants').value;formData.eventAttendees=document.getElementById('eventAttendees').value;formData.eventNotes=document.getElementById('evtNotes').value}formData.staffEmail=STAFF_EMAILS[formData.staffMember]||''}
-async function submitForm(){const btn=formData.logType==='engagement'?document.getElementById('btn3eng'):document.getElementById('btn3evt');btn.disabled=true;btn.innerHTML='<span class="ql-spinner"></span>Submitting...';document.getElementById('errorBanner').classList.remove('visible');try{if(APPS_SCRIPT_URL==="YOUR_APPS_SCRIPT_URL_HERE"){await new Promise(r=>setTimeout(r,800))}else{await fetch(APPS_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(formData)})}showSuccess()}catch(e){document.getElementById('errorBanner').textContent="Something went wrong. Please try again.";document.getElementById('errorBanner').classList.add('visible');btn.disabled=false;btn.textContent="Submit Entry"}}
-function showSuccess(){['step1','step2eng','step2evt','step3eng','step3evt'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('progressBar').classList.add('hidden');document.getElementById('dupWarning').classList.remove('visible');document.getElementById('successView').classList.remove('hidden')}
-/* Live path: the banner comes off. The demo path leaves it standing, so a
+      function buildSelect(id, label, opts, key, req, ph) {
+        document.getElementById(id).innerHTML =
+          `<label class="ql-label">${label}${req ? '<span class="req">*</span>' : ""}</label><div class="ql-select-wrap"><div class="ql-select-trigger placeholder" id="sel_${key}" onclick="toggleDD('${key}')"><span id="sel_${key}_text">${ph || "Select..."}</span><svg class="ql-select-arrow" width="12" height="12" viewBox="0 0 12 12"><path d="M2 4L6 8L10 4" stroke="#64748b" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="ql-dropdown" id="dd_${key}">${opts.map((o) => `<div class="ql-dropdown-item" onclick="selOpt('${key}',\`${o.replace(/`/g, "")}\`,this)">${o}</div>`).join("")}</div></div>`;
+      }
+      function staffPlaceholder() {
+        if (STAFF.length) return "Select staff member";
+        return staffLoadFailed
+          ? "Staff list unavailable \u2014 reload the page"
+          : "Loading staff\u2026";
+      }
+      function toggleDD(k) {
+        document.querySelectorAll(".ql-dropdown").forEach((d) => {
+          if (d.id !== "dd_" + k) d.classList.remove("open");
+        });
+        document.querySelectorAll(".ql-select-trigger").forEach((t) => {
+          if (t.id !== "sel_" + k) t.classList.remove("open");
+        });
+        document.getElementById("dd_" + k).classList.toggle("open");
+        document.getElementById("sel_" + k).classList.toggle("open");
+      }
+      function selOpt(k, v, el) {
+        formData[k] = v;
+        document.getElementById("sel_" + k + "_text").textContent = v;
+        document.getElementById("sel_" + k).classList.remove("placeholder");
+        document.getElementById("dd_" + k).classList.remove("open");
+        document.getElementById("sel_" + k).classList.remove("open");
+        el.parentElement
+          .querySelectorAll(".ql-dropdown-item")
+          .forEach((i) => i.classList.remove("selected"));
+        el.classList.add("selected");
+        checkCur();
+      }
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".ql-select-wrap")) {
+          document.querySelectorAll(".ql-dropdown").forEach((d) => d.classList.remove("open"));
+          document
+            .querySelectorAll(".ql-select-trigger")
+            .forEach((t) => t.classList.remove("open"));
+        }
+        if (!e.target.closest(".ql-autosuggest")) {
+          const s = document.getElementById("suggestList");
+          if (s) s.classList.remove("open");
+        }
+      });
+      function setRadio(k, v, el) {
+        formData[k] = v;
+        el.parentElement
+          .querySelectorAll(".ql-radio-btn")
+          .forEach((b) => b.classList.remove("active"));
+        el.classList.add("active");
+        checkCur();
+      }
+      function goStep(s) {
+        currentStep = s;
+        ["step1", "step2eng", "step2evt", "step3eng", "step3evt", "successView"].forEach((id) =>
+          document.getElementById(id).classList.add("hidden"),
+        );
+        document.getElementById("progressBar").classList.remove("hidden");
+        if (s === 1) document.getElementById("step1").classList.remove("hidden");
+        else if (s === 2)
+          document
+            .getElementById(formData.logType === "engagement" ? "step2eng" : "step2evt")
+            .classList.remove("hidden");
+        else if (s === 3)
+          document
+            .getElementById(formData.logType === "engagement" ? "step3eng" : "step3evt")
+            .classList.remove("hidden");
+        updProg(s);
+        checkCur();
+      }
+      function updProg(s) {
+        for (let i = 1; i <= 3; i++) {
+          const d = document.getElementById("dot" + i);
+          d.className = "ql-step-dot " + (i <= s ? "active" : "inactive");
+          d.innerHTML =
+            i < s
+              ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round"/></svg>'
+              : i;
+        }
+        for (let i = 1; i <= 2; i++)
+          document.getElementById("line" + i).className =
+            "ql-step-line " + (i < s ? "active" : "inactive");
+        document.getElementById("stepLabel").textContent = `Step ${s} of 3`;
+      }
+      function checkCur() {
+        if (currentStep === 1) chk1();
+        else if (currentStep === 2) {
+          formData.logType === "engagement" ? checkStep2() : checkStep2Evt();
+        } else if (currentStep === 3) {
+          formData.logType === "engagement" ? chk3E() : chk3Ev();
+        }
+      }
+      function chk1() {
+        document.getElementById("btn1").disabled = !(
+          formData.logType &&
+          formData.staffMember &&
+          document.getElementById("dateInput").value
+        );
+      }
+      function checkStep2() {
+        document.getElementById("btn2eng").disabled = !(
+          document.getElementById("firstName").value &&
+          document.getElementById("lastName").value &&
+          document.getElementById("emailInput").value &&
+          formData.internalDuke
+        );
+      }
+      function checkStep2Evt() {
+        document.getElementById("btn2evt").disabled = !document.getElementById("eventName").value;
+      }
+      function chk3E() {
+        document.getElementById("btn3eng").disabled = !(
+          formData.engagementType &&
+          formData.topicPrimary &&
+          document.getElementById("engNotes").value.trim()
+        );
+      }
+      function chk3Ev() {
+        document.getElementById("btn3evt").disabled = !formData.eventTopicPrimary;
+      }
+      function toggleSchool() {
+        const f = document.getElementById("schoolField");
+        if (formData.internalDuke === "Yes") f.classList.remove("hidden");
+        else {
+          f.classList.add("hidden");
+          formData.schoolUnit = "";
+        }
+        checkStep2();
+      }
+      function gatherInputs() {
+        formData.date = document.getElementById("dateInput").value;
+        if (formData.logType === "engagement") {
+          formData.firstName = document.getElementById("firstName").value;
+          formData.lastName = document.getElementById("lastName").value;
+          formData.email = document.getElementById("emailInput").value;
+          formData.notes = document.getElementById("engNotes").value;
+        } else {
+          formData.eventName = document.getElementById("eventName").value;
+          formData.eventCoSponsor = document.getElementById("eventCoSponsor").value;
+          formData.eventSpeakers = document.getElementById("eventSpeakers").value;
+          formData.eventRegistrants = document.getElementById("eventRegistrants").value;
+          formData.eventAttendees = document.getElementById("eventAttendees").value;
+          formData.eventNotes = document.getElementById("evtNotes").value;
+        }
+        formData.staffEmail = STAFF_EMAILS[formData.staffMember] || "";
+      }
+      async function submitForm() {
+        const btn =
+          formData.logType === "engagement"
+            ? document.getElementById("btn3eng")
+            : document.getElementById("btn3evt");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="ql-busy"></span>Submitting...';
+        document.getElementById("errorBanner").classList.remove("visible");
+        try {
+          if (APPS_SCRIPT_URL === "YOUR_APPS_SCRIPT_URL_HERE") {
+            await new Promise((r) => setTimeout(r, 800));
+          } else {
+            await fetch(APPS_SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            });
+          }
+          showSuccess();
+        } catch (e) {
+          document.getElementById("errorBanner").textContent =
+            "Something went wrong. Please try again.";
+          document.getElementById("errorBanner").classList.add("visible");
+          btn.disabled = false;
+          btn.textContent = "Submit Entry";
+        }
+      }
+      function showSuccess() {
+        ["step1", "step2eng", "step2evt", "step3eng", "step3evt"].forEach((id) =>
+          document.getElementById(id).classList.add("hidden"),
+        );
+        document.getElementById("progressBar").classList.add("hidden");
+        document.getElementById("dupWarning").classList.remove("visible");
+        document.getElementById("successView").classList.remove("hidden");
+      }
+      /* Live path: the banner comes off. The demo path leaves it standing, so a
    script failure cannot silently un-label the page.
 
    CALLED FROM DOMContentLoaded, NOT ONLY FROM resetForm(). The first
@@ -166,10 +1508,153 @@ function showSuccess(){['step1','step2eng','step2evt','step3eng','step3evt'].for
    hour. The harness did not catch it because every harness case ran in
    demo mode and asserted the banner was PRESENT; nothing asserted it was
    absent when configured. */
-function hideDemoBannerIfLive(){if(APPS_SCRIPT_URL!=="YOUR_APPS_SCRIPT_URL_HERE"&&SPREADSHEET_ID!=="YOUR_SPREADSHEET_ID_HERE"){const b=document.querySelector(".demo-banner");if(b)b.remove()}}
-function resetForm(){formData={logType:"",staffMember:"",date:new Date().toISOString().split("T")[0],firstName:"",lastName:"",email:"",internalDuke:"",schoolUnit:"",engagementType:"",topicPrimary:"",programName:"",notes:"",eventName:"",eventCoSponsor:"",eventTopicPrimary:"",eventSpeakers:"",eventRegistrants:"",eventAttendees:"",eventNotes:""};dupConfirmed=false;document.querySelectorAll('.ql-input,.ql-textarea').forEach(el=>el.value='');document.querySelectorAll('.ql-radio-btn').forEach(b=>b.classList.remove('active'));document.getElementById('dateInput').value=formData.date;document.getElementById('schoolField').classList.add('hidden');document.getElementById('successView').classList.add('hidden');document.getElementById('errorBanner').classList.remove('visible');document.getElementById('dupWarning').classList.remove('visible');const b3e=document.getElementById('btn3eng');if(b3e){b3e.disabled=true;b3e.innerHTML='Submit Entry'}const b3v=document.getElementById('btn3evt');if(b3v){b3v.disabled=true;b3v.innerHTML='Submit Entry'}buildSelect('staffField','Your Name',STAFF,'staffMember',true,'Select staff member');buildSelect('schoolField','School / Unit',DUKE_SCHOOLS,'schoolUnit',false,'Select school or unit (if known)');buildSelect('engTypeField','Engagement Type',ENGAGEMENT_TYPES,'engagementType',true,'Select type');buildSelect('topicPriField','Primary Topic',TOPIC_AREAS,'topicPrimary',true,'Select primary topic');buildSelect('programNameField','Fac Dev Program (optional)',FAC_DEV_PROGRAMS,'programName',false,'Select if applicable');buildSelect('evtTopicPriField','Primary Event Topic',TOPIC_AREAS,'eventTopicPrimary',true,'Select primary topic');switchMode('form');goStep(1);hideDemoBannerIfLive()}
-document.addEventListener('DOMContentLoaded',async function(){hideDemoBannerIfLive();document.getElementById('dateInput').value=formData.date;await Promise.all([loadLookups(),loadContacts(),loadRecentRaw()]);buildSelect('staffField','Your Name',STAFF,'staffMember',true,'Select staff member');buildSelect('schoolField','School / Unit',DUKE_SCHOOLS,'schoolUnit',false,'Select school or unit (if known)');buildSelect('engTypeField','Engagement Type',ENGAGEMENT_TYPES,'engagementType',true,'Select type');buildSelect('topicPriField','Primary Topic',TOPIC_AREAS,'topicPrimary',true,'Select primary topic');buildSelect('programNameField','Fac Dev Program (optional)',FAC_DEV_PROGRAMS,'programName',false,'Select if applicable');
-    buildSelect('evtTopicPriField','Primary Event Topic',TOPIC_AREAS,'eventTopicPrimary',true,'Select primary topic');const fEl=document.getElementById('recentStaffFilter');STAFF.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fEl.appendChild(o)})});
-</script>
-</body>
+      function hideDemoBannerIfLive() {
+        if (
+          APPS_SCRIPT_URL !== "YOUR_APPS_SCRIPT_URL_HERE" &&
+          SPREADSHEET_ID !== "YOUR_SPREADSHEET_ID_HERE"
+        ) {
+          const b = document.querySelector(".demo-banner");
+          if (b) b.remove();
+        }
+      }
+      function resetForm() {
+        formData = {
+          logType: "",
+          staffMember: "",
+          date: new Date().toISOString().split("T")[0],
+          firstName: "",
+          lastName: "",
+          email: "",
+          internalDuke: "",
+          schoolUnit: "",
+          engagementType: "",
+          topicPrimary: "",
+          programName: "",
+          notes: "",
+          eventName: "",
+          eventCoSponsor: "",
+          eventTopicPrimary: "",
+          eventSpeakers: "",
+          eventRegistrants: "",
+          eventAttendees: "",
+          eventNotes: "",
+        };
+        dupConfirmed = false;
+        document.querySelectorAll(".ql-input,.ql-textarea").forEach((el) => (el.value = ""));
+        document.querySelectorAll(".ql-radio-btn").forEach((b) => b.classList.remove("active"));
+        document.getElementById("dateInput").value = formData.date;
+        document.getElementById("schoolField").classList.add("hidden");
+        document.getElementById("successView").classList.add("hidden");
+        document.getElementById("errorBanner").classList.remove("visible");
+        document.getElementById("dupWarning").classList.remove("visible");
+        const b3e = document.getElementById("btn3eng");
+        if (b3e) {
+          b3e.disabled = true;
+          b3e.innerHTML = "Submit Entry";
+        }
+        const b3v = document.getElementById("btn3evt");
+        if (b3v) {
+          b3v.disabled = true;
+          b3v.innerHTML = "Submit Entry";
+        }
+        buildSelect("staffField", "Your Name", STAFF, "staffMember", true, staffPlaceholder());
+        buildSelect(
+          "schoolField",
+          "School / Unit",
+          DUKE_SCHOOLS,
+          "schoolUnit",
+          false,
+          "Select school or unit (if known)",
+        );
+        buildSelect(
+          "engTypeField",
+          "Engagement Type",
+          ENGAGEMENT_TYPES,
+          "engagementType",
+          true,
+          "Select type",
+        );
+        buildSelect(
+          "topicPriField",
+          "Primary Topic",
+          TOPIC_AREAS,
+          "topicPrimary",
+          true,
+          "Select primary topic",
+        );
+        buildSelect(
+          "programNameField",
+          "Fac Dev Program (optional)",
+          FAC_DEV_PROGRAMS,
+          "programName",
+          false,
+          "Select if applicable",
+        );
+        buildSelect(
+          "evtTopicPriField",
+          "Primary Event Topic",
+          TOPIC_AREAS,
+          "eventTopicPrimary",
+          true,
+          "Select primary topic",
+        );
+        switchMode("form");
+        goStep(1);
+        hideDemoBannerIfLive();
+      }
+      document.addEventListener("DOMContentLoaded", async function () {
+        hideDemoBannerIfLive();
+        document.getElementById("dateInput").value = formData.date;
+        await Promise.all([loadLookups(), loadContacts(), loadRecentRaw()]);
+        buildSelect("staffField", "Your Name", STAFF, "staffMember", true, staffPlaceholder());
+        buildSelect(
+          "schoolField",
+          "School / Unit",
+          DUKE_SCHOOLS,
+          "schoolUnit",
+          false,
+          "Select school or unit (if known)",
+        );
+        buildSelect(
+          "engTypeField",
+          "Engagement Type",
+          ENGAGEMENT_TYPES,
+          "engagementType",
+          true,
+          "Select type",
+        );
+        buildSelect(
+          "topicPriField",
+          "Primary Topic",
+          TOPIC_AREAS,
+          "topicPrimary",
+          true,
+          "Select primary topic",
+        );
+        buildSelect(
+          "programNameField",
+          "Fac Dev Program (optional)",
+          FAC_DEV_PROGRAMS,
+          "programName",
+          false,
+          "Select if applicable",
+        );
+        buildSelect(
+          "evtTopicPriField",
+          "Primary Event Topic",
+          TOPIC_AREAS,
+          "eventTopicPrimary",
+          true,
+          "Select primary topic",
+        );
+        const fEl = document.getElementById("recentStaffFilter");
+        STAFF.forEach((s) => {
+          const o = document.createElement("option");
+          o.value = s;
+          o.textContent = s;
+          fEl.appendChild(o);
+        });
+      });
+    </script>
+  </body>
 </html>

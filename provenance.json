@@ -1,11 +1,11 @@
 {
   "schema": "fdconnect-demo-provenance/1",
-  "generated_at": "2026-08-17T15:06:23+00:00",
+  "generated_at": "2026-08-20T14:43:29+00:00",
   "source": {
-    "commit": "4e2ed772b15cdffd39d266a0c9bddd09ff81f49b",
-    "commit_short": "4e2ed772",
+    "commit": "8bd0c54785c6940de82a7bef7ae08c20b9741d68",
+    "commit_short": "8bd0c547",
     "branch": "main",
-    "committed_at": "2026-08-17T11:03:45-04:00",
+    "committed_at": "2026-08-19T21:00:52-04:00",
     "tree_clean": true,
     "note": "Commit in the private canonical repository. Recorded so the team can identify the exact source state; it grants no access. The remote URL is deliberately omitted."
   },
@@ -53,8 +53,8 @@
       },
       {
         "name": "dashboard.html",
-        "bytes": 110248,
-        "sha256": "ba39bb96c091511a177f7d03b51f9b755aa2519b70be68601e66aac60ff89148"
+        "bytes": 110242,
+        "sha256": "9e8df12a23a95e10c011958766889f451a6cfcfe18052e65cbda55f13b7f9d9a"
       },
       {
         "name": "index.html",
@@ -63,11 +63,11 @@
       },
       {
         "name": "quicklog.html",
-        "bytes": 56708,
-        "sha256": "6859e32403cf8f603e40f09463581d06540f876c58d800449b0cbc5d26e6909a"
+        "bytes": 74072,
+        "sha256": "0b1899984aa571e42646fb76466efb2b57729fe85dc1fa1a528acf1a3402b066"
       }
     ]
   },
   "about": "Every person, engagement, program, and number in this demonstration is fictional. The taxonomy and the workflow are the real ones. This build was derived from the commit above and published only after every assertion in the derivation gate passed, including screening all synthetic names against the real contact roster.",
-  "human_summary": "Derived from 4e2ed772 on 2026-08-17. All gate assertions passed."
+  "human_summary": "Derived from 8bd0c547 on 2026-08-20. All gate assertions passed."
 }
